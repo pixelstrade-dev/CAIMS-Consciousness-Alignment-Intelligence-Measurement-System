@@ -9,8 +9,27 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        background: {
+          DEFAULT: "var(--background)",
+          secondary: "var(--background-secondary)",
+          card: "var(--background-card)",
+        },
+        foreground: {
+          DEFAULT: "var(--foreground)",
+          muted: "var(--foreground-muted)",
+        },
+        border: "var(--border)",
+        accent: {
+          cyan: "var(--accent-cyan)",
+          blue: "var(--accent-blue)",
+          orange: "var(--accent-orange)",
+          pink: "var(--accent-pink)",
+          purple: "var(--accent-purple)",
+        },
+      },
+      fontFamily: {
+        sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "monospace"],
       },
     },
   },
