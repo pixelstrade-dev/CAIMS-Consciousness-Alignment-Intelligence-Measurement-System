@@ -22,9 +22,9 @@ const AGENT_COLORS: Record<string, string> = {
 };
 
 function scoreColor(score: number): string {
-  if (score >= 0.7) return "text-accent-cyan";
-  if (score >= 0.4) return "text-accent-blue";
-  if (score >= 0.2) return "text-accent-orange";
+  if (score >= 75) return "text-accent-cyan";
+  if (score >= 50) return "text-accent-blue";
+  if (score >= 25) return "text-accent-orange";
   return "text-accent-pink";
 }
 
@@ -98,7 +98,7 @@ export default function DebateDetailPage() {
           scores: [],
         };
       }
-      const score = turn.score as { composite: number } | null;
+      const score = turn.score;
       if (score?.composite != null) {
         agentScores[key].scores.push(score.composite);
       }
@@ -203,7 +203,7 @@ export default function DebateDetailPage() {
                     turnNumber: turn.turnNumber,
                     content: turn.content,
                     agent: turn.agent,
-                    score: turn.score as { composite: number } | null,
+                    score: turn.score,
                   }}
                 />
               ))}
@@ -277,7 +277,7 @@ export default function DebateDetailPage() {
                             <span
                               className={`text-sm font-mono font-medium ${scoreColor(agent.average)}`}
                             >
-                              {agent.average.toFixed(3)}
+                              {agent.average.toFixed(1)}
                             </span>
                           ) : (
                             <span className="text-xs text-foreground-muted">

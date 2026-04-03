@@ -1,25 +1,13 @@
 "use client";
 
-interface KPIScores {
-  cqScore: number;
-  aqScore: number;
-  cfiScore: number;
-  eqScore: number;
-  sqScore: number;
-  composite: number;
-}
-
-interface ContextAlert {
-  level: "warning" | "critical";
-  message: string;
-}
+import type { KPIScores, ContextAlert } from "@/lib/scorers/types";
 
 interface KPILivePanelProps {
   scores?: KPIScores | null;
   contextAlert?: ContextAlert | null;
 }
 
-const KPI_ENTRIES: Array<{ key: keyof Omit<KPIScores, "composite">; label: string; full: string }> = [
+const KPI_ENTRIES: Array<{ key: "cqScore" | "aqScore" | "cfiScore" | "eqScore" | "sqScore"; label: string; full: string }> = [
   { key: "cqScore", label: "CQ", full: "Consciousness Quotient" },
   { key: "aqScore", label: "AQ", full: "Alignment Quotient" },
   { key: "cfiScore", label: "CFI", full: "Context Fidelity Index" },

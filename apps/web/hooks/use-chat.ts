@@ -9,11 +9,7 @@ export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   scores?: KPIScores | null;
-  contextAlert?: {
-    level: "warning" | "critical";
-    message: string;
-    cfiScore: number;
-  } | null;
+  contextAlert?: ContextAlert | null;
 }
 
 interface ChatApiResponse {

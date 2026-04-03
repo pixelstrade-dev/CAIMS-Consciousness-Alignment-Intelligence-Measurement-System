@@ -39,7 +39,7 @@ export interface DebateTurn {
     role: string;
     agentId: string;
   };
-  score: unknown | null;
+  score: { composite: number; cqScore?: number; aqScore?: number; cfiScore?: number; eqScore?: number; sqScore?: number } | null;
 }
 
 interface DebatesListResponse {
@@ -63,7 +63,7 @@ interface AdvanceDebateResponse {
     turnNumber: number;
     agent: { name: string; role: string; agentId: string };
     content: string;
-    score: unknown | null;
+    score: { composite: number } | null;
   };
   debateStatus: string;
   currentRound: number;
