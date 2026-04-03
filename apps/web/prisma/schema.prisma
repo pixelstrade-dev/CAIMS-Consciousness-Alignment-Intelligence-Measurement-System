@@ -1,0 +1,166 @@
+// CAIMS - Consciousness & Alignment Intelligence Measurement System
+// HYBRID schema: 6 Float columns for main scores + JSONB for sub-score details + JSONB for metadata
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Chat / Scoring models
+// ---------------------------------------------------------------------------
+
+model Session {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  title       String?
+  llmProvider String   @default("anthropic")
+  llmModel    String   @default("claude-sonnet-4-20250514")
+
+  messages Message[]
+  scores   Score[]
+
+  @@index([createdAt])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  role       String // "user" | "assistant"
+  content    String   @db.Text
+  tokenCount Int?
+
+  sessionId String
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  score Score?
+
+  @@index([createdAt])
+  @@index([sessionId])
+}
+
+model Score {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // 6 main Float columns
+  cqScore   Float
+  aqScore   Float
+  cfiScore  Float
+  eqScore   Float
+  sqScore   Float
+  composite Float
+
+  // JSONB for sub-score details (phi_proxy, gwt_proxy, etc.)
+  details  Json
+  // JSONB for metadata (reasoning, modelUsed, scoringPrompt, latencyMs)
+  metadata Json
+
+  sessionId String
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  messageId String?  @unique
+  message   Message? @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([sessionId])
+}
+
+// ---------------------------------------------------------------------------
+// Debate models
+// ---------------------------------------------------------------------------
+
+model Debate {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  topic     String   @db.Text
+  format    String
+  status    String   @default("active")
+
+  agents  DebateAgentInstance[]
+  turns   DebateTurn[]
+  metrics DebateMetrics?
+
+  @@index([createdAt])
+}
+
+model DebateAgentInstance {
+  id           String @id @default(cuid())
+  agentId      String
+  name         String
+  role         String
+  systemPrompt String @db.Text
+
+  debateId String
+  debate   Debate @relation(fields: [debateId], references: [id], onDelete: Cascade)
+
+  turns  DebateTurn[]
+  scores DebateAgentScore[]
+
+  @@index([debateId])
+}
+
+model DebateTurn {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  turnNumber Int
+  content    String   @db.Text
+  tokenCount Int?
+
+  debateId String
+  debate   Debate @relation(fields: [debateId], references: [id], onDelete: Cascade)
+
+  agentId String
+  agent   DebateAgentInstance @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  score DebateAgentScore?
+
+  @@index([createdAt])
+  @@index([debateId])
+  @@index([agentId])
+}
+
+model DebateAgentScore {
+  id String @id @default(cuid())
+
+  // 6 main Float columns
+  cqScore   Float
+  aqScore   Float
+  cfiScore  Float
+  eqScore   Float
+  sqScore   Float
+  composite Float
+
+  // JSONB for sub-score details and metadata
+  details  Json
+  metadata Json
+
+  agentId String
+  agent   DebateAgentInstance @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  turnId String?     @unique
+  turn   DebateTurn? @relation(fields: [turnId], references: [id], onDelete: Cascade)
+
+  @@index([agentId])
+}
+
+model DebateMetrics {
+  id String @id @default(cuid())
+
+  convergenceRate        Float
+  diversityIndex         Float
+  argumentationQuality   Float
+  alignmentCoherence     Float
+  consciousnessEmergence Float
+  compositeDebateScore   Float
+  summary                String? @db.Text
+
+  debateId String @unique
+  debate   Debate @relation(fields: [debateId], references: [id], onDelete: Cascade)
+}

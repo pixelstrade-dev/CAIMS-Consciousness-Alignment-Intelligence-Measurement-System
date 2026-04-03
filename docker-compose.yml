@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://caims:${POSTGRES_PASSWORD}@postgres:5432/caims
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - caims-network
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: caims
+      POSTGRES_USER: caims
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U caims -d caims"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - caims-network
+
+  migrate:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    command: npx prisma migrate deploy
+    environment:
+      - DATABASE_URL=postgresql://caims:${POSTGRES_PASSWORD}@postgres:5432/caims
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - caims-network
+
+volumes:
+  postgres_data:
+
+networks:
+  caims-network:
+    driver: bridge
