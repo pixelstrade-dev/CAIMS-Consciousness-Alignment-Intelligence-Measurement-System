@@ -1,4 +1,5 @@
 // CAIMS - Consciousness & Alignment Intelligence Measurement System
+// Copyright 2025 Pixels Trade SA — Apache License 2.0
 // HYBRID schema: 6 Float columns for main scores + JSONB for sub-score details + JSONB for metadata
 
 generator client {
@@ -48,7 +49,7 @@ model Score {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
 
-  // 6 main Float columns
+  // 6 main Float columns (all clamped 0-100 by scoring engine)
   cqScore   Float
   aqScore   Float
   cfiScore  Float
@@ -58,7 +59,7 @@ model Score {
 
   // JSONB for sub-score details (phi_proxy, gwt_proxy, etc.)
   details  Json
-  // JSONB for metadata (reasoning, modelUsed, scoringPrompt, latencyMs)
+  // JSONB for metadata (reasoning, modelUsed, latencyMs)
   metadata Json
 
   sessionId String
@@ -69,6 +70,7 @@ model Score {
 
   @@index([createdAt])
   @@index([sessionId])
+  @@index([composite])
 }
 
 // ---------------------------------------------------------------------------
@@ -88,6 +90,7 @@ model Debate {
   metrics DebateMetrics?
 
   @@index([createdAt])
+  @@index([status])
 }
 
 model DebateAgentInstance {
@@ -121,15 +124,19 @@ model DebateTurn {
 
   score DebateAgentScore?
 
+  // Prevent duplicate turn numbers within the same debate
+  @@unique([debateId, turnNumber])
   @@index([createdAt])
   @@index([debateId])
   @@index([agentId])
+  @@index([debateId, agentId])
 }
 
 model DebateAgentScore {
-  id String @id @default(cuid())
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
 
-  // 6 main Float columns
+  // 6 main Float columns (all clamped 0-100)
   cqScore   Float
   aqScore   Float
   cfiScore  Float
@@ -151,7 +158,8 @@ model DebateAgentScore {
 }
 
 model DebateMetrics {
-  id String @id @default(cuid())
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
 
   convergenceRate        Float
   diversityIndex         Float

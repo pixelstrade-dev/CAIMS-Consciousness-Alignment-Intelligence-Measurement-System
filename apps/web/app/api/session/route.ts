@@ -1,14 +1,19 @@
 export const dynamic = 'force-dynamic';
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import prisma from '@/lib/db/client';
+import { apiSuccess, apiError } from '@/lib/middleware/api-response';
 
-// GET - List sessions with latest scores
+const MAX_PAGE_SIZE = 100;
+
 export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
-  const limit = parseInt(searchParams.get('limit') || '20');
-  const offset = parseInt(searchParams.get('offset') || '0');
+  const rawLimit = parseInt(searchParams.get('limit') || '20');
+  const rawOffset = parseInt(searchParams.get('offset') || '0');
+
+  const limit = Math.min(Math.max(isNaN(rawLimit) ? 20 : rawLimit, 1), MAX_PAGE_SIZE);
+  const offset = Math.max(isNaN(rawOffset) ? 0 : rawOffset, 0);
 
   const sessions = await prisma.session.findMany({
     take: limit,
@@ -20,15 +25,14 @@ export async function GET(req: NextRequest) {
     },
   });
 
-  return NextResponse.json({ sessions, limit, offset });
+  return apiSuccess({ sessions, limit, offset });
 }
 
 const CreateSessionSchema = z.object({
-  title: z.string().optional(),
-  model: z.string().default('claude-sonnet-4-20250514'),
+  title: z.string().max(200).optional(),
+  model: z.string().max(100).default('claude-sonnet-4-20250514'),
 });
 
-// POST - Create new session
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -41,11 +45,11 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(session, { status: 201 });
+    return apiSuccess(session, 201);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid request', details: error.issues }, { status: 400 });
+      return apiError('VALIDATION_ERROR', 'Invalid request parameters', 400);
     }
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return apiError('INTERNAL_ERROR', 'An internal error occurred', 500);
   }
 }

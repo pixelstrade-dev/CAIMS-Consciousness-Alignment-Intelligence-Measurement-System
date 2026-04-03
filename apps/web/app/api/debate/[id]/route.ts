@@ -1,10 +1,13 @@
 export const dynamic = 'force-dynamic';
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { getAnthropicAdapter } from '@/lib/adapters/anthropic';
 import { scoreInteraction } from '@/lib/scorers/scoring-engine';
 import prisma from '@/lib/db/client';
+import { checkRateLimit, getRateLimitHeaders } from '@/lib/middleware/rate-limit';
+import { apiSuccess, apiError } from '@/lib/middleware/api-response';
+import { logger } from '@/lib/logger';
 
 // GET - Fetch a specific debate with all turns and scores
 export async function GET(
@@ -17,9 +20,7 @@ export async function GET(
     where: { id },
     include: {
       agents: {
-        include: {
-          scores: true,
-        },
+        include: { scores: true },
       },
       turns: {
         orderBy: { turnNumber: 'asc' },
@@ -33,14 +34,14 @@ export async function GET(
   });
 
   if (!debate) {
-    return NextResponse.json({ error: 'Debate not found' }, { status: 404 });
+    return apiError('DEBATE_NOT_FOUND', 'Debate not found', 404);
   }
 
-  return NextResponse.json({ debate });
+  return apiSuccess({ debate });
 }
 
 const AdvanceDebateSchema = z.object({
-  maxTurns: z.number().default(6),
+  maxTurns: z.number().min(1).max(50).default(6),
 });
 
 // POST - Advance the debate by one turn
@@ -49,6 +50,12 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+
+  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'anonymous';
+  const rateCheck = checkRateLimit(`debate-advance:${ip}`, { windowMs: 60_000, maxRequests: 20 });
+  if (!rateCheck.allowed) {
+    return apiError('RATE_LIMITED', 'Too many requests', 429, getRateLimitHeaders(rateCheck));
+  }
 
   try {
     const body = await req.json().catch(() => ({}));
@@ -68,76 +75,56 @@ export async function POST(
       },
     });
 
-    if (!debate) {
-      return NextResponse.json({ error: 'Debate not found' }, { status: 404 });
-    }
-
+    if (!debate) return apiError('DEBATE_NOT_FOUND', 'Debate not found', 404);
     if (debate.status !== 'active') {
-      return NextResponse.json({ error: 'Debate is not active', status: debate.status }, { status: 400 });
+      return apiError('DEBATE_NOT_ACTIVE', `Debate is ${debate.status}`, 400);
     }
 
-    // Determine current turn number
-    const currentTurnNumber = (debate.turns as any[]).length + 1;
-
-    // Separate orchestrator from regular agents
-    const agents = debate.agents as Array<{ id: string; agentId: string; name: string; role: string; systemPrompt: string; debateId: string }>;
-    const orchestrator = agents.find(a => a.role === 'orchestrator');
-    const regularAgents = agents.filter(a => a.role !== 'orchestrator');
+    // Determine which agent speaks next (round-robin with orchestrator after each round)
+    const agents = debate.agents;
+    const orchestrator = agents.find(a => a.agentId === 'agt-orchestrator');
+    const regularAgents = agents.filter(a => a.agentId !== 'agt-orchestrator');
 
     if (regularAgents.length === 0) {
-      return NextResponse.json({ error: 'No regular agents in debate' }, { status: 400 });
+      return apiError('NO_AGENTS', 'No regular agents in debate', 400);
     }
 
-    // Determine which agent speaks next:
-    // Round-robin through regular agents, orchestrator speaks after all regular agents complete a round
-    type TurnWithAgent = { id: string; turnNumber: number; content: string; tokenCount: number | null; debateId: string; agentId: string; agent: { name: string; role: string; agentId: string } };
-    const turns = debate.turns as TurnWithAgent[];
-    const turnsWithoutOrchestrator = turns.filter(
-      t => t.agent.role !== 'orchestrator'
-    );
+    const turns = debate.turns;
+    const turnsWithoutOrchestrator = turns.filter(t => t.agent.agentId !== 'agt-orchestrator');
     const currentRound = Math.floor(turnsWithoutOrchestrator.length / regularAgents.length);
     const positionInRound = turnsWithoutOrchestrator.length % regularAgents.length;
 
     let speakingAgent;
     let isOrchestratorTurn = false;
 
-    // Check if all regular agents have spoken this round
     if (positionInRound === 0 && turnsWithoutOrchestrator.length > 0) {
-      // Check if orchestrator already spoke for the previous round
-      const orchestratorTurnsCount = turns.filter(
-        t => t.agent.role === 'orchestrator'
-      ).length;
-
+      const orchestratorTurnsCount = turns.filter(t => t.agent.agentId === 'agt-orchestrator').length;
       if (orchestrator && orchestratorTurnsCount < currentRound) {
-        // Orchestrator's turn to synthesize the round
         speakingAgent = orchestrator;
         isOrchestratorTurn = true;
       } else {
-        // Start next round with first regular agent
         speakingAgent = regularAgents[0];
       }
     } else {
-      // Next regular agent in round-robin
       speakingAgent = regularAgents[positionInRound];
     }
 
-    // Build context from all previous turns
+    // Build context from previous turns (sanitized)
     const conversationContext = turns.map(t =>
-      `[${t.agent.name} (${t.agent.role})]:\n${t.content}`
-    ).join('\n\n---\n\n');
+      `<agent name="${t.agent.name}" role="${t.agent.role}">\n${t.content}\n</agent>`
+    ).join('\n\n');
 
-    // Build the prompt for the speaking agent
+    // Build prompt for the speaking agent
     let userPrompt: string;
     if (isOrchestratorTurn) {
-      userPrompt = `Sujet du debat: ${debate.topic}\nFormat: ${debate.format}\n\nVoici les echanges du round ${currentRound}:\n\n${conversationContext}\n\nSynthetise les positions, identifie les points de convergence et de divergence, et indique si le debat devrait continuer ou conclure.`;
+      userPrompt = `<debate_topic>${debate.topic}</debate_topic>\n<format>${debate.format}</format>\n\n<previous_exchanges>\n${conversationContext}\n</previous_exchanges>\n\nSynthétise les positions, identifie convergences et divergences, et indique si le débat devrait continuer ou conclure.`;
     } else if (turns.length === 0) {
-      // First turn - introduce the topic
-      userPrompt = `Sujet du debat: ${debate.topic}\nFormat: ${debate.format}\n\nTu es le premier a prendre la parole. Presente ta position initiale sur le sujet.`;
+      userPrompt = `<debate_topic>${debate.topic}</debate_topic>\n<format>${debate.format}</format>\n\nTu es le premier à prendre la parole. Présente ta position initiale sur le sujet.`;
     } else {
-      userPrompt = `Sujet du debat: ${debate.topic}\nFormat: ${debate.format}\n\nVoici les echanges precedents:\n\n${conversationContext}\n\nReponds en tenant compte des arguments presentes. Apporte ta perspective unique en tant que ${speakingAgent.role}.`;
+      userPrompt = `<debate_topic>${debate.topic}</debate_topic>\n<format>${debate.format}</format>\n\n<previous_exchanges>\n${conversationContext}\n</previous_exchanges>\n\nRéponds en tenant compte des arguments présentés. Apporte ta perspective unique en tant que ${speakingAgent.role}.`;
     }
 
-    // Call LLM with agent's system prompt
+    // Call LLM with agent's persona
     const adapter = getAnthropicAdapter();
     const llmResponse = await adapter.chat(
       [{ role: 'user', content: userPrompt }],
@@ -148,51 +135,54 @@ export async function POST(
       }
     );
 
-    // Save the turn
-    const turn = await prisma.debateTurn.create({
-      data: {
-        turnNumber: currentTurnNumber,
-        content: llmResponse.content,
-        tokenCount: llmResponse.outputTokens,
-        debateId: debate.id,
-        agentId: speakingAgent.id,
-      },
-      include: {
-        agent: { select: { name: true, role: true, agentId: true } },
-      },
-    });
+    const currentTurnNumber = turns.length + 1;
 
-    // Score the turn
-    let turnScore = null;
-    try {
-      const scores = await scoreInteraction({
+    // Save turn + score in a transaction for atomicity
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = await (prisma as any).$transaction(async (tx: any) => {
+      const turn = await tx.debateTurn.create({
+        data: {
+          turnNumber: currentTurnNumber,
+          content: llmResponse.content,
+          tokenCount: llmResponse.outputTokens,
+          debateId: debate.id,
+          agentId: speakingAgent.id,
+        },
+        include: {
+          agent: { select: { name: true, role: true, agentId: true } },
+        },
+      });
+
+      // Score the turn
+      let turnScore = null;
+      const scoreResult = await scoreInteraction({
         response: llmResponse.content,
-        question: userPrompt,
+        question: debate.topic,
         history: turns.map(t => ({
           role: 'assistant' as const,
           content: `[${t.agent.name}]: ${t.content}`,
         })),
       });
 
-      if (scores) {
-        turnScore = await prisma.debateAgentScore.create({
+      if (scoreResult) {
+        turnScore = await tx.debateAgentScore.create({
           data: {
-            cqScore: scores.cqScore,
-            aqScore: scores.aqScore,
-            cfiScore: scores.cfiScore,
-            eqScore: scores.eqScore,
-            sqScore: scores.sqScore,
-            composite: scores.composite,
-            details: scores.details as any,
-            metadata: scores.metadata as any,
+            cqScore: scoreResult.cqScore,
+            aqScore: scoreResult.aqScore,
+            cfiScore: scoreResult.cfiScore,
+            eqScore: scoreResult.eqScore,
+            sqScore: scoreResult.sqScore,
+            composite: scoreResult.composite,
+            details: scoreResult.details as object,
+            metadata: scoreResult.metadata as object,
             agentId: speakingAgent.id,
             turnId: turn.id,
           },
         });
       }
-    } catch (scoreError) {
-      console.error('[CAIMS] Debate turn scoring error:', scoreError);
-    }
+
+      return { turn, turnScore };
+    });
 
     // Check if debate should conclude
     const totalRegularTurns = turnsWithoutOrchestrator.length + (isOrchestratorTurn ? 0 : 1);
@@ -202,33 +192,39 @@ export async function POST(
     if (shouldConclude) {
       await prisma.debate.update({
         where: { id: debate.id },
-        data: { status: 'completed' },
+        data: { status: 'concluded' },
       });
     }
 
-    return NextResponse.json({
+    logger.info('Debate turn completed', {
+      debateId: debate.id,
+      agent: speakingAgent.name,
+      turnNumber: currentTurnNumber,
+      scored: !!result.turnScore,
+      isComplete: shouldConclude,
+    });
+
+    return apiSuccess({
       turn: {
-        id: turn.id,
-        turnNumber: turn.turnNumber,
-        agent: turn.agent,
-        content: turn.content,
-        score: turnScore,
+        id: result.turn.id,
+        turnNumber: result.turn.turnNumber,
+        agent: result.turn.agent,
+        content: result.turn.content,
+        score: result.turnScore,
       },
-      debateStatus: shouldConclude ? 'completed' : 'active',
+      debateStatus: shouldConclude ? 'concluded' : 'active',
       currentRound: completedRounds + 1,
-      turnsRemaining: shouldConclude
-        ? 0
-        : (parsed.maxTurns * regularAgents.length) - totalRegularTurns,
+      turnsRemaining: shouldConclude ? 0 : (parsed.maxTurns * regularAgents.length) - totalRegularTurns,
       usage: {
         inputTokens: llmResponse.inputTokens,
         outputTokens: llmResponse.outputTokens,
       },
-    });
+    }, 200, getRateLimitHeaders(rateCheck));
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid request', details: error.issues }, { status: 400 });
+      return apiError('VALIDATION_ERROR', 'Invalid request parameters', 400);
     }
-    console.error('[CAIMS] Debate advance error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    logger.error('Debate advance failed', { debateId: id, error: error instanceof Error ? error.message : String(error) });
+    return apiError('INTERNAL_ERROR', 'An internal error occurred', 500);
   }
 }
