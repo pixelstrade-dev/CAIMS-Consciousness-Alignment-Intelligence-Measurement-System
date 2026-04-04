@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
         where: { id: parsed.sessionId },
         include: {
           messages: {
-            orderBy: { createdAt: 'asc' },
+            orderBy: { createdAt: 'desc' },
             take: MAX_HISTORY_TURNS * 2, // user + assistant pairs
             select: { role: true, content: true },
           },
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
 
     // Build conversation history (truncated to MAX_HISTORY_TURNS)
     const messages = 'messages' in session ? (session as typeof session & { messages: Array<{ role: string; content: string }> }).messages : [];
-    const history = messages.map((m) => ({
+    const history = messages.reverse().map((m) => ({
       role: m.role as 'user' | 'assistant',
       content: m.content,
     }));
@@ -68,9 +68,8 @@ export async function POST(req: NextRequest) {
       { model: parsed.model }
     );
 
-    // Save messages + score in a transaction
-    const result = await (prisma as any).$transaction(async (tx: any) => {
-      // Save user message
+    // Save messages in a transaction (guaranteed)
+    const assistantMessage = await (prisma as any).$transaction(async (tx: any) => {
       await tx.message.create({
         data: {
           role: 'user',
@@ -79,8 +78,7 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // Save assistant message
-      const assistantMessage = await tx.message.create({
+      return tx.message.create({
         data: {
           role: 'assistant',
           content: llmResponse.content,
@@ -88,11 +86,13 @@ export async function POST(req: NextRequest) {
           sessionId: session!.id,
         },
       });
+    });
 
-      // Score if enabled
-      let scores = null;
-      let contextAlert = null;
-      if (parsed.enableScoring) {
+    // Score after messages are safely persisted (non-blocking for chat)
+    let scores = null;
+    let contextAlert = null;
+    if (parsed.enableScoring) {
+      try {
         scores = await scoreInteraction({
           response: llmResponse.content,
           question: parsed.message,
@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
         });
 
         if (scores) {
-          await tx.score.create({
+          await prisma.score.create({
             data: {
               cqScore: scores.cqScore,
               aqScore: scores.aqScore,
@@ -116,10 +116,15 @@ export async function POST(req: NextRequest) {
           });
           contextAlert = checkContextAlert(scores.cfiScore);
         }
+      } catch (scoreError) {
+        logger.warn('Scoring failed but chat preserved', {
+          sessionId: session!.id,
+          error: scoreError instanceof Error ? scoreError.message : String(scoreError),
+        });
       }
+    }
 
-      return { assistantMessage, scores, contextAlert };
-    });
+    const result = { assistantMessage, scores, contextAlert };
 
     const processingTimeMs = Date.now() - startTime;
 

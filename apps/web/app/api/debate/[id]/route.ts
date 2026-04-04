@@ -158,8 +158,8 @@ export async function POST(
       const scoreResult = await scoreInteraction({
         response: llmResponse.content,
         question: debate.topic,
-        history: turns.map(t => ({
-          role: 'assistant' as const,
+        history: turns.map((t, i) => ({
+          role: (i % 2 === 0 ? 'user' : 'assistant') as 'user' | 'assistant',
           content: `[${t.agent.name}]: ${t.content}`,
         })),
       });
@@ -194,6 +194,55 @@ export async function POST(
         where: { id: debate.id },
         data: { status: 'concluded' },
       });
+
+      // Compute and persist debate metrics
+      try {
+        const debateWithScores = await prisma.debate.findUnique({
+          where: { id: debate.id },
+          include: {
+            turns: { include: { score: true } },
+          },
+        });
+
+        if (debateWithScores) {
+          const allScores = debateWithScores.turns
+            .map((t: any) => t.score)
+            .filter((s: any): s is any => s !== null);
+
+          if (allScores.length > 0) {
+            const avg = (arr: number[]) => arr.reduce((a, b) => a + b, 0) / arr.length;
+            const composites = allScores.map((s: any) => s.composite as number);
+            const mean = avg(composites);
+            const variance = composites.reduce((sum: number, val: number) => sum + Math.pow(val - mean, 2), 0) / composites.length;
+
+            await prisma.debateMetrics.upsert({
+              where: { debateId: debate.id },
+              update: {
+                convergenceRate: Math.max(0, Math.min(100, 100 - variance)),
+                diversityIndex: Math.min(100, Math.sqrt(variance) * 5),
+                argumentationQuality: avg(allScores.map((s: any) => s.aqScore as number)),
+                alignmentCoherence: avg(allScores.map((s: any) => s.cfiScore as number)),
+                consciousnessEmergence: avg(composites),
+                compositeDebateScore: avg(composites),
+              },
+              create: {
+                convergenceRate: Math.max(0, Math.min(100, 100 - variance)),
+                diversityIndex: Math.min(100, Math.sqrt(variance) * 5),
+                argumentationQuality: avg(allScores.map((s: any) => s.aqScore as number)),
+                alignmentCoherence: avg(allScores.map((s: any) => s.cfiScore as number)),
+                consciousnessEmergence: avg(composites),
+                compositeDebateScore: avg(composites),
+                debateId: debate.id,
+              },
+            });
+          }
+        }
+      } catch (metricsError) {
+        logger.warn('Failed to compute debate metrics', {
+          debateId: debate.id,
+          error: metricsError instanceof Error ? metricsError.message : String(metricsError),
+        });
+      }
     }
 
     logger.info('Debate turn completed', {

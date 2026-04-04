@@ -97,7 +97,7 @@ export class DebateOrchestrator {
     const response = await adapter.chat(
       [{ role: 'user', content: prompt }],
       {
-        model: agent.systemPrompt ? 'claude-sonnet-4-20250514' : 'claude-sonnet-4-20250514',
+        model: 'claude-sonnet-4-20250514',
         systemPrompt: agent.systemPrompt,
       }
     );
@@ -120,8 +120,8 @@ export class DebateOrchestrator {
     const scoreResult = await scoreInteraction({
       response: response.content,
       question: debate.topic,
-      history: debate.turns.map((t: { agent: { name: string }; content: string }) => ({
-        role: 'assistant' as const,
+      history: debate.turns.map((t: { agent: { name: string }; content: string }, i: number) => ({
+        role: (i % 2 === 0 ? 'user' : 'assistant') as 'user' | 'assistant',
         content: `[${t.agent.name}]: ${t.content}`,
       })),
     });
@@ -152,7 +152,7 @@ export class DebateOrchestrator {
         where: { id: this.config.debateId },
         data: { status: 'concluded' },
       });
-      // Compute final debate metrics could go here
+      await this.computeDebateMetrics();
     }
 
     return {
@@ -214,8 +214,17 @@ export class DebateOrchestrator {
     const alignmentCoherence = avg(allScores.map((s: TurnScore) => s.cfiScore));
     const consciousnessEmergence = avg(composites);
 
-    await prisma.debateMetrics.create({
-      data: {
+    await prisma.debateMetrics.upsert({
+      where: { debateId: this.config.debateId },
+      update: {
+        convergenceRate,
+        diversityIndex,
+        argumentationQuality,
+        alignmentCoherence,
+        consciousnessEmergence,
+        compositeDebateScore: avg(composites),
+      },
+      create: {
         convergenceRate,
         diversityIndex,
         argumentationQuality,
