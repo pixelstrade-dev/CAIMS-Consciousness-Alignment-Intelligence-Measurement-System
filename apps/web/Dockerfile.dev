@@ -1,0 +1,18 @@
+FROM node:20-alpine
+
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm install
+
+COPY prisma ./prisma
+RUN npx prisma generate
+COPY . .
+
+RUN chown -R nextjs:nodejs /app
+USER nextjs
+
+EXPOSE 3000
+CMD ["npm", "run", "dev"]

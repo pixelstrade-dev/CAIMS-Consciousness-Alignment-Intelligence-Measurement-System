@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0a0b14;
+  --background-secondary: #111827;
+  --background-card: #1a1f35;
+  --foreground: #e2e8f0;
+  --foreground-muted: #94a3b8;
+  --border: #1e293b;
+  --accent-cyan: #00f5d4;
+  --accent-blue: #4cc9f0;
+  --accent-orange: #f8961e;
+  --accent-pink: #f72585;
+  --accent-purple: #7c3aed;
+  --score-high: #00f5d4;
+  --score-moderate: #4cc9f0;
+  --score-low: #f8961e;
+  --score-mechanical: #f72585;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Custom animations */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+/* Gauge arc animation */
+@keyframes draw-arc {
+  from { stroke-dashoffset: 251.2; }
+}
+
+.animate-arc {
+  animation: draw-arc 1s ease-out forwards;
+}
