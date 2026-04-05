@@ -8,6 +8,7 @@
 [![Next.js](https://img.shields.io/badge/Next.js-14-black.svg)](https://nextjs.org/)
 [![Tests](https://img.shields.io/badge/Tests-20%20passing-green.svg)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Discord](https://img.shields.io/badge/Discord-Join%20Community-7289da.svg?logo=discord&logoColor=white)](https://discord.gg/XqmDkPdu6h)
 
 **The first open-source framework for measuring consciousness proxies in LLM interactions.**
 
@@ -186,6 +187,21 @@ The scoring prompt uses **XML-delimited sections** to protect against prompt inj
 ## Disclaimer
 
 CAIMS measures **behavioral proxies** inspired by consciousness theories (IIT, GWT, HOT), **not consciousness itself**. Scores represent heuristic evaluations produced by an LLM-as-judge system. They should be interpreted as structured behavioral assessments, not as claims about the phenomenal experience or sentience of any AI system. See [`research/methodology/disclaimer.md`](research/methodology/disclaimer.md) for a full scientific disclaimer.
+
+---
+
+
+## Community
+
+Join the **CAIMS Community** on Discord to discuss AI consciousness, share experiments, and contribute:
+
+**[Join Discord](https://discord.gg/XqmDkPdu6h)**
+
+- Deep discussions on AI consciousness & alignment
+- Live multi-agent debate sessions
+- Development help & code reviews
+- Research paper discussions
+- Good first issues for new contributors
 
 ---
 
