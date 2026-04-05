@@ -17,9 +17,9 @@ const AGENT_TAILWIND_TEXT: Record<string, string> = {
 };
 
 function scoreColor(score: number): string {
-  if (score >= 0.7) return "text-accent-cyan";
-  if (score >= 0.4) return "text-accent-blue";
-  if (score >= 0.2) return "text-accent-orange";
+  if (score >= 75) return "text-accent-cyan";
+  if (score >= 50) return "text-accent-blue";
+  if (score >= 25) return "text-accent-orange";
   return "text-accent-pink";
 }
 
@@ -67,7 +67,7 @@ export default function TurnCard({ turn }: TurnCardProps) {
             <span
               className={`text-xs font-medium px-2 py-0.5 rounded-full bg-background-secondary ${scoreColor(turn.score.composite)}`}
             >
-              {turn.score.composite.toFixed(3)}
+              {turn.score.composite.toFixed(1)}
             </span>
           )}
           <span className="text-xs text-foreground-muted bg-background-secondary px-2 py-0.5 rounded-full">

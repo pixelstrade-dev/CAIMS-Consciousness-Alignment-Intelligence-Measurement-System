@@ -44,9 +44,9 @@ function SessionCardSkeleton() {
 }
 
 function scoreColor(score: number): string {
-  if (score >= 0.7) return "text-accent-cyan";
-  if (score >= 0.4) return "text-accent-blue";
-  if (score >= 0.2) return "text-accent-orange";
+  if (score >= 75) return "text-accent-cyan";
+  if (score >= 50) return "text-accent-blue";
+  if (score >= 25) return "text-accent-orange";
   return "text-accent-pink";
 }
 
@@ -104,7 +104,7 @@ export default function DashboardPage() {
         />
         <StatCard
           label="Score Composite Moyen"
-          value={stats.avgComposite.toFixed(3)}
+          value={stats.avgComposite.toFixed(1)}
           accent="text-accent-orange"
           isLoading={isLoading}
         />
@@ -188,7 +188,7 @@ export default function DashboardPage() {
                         <span
                           className={`font-medium ${scoreColor(lastScore)}`}
                         >
-                          {lastScore.toFixed(3)}
+                          {lastScore.toFixed(1)}
                         </span>
                       </span>
                     )}
