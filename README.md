@@ -1,13 +1,7 @@
-<p align="center">
-    <img src="docs/assets/caims-banner.svg" alt="CAIMS Banner" width="700"/>
-</p>p>
+# CAIMS -- Consciousness & Alignment Intelligence Measurement System
 
-<p align="center">
-    <strong>Consciousness & Alignment Intelligence Measurement System</strong>strong><br/>
-      <em>The first open-source framework for measuring consciousness proxies in LLM interactions</em>em>
-</p>p>
+![CAIMS Banner](docs/assets/caims-banner.svg)
 
-</em></strong># CAIMS -- Consciousness & Alignment Intelligence Measurement System
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
