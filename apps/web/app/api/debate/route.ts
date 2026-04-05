@@ -80,14 +80,19 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
-  const debates = await prisma.debate.findMany({
-    orderBy: { createdAt: 'desc' },
-    take: 50,
-    include: {
-      agents: true,
-      _count: { select: { turns: true } },
-      metrics: true,
-    },
-  });
-  return apiSuccess({ debates });
+  try {
+    const debates = await prisma.debate.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+      include: {
+        agents: true,
+        _count: { select: { turns: true } },
+        metrics: true,
+      },
+    });
+    return apiSuccess({ debates });
+  } catch (error) {
+    logger.error('Debate list failed', { error: error instanceof Error ? error.message : String(error) });
+    return apiError('INTERNAL_ERROR', 'Failed to retrieve debates', 500);
+  }
 }
