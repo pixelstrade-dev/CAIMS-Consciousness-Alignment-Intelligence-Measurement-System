@@ -37,7 +37,7 @@ Propose refinements to the scoring rubrics, weight distributions, or theoretical
 1. Clone the repository and navigate to the project root:
 
 ```bash
-git clone https://github.com/anthropics/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System.git
+git clone https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System.git
 cd CAIMS-Consciousness-Alignment-Intelligence-Measurement-System
 ```
 
