@@ -250,6 +250,6 @@ See [LICENSE](LICENSE) for the full text.
 
 ## Credits
 
-Developed and maintained by [Pixels Trade SA](https://pixels-trade.com).
+Developed and maintained by [Pixels Trade SA](https://pixelstrade.com).
 
-For questions, partnerships, or support: **contact@pixels-trade.com**
+For questions, partnerships, or support: **studio@pixelstrade.com**
