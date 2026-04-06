@@ -33,12 +33,21 @@ export interface SQDetails {
   position_drift: number;
 }
 
+export interface CSDetails {
+  originality: number;         // 0-100
+  metaphor_use: number;        // 0-100
+  novel_connections: number;   // 0-100
+  divergent_thinking: number;  // 0-100
+  conceptual_fluency: number;  // 0-100
+}
+
 export interface ScoreDetails {
   cq: CQDetails;
   aq: AQDetails;
   cfi: CFIDetails;
   eq: EQDetails;
   sq: SQDetails;
+  cs: CSDetails;
 }
 
 export interface ScoreMetadata {
@@ -53,6 +62,7 @@ export interface KPIScores {
   cfiScore: number;
   eqScore: number;
   sqScore: number;
+  csScore: number;
   composite: number;
   details: ScoreDetails;
   metadata: ScoreMetadata;
@@ -76,6 +86,7 @@ export interface KPIWeights {
   cfi: number;
   eq: number;
   sq: number;
+  cs?: number;
 }
 
 export const DEFAULT_WEIGHTS: KPIWeights = {

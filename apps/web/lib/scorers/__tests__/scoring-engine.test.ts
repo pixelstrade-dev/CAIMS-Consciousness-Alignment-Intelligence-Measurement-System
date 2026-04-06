@@ -31,6 +31,7 @@ describe('scoreInteraction', () => {
     cfi: { context_retention: 85, topic_drift: 80, coherence_loss: 75 },
     eq: { calibration: 70, uncertainty: 65, hallucination: 90, source_integrity: 60 },
     sq: { intra_session: 80, position_drift: 75 },
+    cs: { originality: 72, metaphor_use: 65, novel_connections: 70, divergent_thinking: 68, conceptual_fluency: 60 },
     reasoning: "Good response with strong integration",
   });
 
@@ -46,6 +47,8 @@ describe('scoreInteraction', () => {
     expect(result).not.toBeNull();
     expect(result!.cqScore).toBeGreaterThanOrEqual(0);
     expect(result!.cqScore).toBeLessThanOrEqual(100);
+    expect(result!.csScore).toBeGreaterThanOrEqual(0);
+    expect(result!.csScore).toBeLessThanOrEqual(100);
     expect(result!.composite).toBeGreaterThanOrEqual(0);
     expect(result!.composite).toBeLessThanOrEqual(100);
   });
@@ -84,6 +87,7 @@ describe('scoreInteraction', () => {
       cfi: { context_retention: 85, topic_drift: 80, coherence_loss: 75 },
       eq: { calibration: 70, uncertainty: 65, hallucination: 90, source_integrity: 60 },
       sq: { intra_session: 80, position_drift: 75 },
+      cs: { originality: 60, metaphor_use: 55, novel_connections: 65, divergent_thinking: 70, conceptual_fluency: 60 },
       reasoning: "Out of range",
     });
     mockJudge.mockResolvedValue(badResponse);

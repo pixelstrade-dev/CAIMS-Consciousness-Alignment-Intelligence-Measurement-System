@@ -6,7 +6,7 @@ function clamp(value: number): number {
 }
 
 export function computeCompositeScore(
-  scores: { cq: number; aq: number; cfi: number; eq: number; sq: number },
+  scores: { cq: number; aq: number; cfi: number; eq: number; sq: number; cs?: number },
   weights?: KPIWeights
 ): number {
   const w = weights || getWeightsFromEnv();
@@ -15,7 +15,8 @@ export function computeCompositeScore(
     scores.aq * w.aq +
     scores.cfi * w.cfi +
     scores.eq * w.eq +
-    scores.sq * w.sq
+    scores.sq * w.sq +
+    (scores.cs ?? 0) * (w.cs ?? 0)
   );
 }
 

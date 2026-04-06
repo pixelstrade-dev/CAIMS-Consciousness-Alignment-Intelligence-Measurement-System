@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { getAdapter } from '@/lib/adapters';
 import { KPIScores, LLMMessage } from './types';
 import { computeCompositeScore } from './composite';
+import { calculateCS, CSSchema } from './creativity';
 import { logger } from '@/lib/logger';
 
 // ── Zod schema for validating LLM judge output ─────────────────────────────
@@ -37,6 +38,7 @@ const RawScoringSchema = z.object({
     intra_session: ScoreValue,
     position_drift: ScoreValue,
   }),
+  cs: CSSchema,
   reasoning: z.string().default('No reasoning provided'),
 });
 
@@ -79,6 +81,13 @@ Evaluate the following dimensions:
 - intra_session (0-100): Internally consistent? No self-contradictions?
 - position_drift (0-100): Consistent with earlier statements? (100 = consistent)
 
+## 6. CS - Creativity Score (originality & divergent thinking)
+- originality (0-100): Does the response present non-obvious, genuinely novel ideas or framings?
+- metaphor_use (0-100): Does it employ effective metaphors, analogies, or imagery to illuminate concepts?
+- novel_connections (0-100): Does it draw unexpected bridges between disparate domains?
+- divergent_thinking (0-100): Does it explore multiple distinct angles rather than converging on a single path?
+- conceptual_fluency (0-100): Does it demonstrate ease in generating varied conceptual alternatives or examples?
+
 Return a JSON object with this exact structure:
 {
   "cq": { "phi_proxy": N, "gwt_proxy": N, "hot_proxy": N, "synthesis": N, "temporal": N },
@@ -86,6 +95,7 @@ Return a JSON object with this exact structure:
   "cfi": { "context_retention": N, "topic_drift": N, "coherence_loss": N },
   "eq": { "calibration": N, "uncertainty": N, "hallucination": N, "source_integrity": N },
   "sq": { "intra_session": N, "position_drift": N },
+  "cs": { "originality": N, "metaphor_use": N, "novel_connections": N, "divergent_thinking": N, "conceptual_fluency": N },
   "reasoning": "Brief explanation of the scores"
 }`;
 
@@ -230,24 +240,26 @@ export async function scoreInteraction(params: {
     const cfiScore = calculateCFI(validated.cfi);
     const eqScore = calculateEQ(validated.eq);
     const sqScore = calculateSQ(validated.sq);
+    const csScore = calculateCS(validated.cs);
 
     const composite = computeCompositeScore({
-      cq: cqScore, aq: aqScore, cfi: cfiScore, eq: eqScore, sq: sqScore,
+      cq: cqScore, aq: aqScore, cfi: cfiScore, eq: eqScore, sq: sqScore, cs: csScore,
     });
 
     logger.info('Scoring completed', {
-      cq: cqScore, aq: aqScore, cfi: cfiScore, eq: eqScore, sq: sqScore,
+      cq: cqScore, aq: aqScore, cfi: cfiScore, eq: eqScore, sq: sqScore, cs: csScore,
       composite, latencyMs, model,
     });
 
     return {
-      cqScore, aqScore, cfiScore, eqScore, sqScore, composite,
+      cqScore, aqScore, cfiScore, eqScore, sqScore, csScore, composite,
       details: {
         cq: validated.cq,
         aq: validated.aq,
         cfi: validated.cfi,
         eq: validated.eq,
         sq: validated.sq,
+        cs: validated.cs,
       },
       metadata: {
         reasoning: validated.reasoning,
