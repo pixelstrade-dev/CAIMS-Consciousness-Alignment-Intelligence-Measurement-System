@@ -1,0 +1,20 @@
+{
+  "name": "caims-cli",
+  "version": "0.1.0",
+  "description": "CAIMS CLI – score AI responses across 5 KPI dimensions from the command line",
+  "private": true,
+  "scripts": {
+    "score": "NODE_PATH=$(pwd)/node_modules node_modules/.bin/tsx --tsconfig tsconfig.json src/index.ts score",
+    "dev": "NODE_PATH=$(pwd)/node_modules node_modules/.bin/tsx --tsconfig tsconfig.json src/index.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.82.0",
+    "commander": "^12.1.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsx": "^4.19.1",
+    "typescript": "^5"
+  }
+}
