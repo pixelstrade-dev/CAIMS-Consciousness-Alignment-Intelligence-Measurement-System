@@ -3,6 +3,10 @@ import { PrismaClient } from '@/app/generated/prisma/client';
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined };
 
 function createPrismaClient(): PrismaClient {
+  const provider = process.env.CAIMS_DB_PROVIDER ?? 'postgresql';
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[CAIMS] Database provider: ${provider}`);
+  }
   // @ts-expect-error Prisma v7 constructor signature
   return new PrismaClient();
 }

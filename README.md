@@ -71,6 +71,27 @@ docker compose -f docker-compose.dev.yml up
 # The web UI is available at http://localhost:3000
 ```
 
+### Local Development without Docker (SQLite)
+
+If you don't want to run Docker, CAIMS supports a **SQLite** backend for local experimentation:
+
+```bash
+# Clone the repository
+git clone https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System.git
+cd CAIMS-Consciousness-Alignment-Intelligence-Measurement-System
+
+# Run the one-step SQLite setup helper (creates .env, generates client, pushes schema)
+cd apps/web
+bash scripts/setup-sqlite.sh
+
+# Add your ANTHROPIC_API_KEY to apps/web/.env, then start the dev server
+npm run dev
+```
+
+The helper script sets `CAIMS_DB_PROVIDER=sqlite` and `DATABASE_URL=file:./prisma/dev.db` in your local `.env`, generates the Prisma client from the SQLite schema, and applies the schema to a local `prisma/dev.db` file — all in one command.
+
+> **Note:** SQLite is intended for local development only. Use PostgreSQL (via Docker Compose) for production deployments.
+
 ### Pages
 
 | Route | Description |
@@ -162,7 +183,8 @@ All responses follow a consistent envelope:
 | Environment Variable | Default | Description |
 |---------------------|---------|-------------|
 | `ANTHROPIC_API_KEY` | -- | Required. Your Anthropic API key |
-| `DATABASE_URL` | -- | PostgreSQL connection string |
+| `CAIMS_DB_PROVIDER` | `postgresql` | Database backend: `postgresql` (default) or `sqlite` (local dev, no Docker) |
+| `DATABASE_URL` | -- | PostgreSQL connection string, or `file:./prisma/dev.db` for SQLite |
 | `CAIMS_WEIGHTS` | `{"cq":0.35,"aq":0.25,"cfi":0.20,"eq":0.12,"sq":0.08}` | Custom KPI weights (must sum to 1.0) |
 | `CAIMS_MAX_HISTORY_TURNS` | `20` | Max conversation turns for scoring context |
 | `CAIMS_CFI_WARNING_THRESHOLD` | `40` | CFI score triggering warning alert |
@@ -234,7 +256,7 @@ npm run build     # Full production build with type checking
 - [ ] CLI tool for batch evaluation (`caims-cli`)
 - [ ] Public benchmark leaderboard
 - [ ] Jupyter notebook integration
-- [ ] SQLite mode for quick local experimentation
+- [x] SQLite mode for quick local experimentation
 - [ ] Plugin system for custom KPI dimensions
 - [ ] Webhook notifications for score thresholds
 

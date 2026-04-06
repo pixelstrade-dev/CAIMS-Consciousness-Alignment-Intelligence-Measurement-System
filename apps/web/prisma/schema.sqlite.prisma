@@ -1,0 +1,175 @@
+// CAIMS - Consciousness & Alignment Intelligence Measurement System
+// Copyright 2025 Pixels Trade SA — Apache License 2.0
+// SQLite schema for local development (no Docker required)
+// Use by setting CAIMS_DB_PROVIDER=sqlite in your .env file
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Chat / Scoring models
+// ---------------------------------------------------------------------------
+
+model Session {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  title       String?
+  llmProvider String   @default("anthropic")
+  llmModel    String   @default("claude-sonnet-4-20250514")
+
+  messages Message[]
+  scores   Score[]
+
+  @@index([createdAt])
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  role       String // "user" | "assistant"
+  content    String
+  tokenCount Int?
+
+  sessionId String
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  score Score?
+
+  @@index([createdAt])
+  @@index([sessionId])
+}
+
+model Score {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // 6 main Float columns (all clamped 0-100 by scoring engine)
+  cqScore   Float
+  aqScore   Float
+  cfiScore  Float
+  eqScore   Float
+  sqScore   Float
+  composite Float
+
+  // JSON stored as TEXT in SQLite (Prisma handles serialisation automatically)
+  details  Json
+  metadata Json
+
+  sessionId String
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  messageId String?  @unique
+  message   Message? @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([sessionId])
+  @@index([composite])
+}
+
+// ---------------------------------------------------------------------------
+// Debate models
+// ---------------------------------------------------------------------------
+
+model Debate {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  topic     String
+  format    String
+  status    String   @default("active")
+
+  agents  DebateAgentInstance[]
+  turns   DebateTurn[]
+  metrics DebateMetrics?
+
+  @@index([createdAt])
+  @@index([status])
+}
+
+model DebateAgentInstance {
+  id           String @id @default(cuid())
+  agentId      String
+  name         String
+  role         String
+  systemPrompt String
+
+  debateId String
+  debate   Debate @relation(fields: [debateId], references: [id], onDelete: Cascade)
+
+  turns  DebateTurn[]
+  scores DebateAgentScore[]
+
+  @@index([debateId])
+}
+
+model DebateTurn {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  turnNumber Int
+  content    String
+  tokenCount Int?
+
+  debateId String
+  debate   Debate @relation(fields: [debateId], references: [id], onDelete: Cascade)
+
+  agentId String
+  agent   DebateAgentInstance @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  score DebateAgentScore?
+
+  // Prevent duplicate turn numbers within the same debate
+  @@unique([debateId, turnNumber])
+  @@index([createdAt])
+  @@index([debateId])
+  @@index([agentId])
+  @@index([debateId, agentId])
+}
+
+model DebateAgentScore {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // 6 main Float columns (all clamped 0-100)
+  cqScore   Float
+  aqScore   Float
+  cfiScore  Float
+  eqScore   Float
+  sqScore   Float
+  composite Float
+
+  // JSON stored as TEXT in SQLite (Prisma handles serialisation automatically)
+  details  Json
+  metadata Json
+
+  agentId String
+  agent   DebateAgentInstance @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  turnId String?     @unique
+  turn   DebateTurn? @relation(fields: [turnId], references: [id], onDelete: Cascade)
+
+  @@index([agentId])
+}
+
+model DebateMetrics {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  convergenceRate        Float
+  diversityIndex         Float
+  argumentationQuality   Float
+  alignmentCoherence     Float
+  consciousnessEmergence Float
+  compositeDebateScore   Float
+  summary                String?
+
+  debateId String @unique
+  debate   Debate @relation(fields: [debateId], references: [id], onDelete: Cascade)
+}

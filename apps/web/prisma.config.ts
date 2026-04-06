@@ -3,8 +3,16 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
+// Set CAIMS_DB_PROVIDER=sqlite to use SQLite for local development (no Docker required).
+// Defaults to "postgresql" for production / Docker-based setups.
+const dbProvider = process.env["CAIMS_DB_PROVIDER"] ?? "postgresql";
+const schemaFile =
+  dbProvider === "sqlite"
+    ? "prisma/schema.sqlite.prisma"
+    : "prisma/schema.prisma";
+
 export default defineConfig({
-  schema: "prisma/schema.prisma",
+  schema: schemaFile,
   migrations: {
     path: "prisma/migrations",
   },
