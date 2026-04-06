@@ -1,9 +1,8 @@
-import { NextResponse } from 'next/server';
+import { apiSuccess } from '@/lib/middleware/api-response';
 
 export async function GET() {
-  return NextResponse.json({
+  return apiSuccess({
     status: 'ok',
-    timestamp: new Date().toISOString(),
     version: '1.0.0',
   });
 }

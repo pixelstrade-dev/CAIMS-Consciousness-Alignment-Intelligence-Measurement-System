@@ -14,30 +14,35 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
+  try {
+    const { id } = await params;
 
-  const debate = await prisma.debate.findUnique({
-    where: { id },
-    include: {
-      agents: {
-        include: { scores: true },
-      },
-      turns: {
-        orderBy: { turnNumber: 'asc' },
-        include: {
-          agent: { select: { name: true, role: true, agentId: true } },
-          score: true,
+    const debate = await prisma.debate.findUnique({
+      where: { id },
+      include: {
+        agents: {
+          include: { scores: true },
         },
+        turns: {
+          orderBy: { turnNumber: 'asc' },
+          include: {
+            agent: { select: { name: true, role: true, agentId: true } },
+            score: true,
+          },
+        },
+        metrics: true,
       },
-      metrics: true,
-    },
-  });
+    });
 
-  if (!debate) {
-    return apiError('DEBATE_NOT_FOUND', 'Debate not found', 404);
+    if (!debate) {
+      return apiError('DEBATE_NOT_FOUND', 'Debate not found', 404);
+    }
+
+    return apiSuccess({ debate });
+  } catch (error) {
+    logger.error('Debate fetch failed', { error: error instanceof Error ? error.message : String(error) });
+    return apiError('INTERNAL_ERROR', 'Failed to retrieve debate', 500);
   }
-
-  return apiSuccess({ debate });
 }
 
 const AdvanceDebateSchema = z.object({
