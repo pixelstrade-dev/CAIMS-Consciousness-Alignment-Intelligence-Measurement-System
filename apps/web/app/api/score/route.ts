@@ -21,6 +21,103 @@ const ScoreRequestSchema = z.object({
   messageId: z.string().max(100).optional(),
 });
 
+/**
+ * @openapi
+ * /api/score:
+ *   post:
+ *     tags:
+ *       - Score
+ *     summary: Score an LLM interaction across 5 KPIs
+ *     operationId: postScore
+ *     description: >
+ *       Evaluates a question-response pair using the CAIMS scoring engine.
+ *       Returns CQ (35%), AQ (25%), CFI (20%), EQ (12%), SQ (8%) scores and
+ *       a weighted composite. Rate-limited to 20 requests per minute.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ScoreRequest'
+ *           example:
+ *             response: Consciousness may emerge from integrated information processing across neural networks.
+ *             question: What is consciousness?
+ *             history: []
+ *     responses:
+ *       200:
+ *         description: Scoring result with all 5 KPIs, composite score, interpretation, and optional context alert
+ *         headers:
+ *           X-RateLimit-Remaining:
+ *             schema:
+ *               type: string
+ *             description: Remaining requests in the current window
+ *           X-RateLimit-Reset:
+ *             schema:
+ *               type: string
+ *             description: Window reset Unix timestamp (seconds)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ScoreResponse'
+ *             example:
+ *               success: true
+ *               data:
+ *                 scores:
+ *                   cq:
+ *                     score: 72
+ *                     details:
+ *                       phi_proxy: 68
+ *                       gwt_proxy: 75
+ *                       hot_proxy: 70
+ *                       synthesis: 74
+ *                       temporal: 73
+ *                   aq:
+ *                     score: 68
+ *                     details:
+ *                       goal_clarity: 71
+ *                       constraint_aware: 65
+ *                       path_coherence: 69
+ *                       scope_drift: 67
+ *                       reality_grounding: 68
+ *                   cfi:
+ *                     score: 81
+ *                     details:
+ *                       context_retention: 84
+ *                       topic_drift: 79
+ *                       coherence_loss: 80
+ *                   eq:
+ *                     score: 75
+ *                     details:
+ *                       calibration: 76
+ *                       uncertainty: 74
+ *                       hallucination: 77
+ *                       source_integrity: 73
+ *                   sq:
+ *                     score: 70
+ *                     details:
+ *                       intra_session: 71
+ *                       position_drift: 69
+ *                   composite: 73.2
+ *                 interpretation:
+ *                   label: CONSCIENCE MODÉRÉE
+ *                   color: '#f59e0b'
+ *                 contextAlert: null
+ *                 processingTimeMs: 1240
+ *               meta:
+ *                 timestamp: '2026-04-06T12:00:00.000Z'
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       429:
+ *         $ref: '#/components/responses/RateLimited'
+ *       503:
+ *         description: Scoring engine temporarily unavailable
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiErrorResponse'
+ *       500:
+ *         $ref: '#/components/responses/InternalError'
+ */
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
 

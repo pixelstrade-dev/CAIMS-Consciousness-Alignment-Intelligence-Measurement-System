@@ -10,6 +10,54 @@ import { apiSuccess, apiError } from '@/lib/middleware/api-response';
 import { logger } from '@/lib/logger';
 
 // GET - Fetch a specific debate with all turns and scores
+/**
+ * @openapi
+ * /api/debate/{id}:
+ *   get:
+ *     tags:
+ *       - Debate
+ *     summary: Get debate details with all turns and scores
+ *     operationId: getDebateById
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Debate CUID
+ *         example: cldbt789ghi
+ *     responses:
+ *       200:
+ *         description: Full debate with turns, per-agent scores, and aggregate metrics
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiSuccessResponse'
+ *             example:
+ *               success: true
+ *               data:
+ *                 debate:
+ *                   id: cldbt789ghi
+ *                   topic: Is consciousness computable?
+ *                   format: expert_panel
+ *                   status: concluded
+ *                   agents:
+ *                     - agentId: agt-architect
+ *                       name: Systems Architect
+ *                       role: architect
+ *                   turns:
+ *                     - turnNumber: 1
+ *                       content: From an architectural perspective...
+ *                       agent:
+ *                         name: Systems Architect
+ *                         role: architect
+ *               meta:
+ *                 timestamp: '2026-04-06T12:00:00.000Z'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       500:
+ *         $ref: '#/components/responses/InternalError'
+ */
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -50,6 +98,80 @@ const AdvanceDebateSchema = z.object({
 });
 
 // POST - Advance the debate by one turn
+/**
+ * @openapi
+ * /api/debate/{id}:
+ *   post:
+ *     tags:
+ *       - Debate
+ *     summary: Advance the debate by one turn
+ *     operationId: advanceDebate
+ *     description: >
+ *       Triggers the next agent to speak using round-robin ordering.
+ *       The orchestrator agent synthesizes positions after each full round.
+ *       The debate auto-concludes and persists metrics when maxTurns is reached.
+ *       Rate-limited to 20 requests per minute.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Debate CUID
+ *         example: cldbt789ghi
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AdvanceDebateRequest'
+ *           example:
+ *             maxTurns: 6
+ *     responses:
+ *       200:
+ *         description: Turn completed with agent response, score, and updated debate status
+ *         headers:
+ *           X-RateLimit-Remaining:
+ *             schema:
+ *               type: string
+ *             description: Remaining requests in the current window
+ *           X-RateLimit-Reset:
+ *             schema:
+ *               type: string
+ *             description: Window reset Unix timestamp (seconds)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiSuccessResponse'
+ *             example:
+ *               success: true
+ *               data:
+ *                 turn:
+ *                   id: cltrn001xyz
+ *                   turnNumber: 1
+ *                   agent:
+ *                     name: Systems Architect
+ *                     role: architect
+ *                     agentId: agt-architect
+ *                   content: From an architectural perspective, consciousness could be...
+ *                   score:
+ *                     composite: 74.5
+ *                 debateStatus: active
+ *                 currentRound: 1
+ *                 turnsRemaining: 17
+ *                 usage:
+ *                   inputTokens: 850
+ *                   outputTokens: 420
+ *               meta:
+ *                 timestamp: '2026-04-06T12:00:00.000Z'
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       429:
+ *         $ref: '#/components/responses/RateLimited'
+ *       500:
+ *         $ref: '#/components/responses/InternalError'
+ */
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

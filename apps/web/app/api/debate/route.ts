@@ -16,6 +16,72 @@ const CreateDebateSchema = z.object({
   enableOrchestrator: z.boolean().default(true),
 });
 
+/**
+ * @openapi
+ * /api/debate:
+ *   post:
+ *     tags:
+ *       - Debate
+ *     summary: Create a new multi-agent debate
+ *     operationId: createDebate
+ *     description: >
+ *       Initializes a debate with 2-10 agents on a given topic.
+ *       The orchestrator agent (agt-orchestrator) is automatically added after
+ *       each round if enableOrchestrator is true.
+ *       Rate-limited to 10 requests per minute.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateDebateRequest'
+ *           example:
+ *             topic: Is consciousness computable?
+ *             format: expert_panel
+ *             agentIds:
+ *               - agt-architect
+ *               - agt-researcher
+ *               - agt-critic
+ *             maxTurns: 6
+ *             enableOrchestrator: true
+ *     responses:
+ *       201:
+ *         description: Debate created with instantiated agents
+ *         headers:
+ *           X-RateLimit-Remaining:
+ *             schema:
+ *               type: string
+ *             description: Remaining requests in the current window
+ *           X-RateLimit-Reset:
+ *             schema:
+ *               type: string
+ *             description: Window reset Unix timestamp (seconds)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiSuccessResponse'
+ *             example:
+ *               success: true
+ *               data:
+ *                 debateId: cldbt789ghi
+ *                 status: active
+ *                 maxTurns: 6
+ *                 agents:
+ *                   - agentId: agt-architect
+ *                     name: Systems Architect
+ *                     role: architect
+ *                   - agentId: agt-researcher
+ *                     name: Research Analyst
+ *                     role: researcher
+ *               meta:
+ *                 timestamp: '2026-04-06T12:00:00.000Z'
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       429:
+ *         $ref: '#/components/responses/RateLimited'
+ *       500:
+ *         $ref: '#/components/responses/InternalError'
+ */
 export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'anonymous';
   const rateCheck = checkRateLimit(`debate:${ip}`, { windowMs: 60_000, maxRequests: 10 });
@@ -79,6 +145,38 @@ export async function POST(req: NextRequest) {
   }
 }
 
+/**
+ * @openapi
+ * /api/debate:
+ *   get:
+ *     tags:
+ *       - Debate
+ *     summary: List recent debates
+ *     operationId: getDebates
+ *     description: Returns up to 50 most recent debates with agents, turn counts, and metrics.
+ *     responses:
+ *       200:
+ *         description: List of debates
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiSuccessResponse'
+ *             example:
+ *               success: true
+ *               data:
+ *                 debates:
+ *                   - id: cldbt789ghi
+ *                     topic: Is consciousness computable?
+ *                     format: expert_panel
+ *                     status: concluded
+ *                     createdAt: '2026-04-06T10:00:00.000Z'
+ *                     _count:
+ *                       turns: 18
+ *               meta:
+ *                 timestamp: '2026-04-06T12:00:00.000Z'
+ *       500:
+ *         $ref: '#/components/responses/InternalError'
+ */
 export async function GET() {
   try {
     const debates = await prisma.debate.findMany({

@@ -20,6 +20,73 @@ const ChatRequestSchema = z.object({
   enableScoring: z.boolean().default(true),
 });
 
+/**
+ * @openapi
+ * /api/chat:
+ *   post:
+ *     tags:
+ *       - Chat
+ *     summary: Send a message and receive a scored response
+ *     operationId: postChat
+ *     description: >
+ *       Sends a user message to the LLM, saves both messages, and optionally
+ *       scores the interaction across 5 KPIs (CQ, AQ, CFI, EQ, SQ).
+ *       Creates a new session automatically when sessionId is omitted.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ChatRequest'
+ *           example:
+ *             message: Explain the concept of integrated information theory.
+ *             sessionId: clxyz123abc
+ *             model: claude-sonnet-4-20250514
+ *             enableScoring: true
+ *     responses:
+ *       200:
+ *         description: Chat response with optional CAIMS scores
+ *         headers:
+ *           X-RateLimit-Remaining:
+ *             schema:
+ *               type: string
+ *             description: Remaining requests in the current window
+ *           X-RateLimit-Reset:
+ *             schema:
+ *               type: string
+ *             description: Window reset Unix timestamp (seconds)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ApiSuccessResponse'
+ *             example:
+ *               success: true
+ *               data:
+ *                 message: Integrated information theory (IIT) proposes that consciousness...
+ *                 sessionId: clxyz123abc
+ *                 messageId: clmsg456def
+ *                 scores:
+ *                   cqScore: 72
+ *                   aqScore: 68
+ *                   cfiScore: 81
+ *                   eqScore: 75
+ *                   sqScore: 70
+ *                   composite: 73.2
+ *                 usage:
+ *                   inputTokens: 120
+ *                   outputTokens: 340
+ *               meta:
+ *                 timestamp: '2026-04-06T12:00:00.000Z'
+ *                 processingTimeMs: 1850
+ *       400:
+ *         $ref: '#/components/responses/ValidationError'
+ *       404:
+ *         $ref: '#/components/responses/NotFound'
+ *       429:
+ *         $ref: '#/components/responses/RateLimited'
+ *       500:
+ *         $ref: '#/components/responses/InternalError'
+ */
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
 
