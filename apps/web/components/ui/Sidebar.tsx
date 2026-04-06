@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ThemeToggle } from "./ThemeToggle";
 
 const NAV_ITEMS = [
   { href: "/chat", label: "Chat", icon: "chat" },
@@ -67,10 +68,11 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-border">
+      <div className="p-4 border-t border-border flex items-center justify-between gap-2">
         <p className="text-[10px] text-foreground-muted hidden lg:block">
           CAIMS v1.0 — Pixels Trade SA
         </p>
+        <ThemeToggle />
       </div>
     </aside>
   );
