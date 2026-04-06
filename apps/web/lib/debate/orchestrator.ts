@@ -211,7 +211,7 @@ export class DebateOrchestrator {
     ) * 5);
 
     const argumentationQuality = avg(allScores.map((s: TurnScore) => s.aqScore));
-    const alignmentCoherence = avg(allScores.map((s: TurnScore) => s.cfiScore));
+    const alignmentCoherence = avg(allScores.map((s: TurnScore) => s.aqScore));
     const consciousnessEmergence = avg(composites);
 
     await prisma.debateMetrics.upsert({
