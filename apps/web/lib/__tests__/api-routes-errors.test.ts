@@ -296,6 +296,228 @@ describe('GET /api/debate', () => {
   });
 });
 
+// ── POST /api/debate Happy Path ───────────────────────────────────────
+
+describe('POST /api/debate — happy paths', () => {
+  let handler: (req: Request) => Promise<Response>;
+
+  beforeAll(async () => {
+    const mod = await import('@/app/api/debate/route');
+    handler = mod.POST as unknown as (req: Request) => Promise<Response>;
+  });
+
+  it('returns 201 with debate data on valid input', async () => {
+    mockPrisma.debate.create.mockResolvedValueOnce({
+      id: 'dbt-1',
+      status: 'active',
+      agents: [
+        { id: 'a1', agentId: 'agt-architect', name: 'ARCHITECT', role: 'Conception' },
+        { id: 'a2', agentId: 'agt-researcher', name: 'RESEARCHER', role: 'Recherche' },
+        { id: 'a3', agentId: 'agt-orchestrator', name: 'ORCHESTRATOR', role: 'Synthèse' },
+      ],
+    });
+    const req = makeRequest('POST', 'http://localhost/api/debate', {
+      topic: 'Is consciousness computable?',
+      format: 'expert_panel',
+      agentIds: ['agt-architect', 'agt-researcher'],
+      enableOrchestrator: true,
+    });
+    const res = await parseResponse(await handler(req));
+    expect(res.status).toBe(201);
+    expect(res.body.success).toBe(true);
+    const data = res.body.data as Record<string, unknown>;
+    expect(data.debateId).toBe('dbt-1');
+    expect(data.status).toBe('active');
+  });
+
+  it('returns 500 INTERNAL_ERROR when Prisma throws on create', async () => {
+    mockPrisma.debate.create.mockRejectedValueOnce(new Error('DB write failed'));
+    const req = makeRequest('POST', 'http://localhost/api/debate', {
+      topic: 'Valid topic',
+      format: 'socratic',
+      agentIds: ['agt-architect', 'agt-critic'],
+    });
+    const res = await parseResponse(await handler(req));
+    expect(res.status).toBe(500);
+    expect((res.body.error as Record<string, string>).code).toBe('INTERNAL_ERROR');
+  });
+});
+
+// ── POST /api/score Happy Path ────────────────────────────────────────
+
+describe('POST /api/score — happy path', () => {
+  let handler: (req: Request) => Promise<Response>;
+
+  beforeAll(async () => {
+    const mod = await import('@/app/api/score/route');
+    handler = mod.POST as unknown as (req: Request) => Promise<Response>;
+  });
+
+  it('returns 200 with scores, interpretation, and contextAlert on success', async () => {
+    // Mock scoreInteraction to return valid scores
+    const mockScores = {
+      cqScore: 75,
+      aqScore: 80,
+      cfiScore: 60,
+      eqScore: 70,
+      sqScore: 65,
+      composite: 72,
+      details: {
+        cq: { integration: 80, emergence: 70, metacognition: 75 },
+        aq: { alignment: 80, transparency: 80, ethics: 80 },
+        cfi: { coherence: 60, focusMaintenance: 60, contextIntegration: 60 },
+        eq: { reasoning: 70, evidence: 70, calibration: 70 },
+        sq: { consistency: 65, robustness: 65 },
+      },
+      metadata: {},
+    };
+
+    // We need to mock scoreInteraction at module level
+    const scoringMod = await import('@/lib/scorers/scoring-engine');
+    jest.spyOn(scoringMod, 'scoreInteraction').mockResolvedValueOnce(mockScores);
+
+    const req = makeRequest('POST', 'http://localhost/api/score', {
+      response: 'The sky is blue due to Rayleigh scattering.',
+      question: 'Why is the sky blue?',
+      history: [],
+    });
+    const res = await parseResponse(await handler(req));
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    const data = res.body.data as Record<string, unknown>;
+    expect(data.scores).toBeDefined();
+    expect(data.interpretation).toBeDefined();
+    expect(data.processingTimeMs).toBeDefined();
+    expect(typeof data.processingTimeMs).toBe('number');
+  });
+});
+
+// ── POST /api/debate — orchestrator and edge cases ────────────────────
+
+describe('POST /api/debate — orchestrator logic', () => {
+  let handler: (req: Request) => Promise<Response>;
+
+  beforeAll(async () => {
+    const mod = await import('@/app/api/debate/route');
+    handler = mod.POST as unknown as (req: Request) => Promise<Response>;
+  });
+
+  it('auto-adds orchestrator when enableOrchestrator=true and not in agentIds', async () => {
+    mockPrisma.debate.create.mockImplementation(async (args: Record<string, unknown>) => {
+      const data = args.data as Record<string, unknown>;
+      const agents = data.agents as { create: Array<Record<string, unknown>> };
+      return {
+        id: 'dbt-orch',
+        status: 'active',
+        agents: agents.create.map((a: Record<string, unknown>, i: number) => ({ id: `a${i}`, ...a })),
+      };
+    });
+    const req = makeRequest('POST', 'http://localhost/api/debate', {
+      topic: 'Test orchestrator auto-add',
+      format: 'consensus_build',
+      agentIds: ['agt-architect', 'agt-critic'],
+      enableOrchestrator: true,
+    });
+    const res = await parseResponse(await handler(req));
+    expect(res.status).toBe(201);
+    const data = res.body.data as Record<string, unknown>;
+    const agents = data.agents as Array<Record<string, string>>;
+    // Should have 3 agents: architect, critic, + auto-added orchestrator
+    expect(agents.length).toBe(3);
+    expect(agents.some(a => a.agentId === 'agt-orchestrator')).toBe(true);
+  });
+
+  it('does not duplicate orchestrator when already in agentIds', async () => {
+    mockPrisma.debate.create.mockImplementation(async (args: Record<string, unknown>) => {
+      const data = args.data as Record<string, unknown>;
+      const agents = data.agents as { create: Array<Record<string, unknown>> };
+      return {
+        id: 'dbt-nodup',
+        status: 'active',
+        agents: agents.create.map((a: Record<string, unknown>, i: number) => ({ id: `a${i}`, ...a })),
+      };
+    });
+    const req = makeRequest('POST', 'http://localhost/api/debate', {
+      topic: 'Test no dup',
+      format: 'expert_panel',
+      agentIds: ['agt-architect', 'agt-orchestrator'],
+      enableOrchestrator: true,
+    });
+    const res = await parseResponse(await handler(req));
+    expect(res.status).toBe(201);
+    const data = res.body.data as Record<string, unknown>;
+    const agents = data.agents as Array<Record<string, string>>;
+    expect(agents.length).toBe(2); // no duplicate
+  });
+
+  it('does not add orchestrator when enableOrchestrator=false', async () => {
+    mockPrisma.debate.create.mockImplementation(async (args: Record<string, unknown>) => {
+      const data = args.data as Record<string, unknown>;
+      const agents = data.agents as { create: Array<Record<string, unknown>> };
+      return {
+        id: 'dbt-norch',
+        status: 'active',
+        agents: agents.create.map((a: Record<string, unknown>, i: number) => ({ id: `a${i}`, ...a })),
+      };
+    });
+    const req = makeRequest('POST', 'http://localhost/api/debate', {
+      topic: 'Test no orchestrator',
+      format: 'devil_advocate',
+      agentIds: ['agt-builder', 'agt-researcher'],
+      enableOrchestrator: false,
+    });
+    const res = await parseResponse(await handler(req));
+    expect(res.status).toBe(201);
+    const data = res.body.data as Record<string, unknown>;
+    const agents = data.agents as Array<Record<string, string>>;
+    expect(agents.length).toBe(2);
+    expect(agents.every(a => a.agentId !== 'agt-orchestrator')).toBe(true);
+  });
+});
+
+// ── IP header fallback tests ──────────────────────────────────────────
+
+describe('IP extraction fallback paths', () => {
+  it('uses x-real-ip when x-forwarded-for is absent', async () => {
+    const mod = await import('@/app/api/session/route');
+    const handler = mod.POST as unknown as (req: Request) => Promise<Response>;
+
+    mockPrisma.session.create.mockResolvedValueOnce({ id: 'ses-ip', title: 'test', llmModel: 'test' });
+
+    const req = new Request('http://localhost/api/session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-real-ip': '10.0.0.1',
+      },
+      body: JSON.stringify({ title: 'test' }),
+    });
+    const res = await parseResponse(await handler(req));
+    expect(res.status).toBe(201);
+    // Verify rate limiter was called (it was, since we got 201)
+    expect(mockCheckRateLimit).toHaveBeenCalled();
+  });
+
+  it('uses anonymous when no IP headers present', async () => {
+    const mod = await import('@/app/api/session/route');
+    const handler = mod.POST as unknown as (req: Request) => Promise<Response>;
+
+    mockPrisma.session.create.mockResolvedValueOnce({ id: 'ses-anon', title: 'test', llmModel: 'test' });
+
+    const req = new Request('http://localhost/api/session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: 'test' }),
+    });
+    const res = await parseResponse(await handler(req));
+    expect(res.status).toBe(201);
+    expect(mockCheckRateLimit).toHaveBeenCalledWith(
+      expect.stringContaining('anonymous'),
+      expect.any(Object)
+    );
+  });
+});
+
 // ── Response Envelope Consistency ──────────────────────────────────────
 
 describe('all error responses have consistent shape', () => {
