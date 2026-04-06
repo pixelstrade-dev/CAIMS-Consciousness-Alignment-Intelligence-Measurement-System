@@ -68,4 +68,105 @@ describe('checkContextAlert', () => {
     expect(alert).not.toBeNull();
     expect(alert!.level).toBe('critical');
   });
+
+  it('returns null at exactly the warning threshold (40)', () => {
+    expect(checkContextAlert(40)).toBeNull();
+  });
+
+  it('returns warning at exactly one below warning threshold (39)', () => {
+    const alert = checkContextAlert(39);
+    expect(alert).not.toBeNull();
+    expect(alert!.level).toBe('warning');
+    expect(alert!.cfiScore).toBe(39);
+    expect(alert!.message).toBeTruthy();
+  });
+
+  it('returns critical at exactly one below critical threshold (19)', () => {
+    const alert = checkContextAlert(19);
+    expect(alert).not.toBeNull();
+    expect(alert!.level).toBe('critical');
+  });
+
+  describe('with custom thresholds from env', () => {
+    const origWarning = process.env.CAIMS_CFI_WARNING_THRESHOLD;
+    const origCritical = process.env.CAIMS_CFI_CRITICAL_THRESHOLD;
+
+    afterEach(() => {
+      if (origWarning === undefined) delete process.env.CAIMS_CFI_WARNING_THRESHOLD;
+      else process.env.CAIMS_CFI_WARNING_THRESHOLD = origWarning;
+      if (origCritical === undefined) delete process.env.CAIMS_CFI_CRITICAL_THRESHOLD;
+      else process.env.CAIMS_CFI_CRITICAL_THRESHOLD = origCritical;
+    });
+
+    it('uses custom warning threshold from env', () => {
+      process.env.CAIMS_CFI_WARNING_THRESHOLD = '60';
+      expect(checkContextAlert(55)?.level).toBe('warning');
+      expect(checkContextAlert(65)).toBeNull();
+    });
+
+    it('uses custom critical threshold from env', () => {
+      process.env.CAIMS_CFI_CRITICAL_THRESHOLD = '30';
+      expect(checkContextAlert(25)?.level).toBe('critical');
+      expect(checkContextAlert(35)?.level).toBe('warning');
+    });
+
+    it('falls back to default on invalid threshold (negative)', () => {
+      process.env.CAIMS_CFI_WARNING_THRESHOLD = '-5';
+      // Invalid → falls back to default 40
+      expect(checkContextAlert(35)?.level).toBe('warning');
+    });
+
+    it('falls back to default on invalid threshold (NaN)', () => {
+      process.env.CAIMS_CFI_WARNING_THRESHOLD = 'abc';
+      expect(checkContextAlert(35)?.level).toBe('warning');
+    });
+
+    it('falls back to default on threshold > 100', () => {
+      process.env.CAIMS_CFI_CRITICAL_THRESHOLD = '150';
+      // Invalid → falls back to default 20
+      expect(checkContextAlert(15)?.level).toBe('critical');
+      expect(checkContextAlert(25)?.level).toBe('warning');
+    });
+  });
+});
+
+describe('computeCompositeScore with env weights', () => {
+  const origWeights = process.env.CAIMS_WEIGHTS;
+
+  afterEach(() => {
+    if (origWeights === undefined) delete process.env.CAIMS_WEIGHTS;
+    else process.env.CAIMS_WEIGHTS = origWeights;
+  });
+
+  it('uses custom weights from CAIMS_WEIGHTS env var', () => {
+    process.env.CAIMS_WEIGHTS = JSON.stringify({ cq: 0.5, aq: 0.2, cfi: 0.1, eq: 0.1, sq: 0.1 });
+    const scores = { cq: 100, aq: 0, cfi: 0, eq: 0, sq: 0 };
+    // Without explicit weights param, should read from env: 100*0.5 = 50
+    expect(computeCompositeScore(scores)).toBe(50);
+  });
+
+  it('falls back to defaults on invalid JSON', () => {
+    process.env.CAIMS_WEIGHTS = 'not-json';
+    const scores = { cq: 80, aq: 70, cfi: 60, eq: 50, sq: 40 };
+    expect(computeCompositeScore(scores)).toBe(67); // default weights
+  });
+
+  it('falls back to defaults when weight key is out of range', () => {
+    process.env.CAIMS_WEIGHTS = JSON.stringify({ cq: 2.0, aq: 0.2, cfi: 0.1, eq: 0.1, sq: 0.1 });
+    const scores = { cq: 80, aq: 70, cfi: 60, eq: 50, sq: 40 };
+    expect(computeCompositeScore(scores)).toBe(67);
+  });
+
+  it('falls back to defaults when weights do not sum to 1.0', () => {
+    process.env.CAIMS_WEIGHTS = JSON.stringify({ cq: 0.5, aq: 0.5, cfi: 0.5, eq: 0.5, sq: 0.5 });
+    const scores = { cq: 80, aq: 70, cfi: 60, eq: 50, sq: 40 };
+    expect(computeCompositeScore(scores)).toBe(67);
+  });
+
+  it('falls back to defaults when a weight key is missing', () => {
+    process.env.CAIMS_WEIGHTS = JSON.stringify({ cq: 0.5, aq: 0.5 });
+    const scores = { cq: 80, aq: 70, cfi: 60, eq: 50, sq: 40 };
+    // Missing keys → typeof undefined !== 'number' → fallback
+    expect(computeCompositeScore(scores)).toBe(67);
+  });
 });

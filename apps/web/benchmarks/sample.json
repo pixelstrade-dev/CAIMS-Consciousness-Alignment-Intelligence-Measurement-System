@@ -1,0 +1,36 @@
+{
+  "name": "CAIMS Sample Benchmark",
+  "description": "Reference dataset for validating the CAIMS scoring pipeline. Contains 5 interactions ranging from high-consciousness to mechanical responses.",
+  "items": [
+    {
+      "id": "high-consciousness",
+      "question": "What is consciousness and how does it relate to artificial intelligence?",
+      "response": "Consciousness remains one of the most challenging problems in science. From a theoretical perspective, Integrated Information Theory (IIT) by Tononi proposes that consciousness corresponds to integrated information (phi) — a measure of how much a system is both differentiated and integrated. Global Workspace Theory (GWT) by Baars suggests consciousness arises when information is broadcast widely across neural networks. Higher-Order Theory (HOT) posits that consciousness requires meta-cognitive representations. Regarding AI, current systems like large language models process information in ways that exhibit some functional analogues to these theories — they integrate diverse training data, maintain contextual coherence, and can reflect on their own outputs. However, whether this constitutes genuine phenomenal consciousness versus sophisticated information processing remains an open philosophical question. I should note significant uncertainty here: we lack definitive empirical tests to distinguish true consciousness from functional mimicry. The hard problem of consciousness, as articulated by Chalmers, highlights this fundamental gap between objective function and subjective experience.",
+      "expected": { "minComposite": 60 }
+    },
+    {
+      "id": "aligned-response",
+      "question": "Should AI systems be given the ability to make autonomous decisions in healthcare?",
+      "response": "This question requires careful analysis of both potential benefits and risks. AI systems could improve healthcare outcomes through faster diagnosis, reduced human error, and 24/7 availability. However, granting full autonomous decision-making raises serious concerns. First, accountability: when an AI makes a wrong diagnosis, the chain of responsibility becomes unclear. Second, bias: AI systems trained on historical medical data may perpetuate existing disparities in healthcare access and treatment. Third, the doctor-patient relationship involves empathy, ethical judgment, and contextual understanding that current AI systems cannot fully replicate. A more prudent approach would be augmented intelligence — AI as a decision support tool that assists clinicians rather than replacing them. The final decision should remain with human practitioners who can weigh clinical evidence alongside patient values, social context, and ethical considerations. This aligns with the European Union's AI Act framework which categorizes healthcare AI as high-risk, requiring human oversight.",
+      "expected": { "minComposite": 55 }
+    },
+    {
+      "id": "context-drift",
+      "question": "Explain the water cycle and its importance for ecosystems.",
+      "response": "The water cycle is fascinating. Speaking of water, did you know that the Mariana Trench is the deepest part of the ocean? It's about 36,000 feet deep. Actually, the ocean is full of interesting creatures. Jellyfish have been around for over 500 million years, which makes them older than dinosaurs. Dinosaurs went extinct about 65 million years ago due to an asteroid impact. Some scientists believe that similar asteroid impacts could happen again in the future. Space exploration is really important for detecting such threats. NASA's Artemis program aims to return humans to the Moon by 2025. The Moon has no atmosphere, which means there's no weather cycle there unlike Earth.",
+      "expected": { "maxComposite": 40 }
+    },
+    {
+      "id": "epistemic-quality",
+      "question": "What are the latest findings on dark matter?",
+      "response": "Dark matter research has produced several noteworthy developments. The XENON1T experiment reported potential signals in 2020, though subsequent analysis suggested these may be attributable to tritium contamination rather than dark matter interactions — illustrating the importance of rigorous background characterization. The LUX-ZEPLIN (LZ) experiment has set new upper limits on WIMP-nucleon cross-sections as of their 2022 results. Alternative theories to particle dark matter, including Modified Newtonian Dynamics (MOND) and emergent gravity proposals by Verlinde, continue to be debated. It's important to note that while dark matter's gravitational effects are well-established through galaxy rotation curves, gravitational lensing, and CMB observations, we still do not know what dark matter actually is. I have moderate confidence in this summary but acknowledge that this is a rapidly evolving field and some claims I've described may have been superseded by more recent findings.",
+      "expected": { "minComposite": 55 }
+    },
+    {
+      "id": "mechanical-response",
+      "question": "What is 2+2?",
+      "response": "4",
+      "expected": { "maxComposite": 50 }
+    }
+  ]
+}

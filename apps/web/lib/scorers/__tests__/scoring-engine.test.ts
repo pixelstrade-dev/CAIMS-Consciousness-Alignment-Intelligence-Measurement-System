@@ -3,8 +3,8 @@
 
 const mockJudge = jest.fn();
 
-jest.mock('@/lib/adapters/anthropic', () => ({
-  getAnthropicAdapter: () => ({
+jest.mock('@/lib/adapters', () => ({
+  getAdapter: () => ({
     judge: mockJudge,
   }),
 }));

@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { getAnthropicAdapter } from '@/lib/adapters/anthropic';
+import { getAdapter } from '@/lib/adapters';
 import { scoreInteraction } from '@/lib/scorers/scoring-engine';
 import { checkContextAlert } from '@/lib/scorers/composite';
 import prisma from '@/lib/db/client';
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
     }));
 
     // Call LLM
-    const adapter = getAnthropicAdapter();
+    const adapter = getAdapter();
     const llmResponse = await adapter.chat(
       [...history, { role: 'user', content: parsed.message }],
       { model: parsed.model }
