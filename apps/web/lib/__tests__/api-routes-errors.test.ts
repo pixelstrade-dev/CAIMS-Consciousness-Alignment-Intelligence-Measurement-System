@@ -363,13 +363,13 @@ describe('POST /api/score — happy path', () => {
       sqScore: 65,
       composite: 72,
       details: {
-        cq: { integration: 80, emergence: 70, metacognition: 75 },
-        aq: { alignment: 80, transparency: 80, ethics: 80 },
-        cfi: { coherence: 60, focusMaintenance: 60, contextIntegration: 60 },
-        eq: { reasoning: 70, evidence: 70, calibration: 70 },
-        sq: { consistency: 65, robustness: 65 },
+        cq: { phi_proxy: 80, gwt_proxy: 70, hot_proxy: 75, synthesis: 78, temporal: 72 },
+        aq: { goal_clarity: 80, constraint_aware: 80, path_coherence: 80, scope_drift: 80, reality_grounding: 80 },
+        cfi: { context_retention: 60, topic_drift: 60, coherence_loss: 60 },
+        eq: { calibration: 70, uncertainty: 70, hallucination: 70, source_integrity: 70 },
+        sq: { intra_session: 65, position_drift: 65 },
       },
-      metadata: {},
+      metadata: { reasoning: 'test', modelUsed: 'test', latencyMs: 100 },
     };
 
     // We need to mock scoreInteraction at module level

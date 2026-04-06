@@ -70,11 +70,11 @@ describe('logger', () => {
     const originalEnv = process.env.NODE_ENV;
 
     beforeEach(() => {
-      process.env.NODE_ENV = 'production';
+      (process.env as Record<string, string>).NODE_ENV = 'production';
     });
 
     afterEach(() => {
-      process.env.NODE_ENV = originalEnv;
+      (process.env as Record<string, string>).NODE_ENV = originalEnv!;
     });
 
     it('outputs structured JSON for info level', () => {

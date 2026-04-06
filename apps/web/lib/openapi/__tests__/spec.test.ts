@@ -43,7 +43,7 @@ describe('OpenAPI Specification', () => {
       }
       // Verify each operation has responses
       for (const method of httpMethods) {
-        const op = (methods as Record<string, { responses: unknown }>)[method];
+        const op = (methods as Record<string, { responses: Record<string, unknown> }>)[method];
         expect(op.responses).toBeDefined();
         expect(Object.keys(op.responses).length).toBeGreaterThan(0);
       }
