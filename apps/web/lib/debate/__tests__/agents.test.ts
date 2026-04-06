@@ -1,8 +1,8 @@
 import { CAIMS_DEFAULT_AGENTS, getAgentById, getAgentsByIds } from '../agents';
 
 describe('CAIMS_DEFAULT_AGENTS', () => {
-  it('defines exactly 5 agents', () => {
-    expect(CAIMS_DEFAULT_AGENTS).toHaveLength(5);
+  it('defines exactly 6 agents', () => {
+    expect(CAIMS_DEFAULT_AGENTS).toHaveLength(6);
   });
 
   it('has unique IDs for all agents', () => {
@@ -28,6 +28,7 @@ describe('CAIMS_DEFAULT_AGENTS', () => {
     expect(ids).toContain('agt-researcher');
     expect(ids).toContain('agt-builder');
     expect(ids).toContain('agt-critic');
+    expect(ids).toContain('agt-ethicist');
     expect(ids).toContain('agt-orchestrator');
   });
 
@@ -62,10 +63,10 @@ describe('getAgentsByIds', () => {
     expect(agents[1].name).toBe('BUILDER');
   });
 
-  it('returns all 5 agents when all IDs provided', () => {
+  it('returns all 6 agents when all IDs provided', () => {
     const allIds = CAIMS_DEFAULT_AGENTS.map(a => a.id);
     const agents = getAgentsByIds(allIds);
-    expect(agents).toHaveLength(5);
+    expect(agents).toHaveLength(6);
   });
 
   it('throws for an unknown agent ID', () => {
