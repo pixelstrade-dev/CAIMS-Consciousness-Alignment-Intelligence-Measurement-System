@@ -1,10 +1,14 @@
 # CAIMS -- Consciousness & Alignment Intelligence Measurement System
 
+![CAIMS Banner](docs/assets/caims-banner.svg)
+
+
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black.svg)](https://nextjs.org/)
 [![Tests](https://img.shields.io/badge/Tests-20%20passing-green.svg)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Discord](https://img.shields.io/badge/Discord-Join%20Community-7289da.svg?logo=discord&logoColor=white)](https://discord.gg/XqmDkPdu6h)
 
 **The first open-source framework for measuring consciousness proxies in LLM interactions.**
 
@@ -186,6 +190,21 @@ CAIMS measures **behavioral proxies** inspired by consciousness theories (IIT, G
 
 ---
 
+
+## Community
+
+Join the **CAIMS Community** on Discord to discuss AI consciousness, share experiments, and contribute:
+
+**[Join Discord](https://discord.gg/XqmDkPdu6h)**
+
+- Deep discussions on AI consciousness & alignment
+- Live multi-agent debate sessions
+- Development help & code reviews
+- Research paper discussions
+- Good first issues for new contributors
+
+---
+
 ## Contributing
 
 We welcome contributions. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on code standards, development setup, and the PR process.
@@ -231,6 +250,6 @@ See [LICENSE](LICENSE) for the full text.
 
 ## Credits
 
-Developed and maintained by [Pixels Trade SA](https://pixels-trade.com).
+Developed and maintained by [Pixels Trade SA](https://pixelstrade.com).
 
-For questions, partnerships, or support: **contact@pixels-trade.com**
+For questions, partnerships, or support: **studio@pixelstrade.com**

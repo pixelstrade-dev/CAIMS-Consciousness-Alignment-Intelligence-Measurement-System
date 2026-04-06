@@ -19,6 +19,8 @@ const AGENTS = [
   { id: "agt-researcher", name: "RESEARCHER" },
   { id: "agt-builder", name: "BUILDER" },
   { id: "agt-critic", name: "CRITIC" },
+  { id: "agt-orchestrator", name: "ORCHESTRATOR" },
+  { id: "agt-ethicist", name: "ETHICIST" },
 ];
 
 function DebateCardSkeleton() {
