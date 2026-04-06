@@ -309,6 +309,29 @@ export default function DebateDetailPage() {
                         : "Tour Suivant"}
                   </button>
                 </div>
+
+                {/* Export buttons */}
+                {debate && (
+                  <div className="pt-2 space-y-2">
+                    <p className="text-xs text-foreground-muted">Exporter</p>
+                    <div className="flex gap-2">
+                      <a
+                        href={`/api/debate/${debateId}/export?format=json`}
+                        download
+                        className="flex-1 px-3 py-2 rounded-lg border border-border text-foreground-muted text-xs font-medium text-center hover:border-accent-blue hover:text-accent-blue transition-colors"
+                      >
+                        JSON
+                      </a>
+                      <a
+                        href={`/api/debate/${debateId}/export?format=pdf`}
+                        download
+                        className="flex-1 px-3 py-2 rounded-lg border border-border text-foreground-muted text-xs font-medium text-center hover:border-accent-cyan hover:text-accent-cyan transition-colors"
+                      >
+                        PDF
+                      </a>
+                    </div>
+                  </div>
+                )}
               </>
             )}
           </div>
