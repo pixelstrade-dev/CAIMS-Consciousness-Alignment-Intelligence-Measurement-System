@@ -591,6 +591,6 @@ Chaque interaction genere un nouvel appel LLM pour le scoring. Pas de cache des 
 ## Contacts
 
 - **Repository** : https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System
-- **Contact** : contact@pixels-trade.com
-- **Securite** : security@pixels-trade.com
+- **Contact** : contact@pixelstrade.com
+- **Securite** : support@pixelstrade.com
 - **License** : Apache 2.0 -- Copyright 2025 Pixels Trade SA
