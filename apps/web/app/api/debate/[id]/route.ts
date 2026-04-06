@@ -8,6 +8,7 @@ import prisma from '@/lib/db/client';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/middleware/rate-limit';
 import { apiSuccess, apiError } from '@/lib/middleware/api-response';
 import { logger } from '@/lib/logger';
+import { wsManager } from '@/lib/websocket/manager';
 
 // GET - Fetch a specific debate with all turns and scores
 export async function GET(
@@ -257,6 +258,37 @@ export async function POST(
       scored: !!result.turnScore,
       isComplete: shouldConclude,
     });
+
+    // Emit real-time events to connected WebSocket clients
+    wsManager.emit(debate.id, {
+      type: 'turn:new',
+      debateId: debate.id,
+      turn: {
+        id: result.turn.id,
+        turnNumber: result.turn.turnNumber,
+        content: result.turn.content,
+        tokenCount: result.turn.tokenCount ?? null,
+        agent: result.turn.agent,
+        score: result.turnScore
+          ? {
+              composite: result.turnScore.composite,
+              cqScore: result.turnScore.cqScore,
+              aqScore: result.turnScore.aqScore,
+              cfiScore: result.turnScore.cfiScore,
+              eqScore: result.turnScore.eqScore,
+              sqScore: result.turnScore.sqScore,
+            }
+          : null,
+      },
+    });
+
+    if (shouldConclude) {
+      wsManager.emit(debate.id, {
+        type: 'debate:status',
+        debateId: debate.id,
+        status: 'concluded',
+      });
+    }
 
     return apiSuccess({
       turn: {

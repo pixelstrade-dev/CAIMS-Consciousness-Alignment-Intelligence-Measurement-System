@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": false,
+    "outDir": "server-dist",
+    "declaration": false,
+    "target": "es2020",
+    "lib": ["es2020"],
+    "jsx": "react"
+  },
+  "include": ["server.ts", "lib/websocket/**/*.ts"],
+  "exclude": ["node_modules", "**/__tests__/**"]
+}

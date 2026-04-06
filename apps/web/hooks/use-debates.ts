@@ -132,7 +132,7 @@ export function useDebate(id: string) {
     refetch();
   }, [refetch]);
 
-  return { debate, isLoading, error, refetch };
+  return { debate, setDebate, isLoading, error, refetch };
 }
 
 // ----- useCreateDebate -----

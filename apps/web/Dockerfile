@@ -26,6 +26,11 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
+# Replace the default Next.js standalone server with the custom WebSocket-aware server
+COPY --from=builder --chown=nextjs:nodejs /app/server-dist/server.js ./server.js
+RUN mkdir -p lib/websocket
+COPY --from=builder --chown=nextjs:nodejs /app/server-dist/lib/websocket/manager.js ./lib/websocket/manager.js
+
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000

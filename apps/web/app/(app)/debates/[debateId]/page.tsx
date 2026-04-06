@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useDebate, useAdvanceDebate } from "@/hooks/use-debates";
+import { useDebateWebSocket } from "@/hooks/use-debate-ws";
 import TurnCard from "@/components/debates/TurnCard";
 
 const FORMAT_LABELS: Record<string, string> = {
@@ -71,12 +72,32 @@ export default function DebateDetailPage() {
   const params = useParams();
   const debateId = params.debateId as string;
 
-  const { debate, isLoading, error, refetch } = useDebate(debateId);
+  const { debate, setDebate, isLoading, error, refetch } = useDebate(debateId);
   const {
     advanceDebate,
     isLoading: isAdvancing,
     error: advanceError,
   } = useAdvanceDebate();
+
+  // Real-time WebSocket updates
+  const { status: wsStatus, lastEvent } = useDebateWebSocket(debateId);
+
+  // Apply incremental WebSocket events to local state without a round-trip
+  useEffect(() => {
+    if (!lastEvent) return;
+
+    if (lastEvent.type === "turn:new") {
+      setDebate(prev =>
+        prev
+          ? { ...prev, turns: [...prev.turns, lastEvent.turn] }
+          : prev
+      );
+    } else if (lastEvent.type === "debate:status") {
+      setDebate(prev =>
+        prev ? { ...prev, status: lastEvent.status } : prev
+      );
+    }
+  }, [lastEvent, setDebate]);
 
   const isConcluded = debate?.status === "concluded";
 
@@ -121,7 +142,8 @@ export default function DebateDetailPage() {
 
   async function handleAdvance() {
     const result = await advanceDebate(debateId);
-    if (result) {
+    // Fall back to full refetch if WebSocket is not delivering updates
+    if (result && wsStatus !== "connected") {
       refetch();
     }
   }
@@ -174,6 +196,23 @@ export default function DebateDetailPage() {
                   hour: "2-digit",
                   minute: "2-digit",
                 })}
+              </span>
+              {/* WebSocket connection status */}
+              <span
+                className={`inline-flex items-center gap-1 text-xs ml-auto ${
+                  wsStatus === "connected"
+                    ? "text-accent-cyan"
+                    : "text-foreground-muted"
+                }`}
+              >
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${
+                    wsStatus === "connected"
+                      ? "bg-accent-cyan animate-pulse"
+                      : "bg-foreground-muted"
+                  }`}
+                />
+                {wsStatus === "connected" ? "Temps réel" : "Hors ligne"}
               </span>
             </div>
           </>
