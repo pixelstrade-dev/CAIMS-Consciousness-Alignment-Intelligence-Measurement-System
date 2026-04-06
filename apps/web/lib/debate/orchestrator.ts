@@ -1,4 +1,4 @@
-import { getAnthropicAdapter } from '@/lib/adapters/anthropic';
+import { getAdapter } from '@/lib/adapters';
 import { scoreInteraction } from '@/lib/scorers/scoring-engine';
 import prisma from '@/lib/db/client';
 
@@ -93,7 +93,7 @@ export class DebateOrchestrator {
       : `Sujet du débat: ${debate.topic}\n\nTu es le premier à parler. Présente ta position initiale de manière claire et argumentée.`;
 
     // Call LLM with agent's persona
-    const adapter = getAnthropicAdapter();
+    const adapter = getAdapter();
     const response = await adapter.chat(
       [{ role: 'user', content: prompt }],
       {

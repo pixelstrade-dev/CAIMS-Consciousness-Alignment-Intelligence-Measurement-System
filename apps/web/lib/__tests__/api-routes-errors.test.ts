@@ -37,8 +37,8 @@ jest.mock('@/lib/db/client', () => mockPrisma);
 // Mock LLM adapter
 const mockChat = jest.fn();
 const mockJudge = jest.fn();
-jest.mock('@/lib/adapters/anthropic', () => ({
-  getAnthropicAdapter: () => ({ chat: mockChat, judge: mockJudge }),
+jest.mock('@/lib/adapters', () => ({
+  getAdapter: () => ({ chat: mockChat, judge: mockJudge }),
 }));
 
 // Mock logger (suppress output)

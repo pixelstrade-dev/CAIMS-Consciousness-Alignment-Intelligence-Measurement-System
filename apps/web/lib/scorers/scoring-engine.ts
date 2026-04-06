@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { getAnthropicAdapter } from '@/lib/adapters/anthropic';
+import { getAdapter } from '@/lib/adapters';
 import { KPIScores, LLMMessage } from './types';
 import { computeCompositeScore } from './composite';
 import { logger } from '@/lib/logger';
@@ -209,7 +209,7 @@ export async function scoreInteraction(params: {
   try {
     const userPrompt = buildScoringPrompt(params);
 
-    const adapter = getAnthropicAdapter();
+    const adapter = getAdapter();
     const judgeResponse = await adapter.judge(
       `${SCORING_SYSTEM_PROMPT}\n\n${userPrompt}`,
       { model, maxTokens: 2048 }

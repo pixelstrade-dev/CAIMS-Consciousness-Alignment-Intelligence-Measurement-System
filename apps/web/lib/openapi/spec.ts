@@ -11,7 +11,7 @@ export const openApiSpec = {
     title: 'CAIMS API',
     version: '1.0.0',
     description:
-      'Consciousness & Alignment Intelligence Measurement System — API for scoring LLM interactions across 5 KPIs (CQ, AQ, CFI, EQ, SQ) and running multi-agent debates.',
+      'Consciousness & Alignment Intelligence Measurement System — API for scoring LLM interactions across 5 KPIs (CQ, AQ, CFI, EQ, SQ) and running multi-agent debates. Supports multiple LLM providers (Anthropic, OpenAI) via CAIMS_LLM_PROVIDER env var.',
     license: {
       name: 'Apache 2.0',
       url: 'https://www.apache.org/licenses/LICENSE-2.0',
