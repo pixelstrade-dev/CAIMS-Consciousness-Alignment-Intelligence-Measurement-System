@@ -54,6 +54,10 @@ export interface KPIScores {
   eqScore: number;
   sqScore: number;
   composite: number;
+  /** EmQ — Emotional Quotient (Anthropic functional emotions, April 2026) */
+  emqScore?: number;
+  /** Emotion analysis details (per-response + conversation-level) */
+  emotionAnalysis?: import('@/lib/emotions/types').EmotionScoringResult;
   details: ScoreDetails;
   metadata: ScoreMetadata;
 }

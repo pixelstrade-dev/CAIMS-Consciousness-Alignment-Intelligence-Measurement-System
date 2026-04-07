@@ -3,6 +3,8 @@ import { getAdapter } from '@/lib/adapters';
 import { KPIScores, LLMMessage } from './types';
 import { computeCompositeScore } from './composite';
 import { logger } from '@/lib/logger';
+import { scoreEmotion } from '@/lib/emotions';
+import type { DetectedEmotion } from '@/lib/emotions';
 
 // ── Zod schema for validating LLM judge output ─────────────────────────────
 const ScoreValue = z.number().min(0).max(100);
@@ -202,6 +204,7 @@ export async function scoreInteraction(params: {
   question: string;
   history: LLMMessage[];
   model?: string;
+  emotionHistory?: DetectedEmotion[];
 }): Promise<KPIScores | null> {
   const model = params.model || process.env.CAIMS_SCORING_MODEL || 'claude-sonnet-4-20250514';
   const startTime = Date.now();
@@ -235,13 +238,37 @@ export async function scoreInteraction(params: {
       cq: cqScore, aq: aqScore, cfi: cfiScore, eq: eqScore, sq: sqScore,
     });
 
+    // Run emotion analysis (non-blocking — doesn't fail the main scoring)
+    let emqScore: number | undefined;
+    let emotionAnalysis: import('@/lib/emotions/types').EmotionScoringResult | undefined;
+    try {
+      const emotionResult = await scoreEmotion({
+        response: params.response,
+        question: params.question,
+        emotionHistory: params.emotionHistory,
+        model,
+      });
+      if (emotionResult) {
+        emqScore = emotionResult.emqScore;
+        emotionAnalysis = emotionResult;
+      }
+    } catch (emotionError) {
+      logger.warn('Emotion scoring failed (non-fatal)', {
+        error: emotionError instanceof Error ? emotionError.message : String(emotionError),
+      });
+    }
+
+    const totalLatencyMs = Date.now() - startTime;
+
     logger.info('Scoring completed', {
       cq: cqScore, aq: aqScore, cfi: cfiScore, eq: eqScore, sq: sqScore,
-      composite, latencyMs, model,
+      composite, emq: emqScore, latencyMs: totalLatencyMs, model,
     });
 
     return {
       cqScore, aqScore, cfiScore, eqScore, sqScore, composite,
+      emqScore,
+      emotionAnalysis,
       details: {
         cq: validated.cq,
         aq: validated.aq,
@@ -252,7 +279,7 @@ export async function scoreInteraction(params: {
       metadata: {
         reasoning: validated.reasoning,
         modelUsed: model,
-        latencyMs,
+        latencyMs: totalLatencyMs,
       },
     };
   } catch (error) {
