@@ -38,45 +38,38 @@
   *{box-sizing:border-box}
   body{
     margin:0; background:var(--ground); color:var(--ink);
-    font-family:var(--font-body); line-height:1.5;
-    -webkit-font-smoothing:antialiased;
+    font-family:var(--font-body); line-height:1.5; -webkit-font-smoothing:antialiased;
     display:flex; justify-content:center;
     padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));
     min-height:100dvh;
   }
-  .app{
-    width:100%; max-width:440px; display:flex; flex-direction:column;
-  }
+  .app{width:100%; max-width:440px; display:flex; flex-direction:column}
 
-  /* ---- Top bar ---- */
-  .top{display:flex; align-items:center; gap:12px; min-height:44px; margin-bottom:14px}
-  .brand{display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-weight:700; letter-spacing:-.01em}
-  .brand .paw{font-size:20px}
-  .back{
-    appearance:none; border:1px solid var(--line); background:var(--surface); color:var(--ink);
+  .top{display:flex; align-items:center; gap:10px; min-height:44px; margin-bottom:14px}
+  .brand{display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-weight:700; letter-spacing:-.01em; font-size:15px}
+  .brand .paw{font-size:19px}
+  .back{appearance:none; border:1px solid var(--line); background:var(--surface); color:var(--ink);
     width:38px; height:38px; border-radius:12px; font-size:18px; cursor:pointer; display:none;
-    align-items:center; justify-content:center; transition:background .15s;
-  }
+    align-items:center; justify-content:center; transition:background .15s}
   .back:hover{background:var(--surface-2)}
   .back.show{display:inline-flex}
   .spacer{flex:1}
   .count{font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums}
+  .lang{display:inline-flex; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--surface)}
+  .lang button{appearance:none; border:none; background:transparent; color:var(--muted); font-size:12.5px; font-weight:700;
+    padding:7px 9px; cursor:pointer; font-family:var(--font-body)}
+  .lang button.on{background:var(--accent); color:#fff}
 
-  /* ---- Progress ---- */
   .progress{height:6px; background:var(--surface-2); border-radius:99px; overflow:hidden; margin-bottom:22px}
   .progress > i{display:block; height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .4s cubic-bezier(.4,0,.2,1)}
 
-  /* ---- Screens ---- */
   .screen{display:none}
   .screen.active{display:block; animation:fade .35s ease both}
   @keyframes fade{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
 
-  /* ---- Intro ---- */
   .hero-badges{display:flex; justify-content:center; gap:6px; margin:6px 0 20px}
-  .hero-badges span{
-    font-size:30px; width:56px; height:56px; border-radius:50%; display:grid; place-items:center;
-    background:var(--surface); box-shadow:var(--shadow);
-  }
+  .hero-badges span{font-size:30px; width:56px; height:56px; border-radius:50%; display:grid; place-items:center;
+    background:var(--surface); box-shadow:var(--shadow)}
   .hero-badges span:nth-child(1){transform:translateY(4px) rotate(-6deg)}
   .hero-badges span:nth-child(3){transform:translateY(4px) rotate(6deg)}
   h1{font-family:var(--font-display); font-size:29px; line-height:1.12; letter-spacing:-.02em; text-wrap:balance; margin:0 0 12px}
@@ -85,27 +78,43 @@
   .pills{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:26px}
   .pill{font-size:13px; padding:7px 12px; border-radius:99px; background:var(--accent-soft); color:var(--accent); font-weight:600}
 
-  /* ---- Buttons ---- */
-  .cta{
-    appearance:none; border:none; cursor:pointer; width:100%;
+  .cta{appearance:none; border:none; cursor:pointer; width:100%;
     font-family:var(--font-display); font-weight:700; font-size:17px;
     background:var(--accent); color:#fff; padding:16px; border-radius:14px;
-    box-shadow:var(--shadow); transition:transform .12s, filter .15s;
-  }
+    box-shadow:var(--shadow); transition:transform .12s, filter .15s}
   .cta:hover{filter:brightness(1.05)}
   .cta:active{transform:scale(.985)}
+  .cta:disabled{opacity:.45; cursor:not-allowed; filter:none}
   .cta.ghost{background:var(--surface); color:var(--ink); border:1px solid var(--line); box-shadow:none}
   .microcopy{text-align:center; font-size:12.5px; color:var(--muted); margin-top:12px}
 
-  /* ---- Question ---- */
+  /* Gate / disclaimer */
+  .note{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:16px 17px; box-shadow:var(--shadow); margin-bottom:16px}
+  .note h3{font-family:var(--font-display); font-size:16px; margin:0 0 8px; display:flex; align-items:center; gap:8px}
+  .note p{margin:0 0 8px; font-size:14px; color:var(--muted)}
+  .note p:last-child{margin:0}
+  .check{display:flex; gap:12px; align-items:flex-start; background:var(--surface-2); border-radius:12px; padding:14px; cursor:pointer; margin-bottom:16px}
+  .check input{margin-top:2px; width:20px; height:20px; accent-color:var(--accent); flex:none}
+  .check span{font-size:14px}
+
+  /* Auth */
+  .auth-btns{display:flex; flex-direction:column; gap:11px; margin-bottom:8px}
+  .auth{appearance:none; cursor:pointer; width:100%; display:flex; align-items:center; justify-content:center; gap:10px;
+    font-family:var(--font-body); font-weight:600; font-size:15.5px; padding:14px; border-radius:13px; border:1px solid var(--line);
+    background:var(--surface); color:var(--ink); transition:background .15s, transform .1s}
+  .auth:active{transform:scale(.99)}
+  .auth.apple{background:#000; color:#fff; border-color:#000}
+  .auth.google{background:var(--surface)}
+  .auth .g{font-weight:800; font-family:var(--font-display)}
+  .sep{display:flex; align-items:center; gap:12px; color:var(--muted); font-size:12.5px; margin:14px 0}
+  .sep::before,.sep::after{content:""; height:1px; background:var(--line); flex:1}
+
   .q-title{font-family:var(--font-display); font-size:22px; line-height:1.22; letter-spacing:-.01em; text-wrap:balance; margin:0 0 20px}
   .options{display:flex; flex-direction:column; gap:10px}
-  .opt{
-    appearance:none; text-align:left; cursor:pointer; width:100%;
+  .opt{appearance:none; text-align:left; cursor:pointer; width:100%;
     background:var(--surface); color:var(--ink); border:1.5px solid var(--line);
     padding:15px 16px; border-radius:14px; font-size:15.5px; line-height:1.35;
-    display:flex; align-items:center; gap:13px; transition:border-color .15s, background .15s, transform .1s;
-  }
+    display:flex; align-items:center; gap:13px; transition:border-color .15s, background .15s, transform .1s}
   .opt:hover{border-color:var(--accent); background:var(--surface-2)}
   .opt:active{transform:scale(.99)}
   .opt .dot{flex:none; width:22px; height:22px; border-radius:50%; border:2px solid var(--line); transition:.15s}
@@ -113,18 +122,13 @@
   .opt.sel .dot{border-color:var(--accent); background:var(--accent); box-shadow:inset 0 0 0 3px var(--surface)}
   .opt:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
 
-  /* ---- Result ---- */
   .result-hero{display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:8px}
-  .badge-big{
-    width:118px; height:118px; border-radius:50%; display:grid; place-items:center;
+  .badge-big{width:118px; height:118px; border-radius:50%; display:grid; place-items:center;
     font-size:62px; box-shadow:var(--shadow); margin-bottom:14px; position:relative;
-    animation:pop .5s cubic-bezier(.34,1.56,.64,1) both;
-  }
+    animation:pop .5s cubic-bezier(.34,1.56,.64,1) both}
   @keyframes pop{from{opacity:0; transform:scale(.6)} to{opacity:1; transform:scale(1)}}
-  .badge-sec{
-    position:absolute; right:-6px; bottom:-2px; width:46px; height:46px; border-radius:50%;
-    display:grid; place-items:center; font-size:24px; background:var(--surface); box-shadow:var(--shadow);
-  }
+  .badge-sec{position:absolute; right:-6px; bottom:-2px; width:46px; height:46px; border-radius:50%;
+    display:grid; place-items:center; font-size:24px; background:var(--surface); box-shadow:var(--shadow)}
   .eyebrow{font-size:12.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:4px}
   .result-name{font-family:var(--font-display); font-size:27px; letter-spacing:-.01em; margin:0 0 6px}
   .result-sub{color:var(--muted); font-size:15px; margin:0 0 4px; text-wrap:balance}
@@ -146,22 +150,30 @@
   .avoid{margin-top:14px; padding-top:14px; border-top:1px dashed var(--line); font-size:13.5px; color:var(--muted)}
   .avoid b{color:var(--ink)}
   .sec-note{background:var(--surface-2); border-radius:12px; padding:13px 15px; font-size:14px; margin-top:14px}
-  .sec-note b{font-weight:700}
 
-  .footer{margin-top:22px; display:flex; flex-direction:column; gap:10px}
+  /* Shareable card */
+  .share-card{margin-top:18px; border-radius:var(--r); padding:22px 20px; color:#fff; position:relative; overflow:hidden;
+    box-shadow:var(--shadow); text-align:center}
+  .share-card .sc-emojis{font-size:44px; letter-spacing:2px}
+  .share-card .sc-name{font-family:var(--font-display); font-weight:800; font-size:22px; margin:6px 0 2px}
+  .share-card .sc-tag{font-size:13.5px; opacity:.92}
+  .share-card .sc-brand{position:absolute; top:12px; right:14px; font-size:11px; font-weight:700; opacity:.8; letter-spacing:.03em}
+
+  .footer{margin-top:16px; display:flex; flex-direction:column; gap:10px}
   .disclaimer{font-size:11.5px; color:var(--muted); text-align:center; line-height:1.5; margin-top:16px}
 
-  @media (prefers-reduced-motion:reduce){
-    *{animation-duration:.001ms !important; transition-duration:.001ms !important}
-  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important; transition-duration:.001ms !important}}
 </style>
 
 <div class="app">
   <div class="top">
-    <button class="back" id="back" aria-label="Question précédente">←</button>
-    <div class="brand"><span class="paw">🐾</span><span>Mon Animal Minceur</span></div>
+    <button class="back" id="back" aria-label="Back">←</button>
+    <div class="brand"><span class="paw">🐾</span><span id="brandName">Mon Animal Minceur</span></div>
     <span class="spacer"></span>
     <span class="count" id="count"></span>
+    <span class="lang" role="group" aria-label="Language">
+      <button id="langFr" class="on">FR</button><button id="langEn">EN</button>
+    </span>
   </div>
 
   <div class="progress" id="progress" style="display:none"><i id="bar"></i></div>
@@ -169,15 +181,44 @@
   <!-- INTRO -->
   <section class="screen active" id="intro">
     <div class="hero-badges"><span>🦁</span><span>🐺</span><span>🦊</span><span>🐻</span></div>
-    <h1>Comment as-tu faim&nbsp;?</h1>
-    <p class="lead">Pour maigrir durablement, il faut d'abord comprendre <b>pourquoi</b> tu manges. Réponds à 12 questions et découvre ton <b>type de faim</b> — un animal, ou deux.</p>
+    <h1 data-i="h1"></h1>
+    <p class="lead" data-i="lead"></p>
     <div class="pills">
-      <span class="pill">⏱️ 2 minutes</span>
-      <span class="pill">🔒 Sans inscription</span>
-      <span class="pill">✅ Sans engagement</span>
+      <span class="pill" data-i="pill1"></span>
+      <span class="pill" data-i="pill2"></span>
+      <span class="pill" data-i="pill3"></span>
     </div>
-    <button class="cta" id="start">Découvrir mon animal</button>
-    <p class="microcopy">Basé sur les 4 phénotypes de la faim (recherche Mayo Clinic). Outil éducatif, pas un avis médical.</p>
+    <button class="cta" id="start" data-i="start"></button>
+    <p class="microcopy" data-i="introFoot"></p>
+  </section>
+
+  <!-- GATE: disclaimer + age -->
+  <section class="screen" id="gate">
+    <h1 data-i="gateTitle" style="font-size:24px"></h1>
+    <div class="note">
+      <h3 data-i="discTitle"></h3>
+      <p data-i="disc1"></p>
+      <p data-i="disc2"></p>
+    </div>
+    <label class="check">
+      <input type="checkbox" id="agree">
+      <span data-i="agree"></span>
+    </label>
+    <button class="cta" id="gateNext" disabled data-i="continue"></button>
+  </section>
+
+  <!-- AUTH -->
+  <section class="screen" id="auth">
+    <h1 data-i="authTitle" style="font-size:24px"></h1>
+    <p class="lead" data-i="authSub"></p>
+    <div class="auth-btns">
+      <button class="auth apple" data-go><span></span><span data-i="apple"></span></button>
+      <button class="auth google" data-go><span class="g">G</span><span data-i="google"></span></button>
+      <button class="auth" data-go><span>✉️</span><span data-i="email"></span></button>
+    </div>
+    <div class="sep" data-i="or"></div>
+    <button class="cta ghost" data-go data-i="guest"></button>
+    <p class="microcopy" data-i="authFoot"></p>
   </section>
 
   <!-- QUESTION -->
@@ -190,7 +231,7 @@
   <section class="screen" id="result">
     <div class="result-hero">
       <div class="badge-big" id="badgeBig"></div>
-      <div class="eyebrow">Ton type de faim</div>
+      <div class="eyebrow" data-i="resEyebrow"></div>
       <h2 class="result-name" id="resName"></h2>
       <p class="result-sub" id="resSub"></p>
     </div>
@@ -200,257 +241,326 @@
     <div class="card" id="planCard"></div>
     <div id="secBlock"></div>
 
-    <div class="footer">
-      <button class="cta ghost" id="restart">↺ Recommencer le test</button>
+    <div class="share-card" id="shareCard">
+      <span class="sc-brand">🐾 Mon Animal Minceur</span>
+      <div class="sc-emojis" id="scEmojis"></div>
+      <div class="sc-name" id="scName"></div>
+      <div class="sc-tag" id="scTag"></div>
     </div>
-    <p class="disclaimer">Cet outil est éducatif et ne remplace pas l'avis d'un professionnel de santé. Pour une perte de poids sûre, visez un rythme progressif (~0,5–1 kg/semaine) et consultez un médecin ou un(e) diététicien(ne).</p>
+
+    <div class="footer">
+      <button class="cta" id="share" data-i="share"></button>
+      <button class="cta ghost" id="restart" data-i="restart"></button>
+    </div>
+    <p class="disclaimer" data-i="resDisc"></p>
   </section>
 </div>
 
 <script>
 (function(){
   "use strict";
+  var LANG = "fr";
 
-  // Types = 4 animals mapped to Mayo Clinic hunger phenotypes
-  var TYPES = {
-    lion:   {emoji:"🦁", name:"Lion",   pheno:"Cerveau affamé",   color:"var(--lion)"},
-    loup:   {emoji:"🐺", name:"Loup",   pheno:"Intestin affamé",  color:"var(--loup)"},
-    renard: {emoji:"🦊", name:"Renard", pheno:"Faim émotionnelle", color:"var(--renard)"},
-    ours:   {emoji:"🐻", name:"Ours",   pheno:"Métabolisme lent",  color:"var(--ours)"}
+  var I18N = {
+    brand:{fr:"Mon Animal Minceur", en:"My Hunger Animal"},
+    h1:{fr:"Comment as-tu faim ?", en:"How do you get hungry?"},
+    lead:{fr:"Pour se sentir mieux durablement, il faut d'abord comprendre <b>pourquoi</b> tu manges. Réponds à 12 questions et découvre ton <b>type de faim</b> — un animal, ou deux.",
+          en:"To feel better for the long run, first understand <b>why</b> you eat. Answer 12 questions and discover your <b>hunger type</b> — one animal, or two."},
+    pill1:{fr:"⏱️ 2 minutes", en:"⏱️ 2 minutes"},
+    pill2:{fr:"🔒 Sans inscription", en:"🔒 No signup"},
+    pill3:{fr:"✅ Sans engagement", en:"✅ No commitment"},
+    start:{fr:"Découvrir mon animal", en:"Discover my animal"},
+    introFoot:{fr:"Inspiré des 4 profils de faim (recherche Mayo Clinic). Test de bien-être — pas un avis médical.",
+               en:"Inspired by the 4 hunger profiles (Mayo Clinic research). A wellness test — not medical advice."},
+
+    gateTitle:{fr:"Avant de commencer", en:"Before you start"},
+    discTitle:{fr:"🩺 C'est un test de bien-être", en:"🩺 This is a wellness test"},
+    disc1:{fr:"Ce test est informatif et ludique. Il s'inspire de travaux scientifiques mais ne constitue <b>pas</b> un diagnostic, un avis médical ni un traitement.",
+           en:"This test is informational and fun. It draws on scientific work but is <b>not</b> a diagnosis, medical advice, or treatment."},
+    disc2:{fr:"Les recommandations sont des suggestions générales que tu n'es pas tenu(e) de suivre. Consulte un professionnel de santé avant tout changement.",
+           en:"The recommendations are general suggestions you are not required to follow. Consult a health professional before making any change."},
+    agree:{fr:"J'ai 12 ans ou plus et j'ai compris qu'il s'agit d'un test de bien-être, pas d'un avis médical.",
+           en:"I am 12 or older and I understand this is a wellness test, not medical advice."},
+    continue:{fr:"Continuer", en:"Continue"},
+
+    authTitle:{fr:"Sauvegarder ton résultat ?", en:"Save your result?"},
+    authSub:{fr:"Crée un compte pour retrouver ton animal et ton programme — ou continue sans compte.",
+             en:"Create an account to keep your animal and program — or continue without one."},
+    apple:{fr:"Continuer avec Apple", en:"Continue with Apple"},
+    google:{fr:"Continuer avec Google", en:"Continue with Google"},
+    email:{fr:"Continuer avec l'e-mail", en:"Continue with email"},
+    or:{fr:"ou", en:"or"},
+    guest:{fr:"Continuer sans compte", en:"Continue as guest"},
+    authFoot:{fr:"Démo : les boutons de connexion sont simulés dans ce prototype.",
+              en:"Demo: sign-in buttons are simulated in this prototype."},
+
+    resEyebrow:{fr:"Ton type de faim", en:"Your hunger type"},
+    youAre:{fr:"Tu es un ", en:"You are a "},
+    withPart:{fr:"Profil « %P », avec une part de %S (%PS).", en:"“%P” profile, with a touch of %S (%PS)."},
+    single:{fr:"Profil « %P ». C'est ta façon dominante d'avoir faim.", en:"“%P” profile. This is your dominant way of getting hungry."},
+    secLead:{fr:"Ta part de %S : ", en:"Your %S side: "},
+    yourProgram:{fr:"Ton programme ", en:"Your program: "},
+    avoidLabel:{fr:"À limiter :", en:"Limit:"},
+    share:{fr:"📣 Partager mon animal", en:"📣 Share my animal"},
+    restart:{fr:"↺ Recommencer le test", en:"↺ Restart the test"},
+    shareTag:{fr:"Quel est ton type de faim ?", en:"What's your hunger type?"},
+    shareText:{fr:"Je suis un %N sur Mon Animal Minceur 🐾 Et toi, quel est ton type de faim ?",
+               en:"I'm a %N on My Hunger Animal 🐾 What's your hunger type?"},
+    copied:{fr:"Texte copié — colle-le dans tes stories !", en:"Text copied — paste it in your stories!"},
+    resDisc:{fr:"Outil éducatif, ne remplace pas un avis médical. Pour une démarche saine, vise un rythme progressif et consulte un(e) professionnel(le) de santé.",
+             en:"Educational tool, not a substitute for medical advice. For a healthy approach, aim for gradual progress and consult a health professional."}
   };
 
-  // Each option adds weight to one or more types
-  var QUESTIONS = [
-    {q:"À la fin d'un repas normal, comment te sens-tu ?", o:[
-      {t:"Encore un peu faim, je pourrais reprendre", s:{lion:2}},
-      {t:"Rassasié… mais j'ai de nouveau faim très vite", s:{loup:2}},
-      {t:"Ça dépend surtout de mon humeur", s:{renard:2}},
-      {t:"Bien calé longtemps, pourtant je prends du poids", s:{ours:2}}
+  var TYPES = {
+    lion:{emoji:"🦁", color:"var(--lion)", name:{fr:"Lion",en:"Lion"}, pheno:{fr:"Cerveau affamé",en:"Hungry Brain"}},
+    loup:{emoji:"🐺", color:"var(--loup)", name:{fr:"Loup",en:"Wolf"}, pheno:{fr:"Intestin affamé",en:"Hungry Gut"}},
+    renard:{emoji:"🦊", color:"var(--renard)", name:{fr:"Renard",en:"Fox"}, pheno:{fr:"Faim émotionnelle",en:"Emotional Hunger"}},
+    ours:{emoji:"🐻", color:"var(--ours)", name:{fr:"Ours",en:"Bear"}, pheno:{fr:"Métabolisme lent",en:"Slow Burn"}}
+  };
+
+  var Q = [
+    {q:{fr:"À la fin d'un repas normal, comment te sens-tu ?", en:"At the end of a normal meal, how do you feel?"}, o:[
+      {fr:"Encore un peu faim, je pourrais reprendre", en:"Still a bit hungry, I could have more", s:{lion:2}},
+      {fr:"Rassasié… mais j'ai de nouveau faim très vite", en:"Full… but hungry again very soon", s:{loup:2}},
+      {fr:"Ça dépend surtout de mon humeur", en:"It mostly depends on my mood", s:{renard:2}},
+      {fr:"Bien calé longtemps, pourtant je prends du poids", en:"Full for a long time, yet I gain weight", s:{ours:2}}
     ]},
-    {q:"Tes portions habituelles, c'est plutôt…", o:[
-      {t:"Grandes — il m'en faut beaucoup pour être calé", s:{lion:2}},
-      {t:"Normales, mais je grignote après", s:{loup:2}},
-      {t:"Variables, selon le stress et l'envie", s:{renard:2}},
-      {t:"Petites — je mange peu, en réalité", s:{ours:2}}
+    {q:{fr:"Tes portions habituelles, c'est plutôt…", en:"Your usual portions are rather…"}, o:[
+      {fr:"Grandes — il m'en faut beaucoup pour être calé", en:"Large — I need a lot to feel full", s:{lion:2}},
+      {fr:"Normales, mais je grignote après", en:"Normal, but I snack afterwards", s:{loup:2}},
+      {fr:"Variables, selon le stress et l'envie", en:"Variable, depending on stress and cravings", s:{renard:2}},
+      {fr:"Petites — je mange peu, en réalité", en:"Small — I actually eat little", s:{ours:2}}
     ]},
-    {q:"Combien de temps après un repas as-tu de nouveau faim ?", o:[
-      {t:"Moins de 2 heures", s:{loup:2}},
-      {t:"3 à 4 heures, c'est régulier", s:{lion:1}},
-      {t:"Je n'ai pas vraiment faim, je mange par habitude", s:{renard:2}},
-      {t:"J'ai peu faim, mais je stocke facilement", s:{ours:2}}
+    {q:{fr:"Combien de temps après un repas as-tu de nouveau faim ?", en:"How long after a meal are you hungry again?"}, o:[
+      {fr:"Moins de 2 heures", en:"Less than 2 hours", s:{loup:2}},
+      {fr:"3 à 4 heures, c'est régulier", en:"3 to 4 hours, quite regular", s:{lion:1}},
+      {fr:"Je n'ai pas vraiment faim, je mange par habitude", en:"I'm not really hungry, I eat out of habit", s:{renard:2}},
+      {fr:"J'ai peu faim, mais je stocke facilement", en:"Little hunger, but I store fat easily", s:{ours:2}}
     ]},
-    {q:"Quand tu es stressé(e), triste ou tu t'ennuies…", o:[
-      {t:"Je mange pour me réconforter", s:{renard:2}},
-      {t:"Je mange plus, en grande quantité", s:{renard:1,lion:1}},
-      {t:"Ça me coupe plutôt l'appétit", s:{ours:1}},
-      {t:"Aucun effet, je mange pareil", s:{loup:1}}
+    {q:{fr:"Quand tu es stressé(e), triste ou tu t'ennuies…", en:"When you're stressed, sad or bored…"}, o:[
+      {fr:"Je mange pour me réconforter", en:"I eat for comfort", s:{renard:2}},
+      {fr:"Je mange plus, en grande quantité", en:"I eat more, in large amounts", s:{renard:1,lion:1}},
+      {fr:"Ça me coupe plutôt l'appétit", en:"It kills my appetite", s:{ours:1}},
+      {fr:"Aucun effet, je mange pareil", en:"No effect, I eat the same", s:{loup:1}}
     ]},
-    {q:"Le grignotage entre les repas…", o:[
-      {t:"Souvent — un petit creux revient vite", s:{loup:2}},
-      {t:"Surtout par ennui ou émotion", s:{renard:2}},
-      {t:"De grosses quantités quand je m'y mets", s:{lion:2}},
-      {t:"Rarement, ce n'est pas mon truc", s:{ours:1}}
+    {q:{fr:"Le grignotage entre les repas…", en:"Snacking between meals…"}, o:[
+      {fr:"Souvent — un petit creux revient vite", en:"Often — hunger comes back quickly", s:{loup:2}},
+      {fr:"Surtout par ennui ou émotion", en:"Mostly from boredom or emotion", s:{renard:2}},
+      {fr:"De grosses quantités quand je m'y mets", en:"Big amounts when I get into it", s:{lion:2}},
+      {fr:"Rarement, ce n'est pas mon truc", en:"Rarely, it's not my thing", s:{ours:1}}
     ]},
-    {q:"Devant un buffet à volonté, tu te vois plutôt…", o:[
-      {t:"Me resservir plusieurs fois", s:{lion:2}},
-      {t:"Bien manger, puis avoir faim 2 h après", s:{loup:2}},
-      {t:"Manger selon l'ambiance et l'humeur", s:{renard:2}},
-      {t:"Manger peu, mais le corps stocke", s:{ours:2}}
+    {q:{fr:"Devant un buffet à volonté, tu te vois plutôt…", en:"At an all-you-can-eat buffet, you'd rather…"}, o:[
+      {fr:"Me resservir plusieurs fois", en:"Go back several times", s:{lion:2}},
+      {fr:"Bien manger, puis avoir faim 2 h après", en:"Eat well, then be hungry 2h later", s:{loup:2}},
+      {fr:"Manger selon l'ambiance et l'humeur", en:"Eat based on mood and vibe", s:{renard:2}},
+      {fr:"Manger peu, mais le corps stocke", en:"Eat little, but the body stores it", s:{ours:2}}
     ]},
-    {q:"Ton énergie au quotidien ?", o:[
-      {t:"Bonne, plutôt stable", s:{lion:1}},
-      {t:"Souvent fatigué(e), j'ai facilement froid", s:{ours:2}},
-      {t:"En dents de scie selon l'humeur", s:{renard:2}},
-      {t:"Basse quand j'ai faim, ça me déconcentre", s:{loup:2}}
+    {q:{fr:"Ton énergie au quotidien ?", en:"Your daily energy?"}, o:[
+      {fr:"Bonne, plutôt stable", en:"Good, fairly stable", s:{lion:1}},
+      {fr:"Souvent fatigué(e), j'ai facilement froid", en:"Often tired, I get cold easily", s:{ours:2}},
+      {fr:"En dents de scie selon l'humeur", en:"Up and down with my mood", s:{renard:2}},
+      {fr:"Basse quand j'ai faim, ça me déconcentre", en:"Low when hungry, it distracts me", s:{loup:2}}
     ]},
-    {q:"Ton niveau d'activité physique ?", o:[
-      {t:"Actif(ve) presque tous les jours", s:{lion:1}},
-      {t:"Sédentaire, je bouge peu", s:{ours:2}},
-      {t:"Ça dépend de ma motivation du moment", s:{renard:1}},
-      {t:"Variable, mais j'ai toujours faim après le sport", s:{loup:1}}
+    {q:{fr:"Ton niveau d'activité physique ?", en:"Your physical activity level?"}, o:[
+      {fr:"Actif(ve) presque tous les jours", en:"Active almost every day", s:{lion:1}},
+      {fr:"Sédentaire, je bouge peu", en:"Sedentary, I move little", s:{ours:2}},
+      {fr:"Ça dépend de ma motivation du moment", en:"Depends on my motivation", s:{renard:1}},
+      {fr:"Variable, mais j'ai toujours faim après le sport", en:"Variable, but always hungry after exercise", s:{loup:1}}
     ]},
-    {q:"Prends-tu du poids facilement, même en mangeant peu ?", o:[
-      {t:"Oui, clairement, c'est frustrant", s:{ours:2}},
-      {t:"Seulement quand je mange de grosses portions", s:{lion:2}},
-      {t:"Surtout quand je grignote par émotion", s:{renard:2}},
-      {t:"Quand j'ai des fringales incontrôlables", s:{loup:2}}
+    {q:{fr:"Prends-tu du poids facilement, même en mangeant peu ?", en:"Do you gain weight easily, even eating little?"}, o:[
+      {fr:"Oui, clairement, c'est frustrant", en:"Yes, clearly, it's frustrating", s:{ours:2}},
+      {fr:"Seulement quand je mange de grosses portions", en:"Only with big portions", s:{lion:2}},
+      {fr:"Surtout quand je grignote par émotion", en:"Mostly when I emotionally snack", s:{renard:2}},
+      {fr:"Quand j'ai des fringales incontrôlables", en:"When I get uncontrollable cravings", s:{loup:2}}
     ]},
-    {q:"Te réveilles-tu la nuit, ou très tôt, avec la faim ?", o:[
-      {t:"Oui, ça m'arrive souvent", s:{loup:2}},
-      {t:"Non, mais je mange tard le soir par envie", s:{renard:2}},
-      {t:"Non, je n'ai pas très faim le matin", s:{ours:1}},
-      {t:"Non, et le matin j'ai une grosse faim", s:{lion:1}}
+    {q:{fr:"Te réveilles-tu la nuit, ou très tôt, avec la faim ?", en:"Do you wake at night, or very early, hungry?"}, o:[
+      {fr:"Oui, ça m'arrive souvent", en:"Yes, often", s:{loup:2}},
+      {fr:"Non, mais je mange tard le soir par envie", en:"No, but I eat late at night by craving", s:{renard:2}},
+      {fr:"Non, je n'ai pas très faim le matin", en:"No, I'm not very hungry in the morning", s:{ours:1}},
+      {fr:"Non, et le matin j'ai une grosse faim", en:"No, and I'm very hungry in the morning", s:{lion:1}}
     ]},
-    {q:"Après avoir (trop) mangé, ressens-tu de la culpabilité ?", o:[
-      {t:"Oui, souvent", s:{renard:2}},
-      {t:"Seulement les jours où je me suis lâché(e)", s:{lion:1}},
-      {t:"Rarement", s:{loup:1}},
-      {t:"Non, mais je m'en veux de ne pas maigrir", s:{ours:1}}
+    {q:{fr:"Après avoir (trop) mangé, ressens-tu de la culpabilité ?", en:"After (over)eating, do you feel guilty?"}, o:[
+      {fr:"Oui, souvent", en:"Yes, often", s:{renard:2}},
+      {fr:"Seulement les jours où je me suis lâché(e)", en:"Only on days I let go", s:{lion:1}},
+      {fr:"Rarement", en:"Rarely", s:{loup:1}},
+      {fr:"Non, mais je m'en veux de ne pas maigrir", en:"No, but I'm frustrated I don't slim down", s:{ours:1}}
     ]},
-    {q:"Selon toi, qu'est-ce qui t'aiderait le plus à maigrir ?", o:[
-      {t:"Manger à ma faim, mais moins calorique", s:{lion:2}},
-      {t:"Tenir plus longtemps sans fringale", s:{loup:2}},
-      {t:"Mieux gérer mes émotions face à la nourriture", s:{renard:2}},
-      {t:"Relancer mon métabolisme et bouger plus", s:{ours:2}}
+    {q:{fr:"Selon toi, qu'est-ce qui t'aiderait le plus ?", en:"What do you think would help you most?"}, o:[
+      {fr:"Manger à ma faim, mais moins calorique", en:"Eat to my fill, but lower calorie", s:{lion:2}},
+      {fr:"Tenir plus longtemps sans fringale", en:"Last longer without cravings", s:{loup:2}},
+      {fr:"Mieux gérer mes émotions face à la nourriture", en:"Handle emotions around food better", s:{renard:2}},
+      {fr:"Relancer mon métabolisme et bouger plus", en:"Boost my metabolism and move more", s:{ours:2}}
     ]}
   ];
 
-  // Personalized programs per animal (compliant, non-medical)
   var PLANS = {
-    lion:{
-      why:"Ton cerveau réclame du volume avant de se sentir rassasié. La clé : manger à ta faim, mais avec des aliments qui remplissent l'assiette sans exploser les calories.",
-      tips:[
-        "Commence chaque repas par une grande portion de légumes ou une soupe.",
-        "Remplis la moitié de l'assiette de légumes, un quart de protéines, un quart de féculents.",
-        "Mise sur les aliments rassasiants et peu denses : légumes, fruits, légumineuses, protéines maigres.",
-        "Bois un grand verre d'eau avant de te resservir — laisse 10 min à la satiété."
-      ],
-      avoid:"les aliments très caloriques et peu volumineux (chips, sauces, sucreries) qui ne te calent jamais."
-    },
-    loup:{
-      why:"Ta satiété ne dure pas : la faim revient vite. L'objectif est de stabiliser ta glycémie pour tenir plus longtemps entre les repas.",
-      tips:[
-        "Mets des protéines à chaque repas (œufs, poisson, volaille, tofu, yaourt grec).",
-        "Ajoute des fibres et des bonnes graisses (légumes, avoine, oléagineux) qui ralentissent la digestion.",
-        "Structure 3 vrais repas plutôt que de multiplier les grignotages.",
-        "Évite les sucres rapides seuls : ils créent un pic puis une fringale."
-      ],
-      avoid:"les collations sucrées à jeun (viennoiseries, sodas, bonbons) qui relancent la faim une heure après."
-    },
-    renard:{
-      why:"Ta faim est souvent déclenchée par les émotions, pas par le corps. Apprendre à repérer et détourner ces envies change tout.",
-      tips:[
-        "Avant de manger, demande-toi : « Faim du ventre, ou de la tête ? »",
-        "Repère tes déclencheurs (stress, ennui, fatigue) et note-les 3 jours.",
-        "Prépare une alternative rapide : marche de 5 min, respiration, verre d'eau, appel à un proche.",
-        "Mange en pleine conscience, sans écran, pour vraiment ressentir la satiété."
-      ],
-      avoid:"le grignotage automatique devant les écrans — sers-toi une portion dans une assiette, jamais à même le paquet."
-    },
-    ours:{
-      why:"Ton corps brûle lentement : tu peux grossir en mangeant peu. La priorité n'est pas de manger moins, mais de réveiller ton métabolisme.",
-      tips:[
-        "Bouge chaque jour : vise 7 000–10 000 pas, en augmentant progressivement.",
-        "Ajoute 2 séances de renforcement musculaire par semaine — le muscle brûle plus au repos.",
-        "Soigne ton sommeil (7–8 h) : le manque de sommeil ralentit le métabolisme.",
-        "Garde assez de protéines pour préserver ta masse musculaire pendant la perte de poids."
-      ],
-      avoid:"les régimes trop restrictifs : ils ralentissent encore ton métabolisme et provoquent l'effet yo-yo."
-    }
+    lion:{why:{fr:"Ton cerveau réclame du volume avant de se sentir rassasié. La clé : manger à ta faim, mais avec des aliments qui remplissent l'assiette sans exploser les calories.",
+               en:"Your brain wants volume before feeling full. The key: eat to your fill, but with foods that fill the plate without piling on calories."},
+      tips:{fr:["Commence chaque repas par une grande portion de légumes ou une soupe.","Moitié de l'assiette en légumes, un quart de protéines, un quart de féculents.","Mise sur les aliments rassasiants et peu denses : légumes, fruits, légumineuses, protéines maigres.","Bois un grand verre d'eau et laisse 10 min avant de te resservir."],
+            en:["Start each meal with a big portion of vegetables or a soup.","Half the plate vegetables, a quarter protein, a quarter starch.","Favor filling, low-density foods: vegetables, fruit, legumes, lean protein.","Drink a big glass of water and wait 10 min before seconds."]},
+      avoid:{fr:"les aliments très caloriques et peu volumineux (chips, sauces, sucreries) qui ne te calent jamais.",
+             en:"very calorie-dense, low-volume foods (chips, sauces, sweets) that never fill you up."}},
+    loup:{why:{fr:"Ta satiété ne dure pas : la faim revient vite. L'objectif est de stabiliser ta glycémie pour tenir plus longtemps entre les repas.",
+               en:"Your fullness doesn't last: hunger returns fast. The goal is to steady your blood sugar to last longer between meals."},
+      tips:{fr:["Des protéines à chaque repas (œufs, poisson, volaille, tofu, yaourt grec).","Ajoute fibres et bonnes graisses (légumes, avoine, oléagineux) qui ralentissent la digestion.","Structure 3 vrais repas plutôt que de multiplier les grignotages.","Évite les sucres rapides seuls : ils créent un pic puis une fringale."],
+            en:["Protein at every meal (eggs, fish, poultry, tofu, Greek yogurt).","Add fiber and good fats (vegetables, oats, nuts) that slow digestion.","Build 3 real meals instead of constant snacking.","Avoid fast sugars alone: they spike then crash into cravings."]},
+      avoid:{fr:"les collations sucrées à jeun (viennoiseries, sodas, bonbons) qui relancent la faim une heure après.",
+             en:"sugary snacks on an empty stomach (pastries, sodas, candy) that reignite hunger an hour later."}},
+    renard:{why:{fr:"Ta faim est souvent déclenchée par les émotions, pas par le corps. Apprendre à repérer et détourner ces envies change tout.",
+                 en:"Your hunger is often triggered by emotions, not the body. Learning to spot and redirect those urges changes everything."},
+      tips:{fr:["Avant de manger, demande-toi : « Faim du ventre, ou de la tête ? »","Repère tes déclencheurs (stress, ennui, fatigue) et note-les 3 jours.","Prépare une alternative rapide : marche de 5 min, respiration, verre d'eau, appel à un proche.","Mange sans écran pour vraiment ressentir la satiété."],
+            en:["Before eating, ask: “Belly hunger, or head hunger?”","Spot your triggers (stress, boredom, fatigue) and log them for 3 days.","Prepare a quick alternative: 5-min walk, breathing, glass of water, call a friend.","Eat screen-free to truly feel fullness."]},
+      avoid:{fr:"le grignotage automatique devant les écrans — sers-toi une portion dans une assiette, jamais à même le paquet.",
+             en:"mindless snacking in front of screens — serve a portion on a plate, never from the bag."}},
+    ours:{why:{fr:"Ton corps brûle lentement : tu peux grossir en mangeant peu. La priorité n'est pas de manger moins, mais de réveiller ton métabolisme.",
+               en:"Your body burns slowly: you can gain weight eating little. The priority isn't eating less, but waking up your metabolism."},
+      tips:{fr:["Bouge chaque jour : vise 7 000–10 000 pas, en augmentant progressivement.","Ajoute 2 séances de renforcement musculaire par semaine — le muscle brûle plus au repos.","Soigne ton sommeil (7–8 h) : le manque de sommeil ralentit le métabolisme.","Garde assez de protéines pour préserver ta masse musculaire."],
+            en:["Move daily: aim for 7,000–10,000 steps, increasing gradually.","Add 2 strength sessions per week — muscle burns more at rest.","Protect your sleep (7–8h): poor sleep slows metabolism.","Keep enough protein to preserve muscle mass."]},
+      avoid:{fr:"les régimes trop restrictifs : ils ralentissent encore ton métabolisme et provoquent l'effet yo-yo.",
+             en:"overly restrictive diets: they slow your metabolism further and cause the yo-yo effect."}}
   };
 
-  var state = {idx:0, answers:[]};
-  var $ = function(id){return document.getElementById(id)};
-  var screens = {intro:$("intro"), question:$("question"), result:$("result")};
+  var state={idx:0, answers:[], result:null};
+  var $=function(id){return document.getElementById(id)};
+  var screens={intro:$("intro"),gate:$("gate"),auth:$("auth"),question:$("question"),result:$("result")};
+  function T(k){return I18N[k] ? I18N[k][LANG] : k}
+
+  function applyStatic(){
+    document.documentElement.lang = LANG;
+    $("brandName").textContent = T("brand");
+    document.querySelectorAll("[data-i]").forEach(function(el){ el.innerHTML = T(el.getAttribute("data-i")); });
+  }
 
   function show(name){
     Object.keys(screens).forEach(function(k){screens[k].classList.toggle("active", k===name)});
     window.scrollTo(0,0);
   }
 
+  function setLang(l){
+    LANG=l;
+    $("langFr").classList.toggle("on", l==="fr");
+    $("langEn").classList.toggle("on", l==="en");
+    applyStatic();
+    if(screens.question.classList.contains("active")) renderQuestion();
+    if(screens.result.classList.contains("active") && state.result) renderResult(state.result);
+  }
+
   function renderQuestion(){
-    var Q = QUESTIONS[state.idx];
-    $("q-title").textContent = Q.q;
-    $("count").textContent = (state.idx+1) + " / " + QUESTIONS.length;
-    $("bar").style.width = ((state.idx)/QUESTIONS.length*100) + "%";
-    $("back").classList.toggle("show", state.idx>0);
-    var box = $("options"); box.innerHTML = "";
-    Q.o.forEach(function(opt, i){
-      var b = document.createElement("button");
-      b.className = "opt" + (state.answers[state.idx]===i ? " sel":"");
-      b.innerHTML = '<span class="dot"></span><span>'+opt.t+'</span>';
-      b.addEventListener("click", function(){ choose(i); });
+    var q=Q[state.idx];
+    $("q-title").textContent=q.q[LANG];
+    $("count").textContent=(state.idx+1)+" / "+Q.length;
+    $("bar").style.width=((state.idx)/Q.length*100)+"%";
+    $("back").classList.add("show");
+    var box=$("options"); box.innerHTML="";
+    q.o.forEach(function(opt,i){
+      var b=document.createElement("button");
+      b.className="opt"+(state.answers[state.idx]===i?" sel":"");
+      b.innerHTML='<span class="dot"></span><span>'+opt[LANG]+'</span>';
+      b.addEventListener("click",function(){choose(i)});
       box.appendChild(b);
     });
   }
 
   function choose(i){
-    state.answers[state.idx] = i;
-    var opts = $("options").children;
-    for(var k=0;k<opts.length;k++) opts[k].classList.toggle("sel", k===i);
+    state.answers[state.idx]=i;
+    var opts=$("options").children;
+    for(var k=0;k<opts.length;k++) opts[k].classList.toggle("sel",k===i);
     setTimeout(function(){
-      if(state.idx < QUESTIONS.length-1){ state.idx++; renderQuestion(); }
+      if(state.idx<Q.length-1){state.idx++; renderQuestion();}
       else finish();
-    }, 240);
-  }
-
-  function computeScores(){
-    var sc = {lion:0, loup:0, renard:0, ours:0};
-    state.answers.forEach(function(ai, qi){
-      var s = QUESTIONS[qi].o[ai].s;
-      for(var t in s) sc[t]+=s[t];
-    });
-    return sc;
+    },240);
   }
 
   function finish(){
-    $("bar").style.width = "100%";
-    var sc = computeScores();
-    var order = Object.keys(sc).sort(function(a,b){return sc[b]-sc[a]});
-    var dom = order[0], sec = order[1];
-    var hasSec = sc[sec] > 0 && sc[sec] >= 0.6*sc[dom];
-    var max = sc[dom] || 1;
-
-    // hero
-    var big = $("badgeBig");
-    big.style.background = "color-mix(in srgb, "+TYPES[dom].color+" 20%, var(--surface))";
-    big.innerHTML = TYPES[dom].emoji + (hasSec ? '<span class="badge-sec">'+TYPES[sec].emoji+'</span>' : '');
-    $("resName").textContent = hasSec
-      ? TYPES[dom].name + " · " + TYPES[sec].name
-      : "Tu es un " + TYPES[dom].name;
-    $("resSub").textContent = hasSec
-      ? "Profil « "+TYPES[dom].pheno.toLowerCase()+" », avec une part de "+TYPES[sec].name+" ("+TYPES[sec].pheno.toLowerCase()+")."
-      : "Profil « "+TYPES[dom].pheno.toLowerCase()+" ». C'est ta façon dominante d'avoir faim.";
-
-    // bars
-    var bars = $("bars"); bars.innerHTML = "";
-    order.forEach(function(t){
-      var pct = Math.round(sc[t]/max*100);
-      var row = document.createElement("div");
-      row.className = "bar-row";
-      row.innerHTML =
-        '<span class="lab">'+TYPES[t].emoji+' '+TYPES[t].name+'</span>'+
-        '<span class="bar-track"><i style="background:'+TYPES[t].color+'"></i></span>'+
-        '<span class="pct">'+pct+'%</span>';
-      bars.appendChild(row);
-      requestAnimationFrame(function(){
-        setTimeout(function(){ row.querySelector("i").style.width = pct+"%"; }, 60);
-      });
-    });
-
-    // plan card (dominant)
-    var P = PLANS[dom];
-    var card = $("planCard");
-    card.innerHTML =
-      '<div class="kicker"><span class="em">'+TYPES[dom].emoji+'</span> Ton programme '+TYPES[dom].name+'</div>'+
-      '<p class="why">'+P.why+'</p>'+
-      '<ul class="plan">'+P.tips.map(function(x){return '<li><span class="ic">✓</span><span>'+x+'</span></li>'}).join("")+'</ul>'+
-      '<p class="avoid">🚫 <b>À limiter :</b> '+P.avoid+'</p>';
-
-    // secondary short note
-    var secBlock = $("secBlock");
-    if(hasSec){
-      var S = PLANS[sec];
-      secBlock.innerHTML =
-        '<div class="sec-note">➕ <b>Ta part de '+TYPES[sec].name+' :</b> '+S.tips[0].charAt(0).toLowerCase()+S.tips[0].slice(1)+'</div>';
-    } else secBlock.innerHTML = "";
-
+    $("bar").style.width="100%";
+    var sc={lion:0,loup:0,renard:0,ours:0};
+    state.answers.forEach(function(ai,qi){var s=Q[qi].o[ai].s; for(var t in s) sc[t]+=s[t];});
+    var order=Object.keys(sc).sort(function(a,b){return sc[b]-sc[a]});
+    var dom=order[0], sec=order[1];
+    var hasSec= sc[sec]>0 && sc[sec]>=0.6*sc[dom];
+    state.result={sc:sc, order:order, dom:dom, sec:sec, hasSec:hasSec};
+    renderResult(state.result);
     show("result");
   }
 
+  function renderResult(R){
+    var dom=R.dom, sec=R.sec, sc=R.sc, order=R.order, hasSec=R.hasSec;
+    var max=sc[dom]||1;
+    var domName=TYPES[dom].name[LANG], secName=TYPES[sec].name[LANG];
+
+    var big=$("badgeBig");
+    big.style.background="color-mix(in srgb, "+TYPES[dom].color+" 20%, var(--surface))";
+    big.innerHTML=TYPES[dom].emoji+(hasSec?'<span class="badge-sec">'+TYPES[sec].emoji+'</span>':'');
+    $("resName").textContent= hasSec ? domName+" · "+secName : T("youAre")+domName;
+    $("resSub").textContent= hasSec
+      ? T("withPart").replace("%P",TYPES[dom].pheno[LANG]).replace("%S",secName).replace("%PS",TYPES[sec].pheno[LANG])
+      : T("single").replace("%P",TYPES[dom].pheno[LANG]);
+
+    var bars=$("bars"); bars.innerHTML="";
+    order.forEach(function(t){
+      var pct=Math.round(sc[t]/max*100);
+      var row=document.createElement("div"); row.className="bar-row";
+      row.innerHTML='<span class="lab">'+TYPES[t].emoji+' '+TYPES[t].name[LANG]+'</span>'+
+        '<span class="bar-track"><i style="background:'+TYPES[t].color+'"></i></span>'+
+        '<span class="pct">'+pct+'%</span>';
+      bars.appendChild(row);
+      (function(r,p){ requestAnimationFrame(function(){ setTimeout(function(){ r.querySelector("i").style.width=p+"%"; },60); }); })(row,pct);
+    });
+
+    var P=PLANS[dom];
+    $("planCard").innerHTML=
+      '<div class="kicker"><span class="em">'+TYPES[dom].emoji+'</span> '+T("yourProgram")+domName+'</div>'+
+      '<p class="why">'+P.why[LANG]+'</p>'+
+      '<ul class="plan">'+P.tips[LANG].map(function(x){return '<li><span class="ic">✓</span><span>'+x+'</span></li>'}).join("")+'</ul>'+
+      '<p class="avoid">🚫 <b>'+T("avoidLabel")+'</b> '+P.avoid[LANG]+'</p>';
+
+    if(hasSec){
+      var s0=PLANS[sec].tips[LANG][0];
+      $("secBlock").innerHTML='<div class="sec-note">➕ <b>'+T("secLead").replace("%S",secName)+'</b>'+s0.charAt(0).toLowerCase()+s0.slice(1)+'</div>';
+    } else $("secBlock").innerHTML="";
+
+    // shareable card
+    var label = hasSec ? domName+" + "+secName : domName;
+    $("scEmojis").textContent = hasSec ? TYPES[dom].emoji+" "+TYPES[sec].emoji : TYPES[dom].emoji;
+    $("scName").textContent = label;
+    $("scTag").textContent = T("shareTag");
+    var c1=getComputedStyle(document.documentElement).getPropertyValue(TYPES[dom].color.replace(/var\(|\)/g,"")).trim()||"#2F7D5B";
+    var c2= hasSec ? (getComputedStyle(document.documentElement).getPropertyValue(TYPES[sec].color.replace(/var\(|\)/g,"")).trim()||c1) : c1;
+    $("shareCard").style.background="linear-gradient(135deg,"+c1+","+c2+")";
+
+    // share button
+    $("share").onclick=function(){
+      var label2 = hasSec ? domName+" + "+secName : domName;
+      var txt=T("shareText").replace("%N",label2);
+      if(navigator.share){ navigator.share({title:T("brand"), text:txt}).catch(function(){}); }
+      else if(navigator.clipboard){ navigator.clipboard.writeText(txt).then(function(){ alert(T("copied")); }); }
+      else { alert(txt); }
+    };
+  }
+
   // Navigation
-  $("start").addEventListener("click", function(){
-    state.idx=0; state.answers=[];
-    $("progress").style.display="block";
-    renderQuestion(); show("question");
+  $("langFr").addEventListener("click",function(){setLang("fr")});
+  $("langEn").addEventListener("click",function(){setLang("en")});
+  $("start").addEventListener("click",function(){ show("gate"); $("count").textContent=""; });
+  $("agree").addEventListener("change",function(){ $("gateNext").disabled=!this.checked; });
+  $("gateNext").addEventListener("click",function(){ show("auth"); });
+  document.querySelectorAll("[data-go]").forEach(function(b){
+    b.addEventListener("click",function(){
+      state.idx=0; state.answers=[]; state.result=null;
+      $("progress").style.display="block";
+      renderQuestion(); show("question");
+    });
   });
-  $("back").addEventListener("click", function(){
-    if(state.idx>0){ state.idx--; renderQuestion(); }
+  $("back").addEventListener("click",function(){
+    if(state.idx>0){state.idx--; renderQuestion();}
+    else { $("progress").style.display="none"; show("auth"); }
   });
-  $("restart").addEventListener("click", function(){
-    state.idx=0; state.answers=[]; $("count").textContent="";
-    $("progress").style.display="none";
+  $("restart").addEventListener("click",function(){
+    state.idx=0; state.answers=[]; state.result=null; $("count").textContent="";
+    $("progress").style.display="none"; $("agree").checked=false; $("gateNext").disabled=true;
     show("intro");
   });
+
+  applyStatic();
 })();
 </script>

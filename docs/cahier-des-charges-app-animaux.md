@@ -4,12 +4,17 @@
 > l'utilisateur, via un questionnaire, avec un programme personnalisé généré
 > par IA.
 
-**Version :** 2.0 · **Date :** 2026-07-26 · **Statut :** MVP à développer
+**Version :** 3.0 (global) · **Date :** 2026-07-26 · **Statut :** MVP à développer
 
 > **Nouveautés v2.0 :** authentification (Apple/Google/email + invité) §12,
 > conditions générales & confidentialité §13, disclaimers & limitation de
 > responsabilité §14, stratégie Go-to-Market & ASO §15, contenu opérationnel de
 > lancement §16, indicateurs de succès §17.
+>
+> **Nouveautés v3.0 (lancement mondial) :** conformité dispositifs médicaux par
+> pays/région — FDA, Swissmedic, UE, UK, Canada, Australie, Japon… §18 ;
+> protection des données par juridiction §19 ; **mineurs 12+ — obligations &
+> alertes** §20 ; internationalisation FR/EN & déploiement mondial §21.
 
 ---
 
@@ -547,9 +552,155 @@ d'abord le funnel en organique.
 
 ---
 
+---
+
+## 18. Conformité « dispositif médical » — stratégie mondiale
+
+> ⚠️ **Avertissement : ce ne sont pas des conseils juridiques.** Ce tableau
+> donne la logique de conformité par marché. La qualification finale dépend des
+> **allégations exactes** et doit être **confirmée par un conseil réglementaire
+> local** dans chaque pays visé.
+
+### 18.1 La stratégie unique qui vaut partout : rester « bien-être »
+Tous les régulateurs (US, UE, Suisse, UK, Canada, Australie, Japon…) appliquent
+la même logique : **un logiciel devient « dispositif médical » selon sa finalité
+et ses allégations**. Un logiciel destiné à **diagnostiquer, traiter, prévenir
+ou guérir une maladie** est régulé. Un logiciel de **bien-être / mode de vie**
+qui ne fait **aucune allégation médicale** est hors champ presque partout.
+
+**Notre positionnement, valable mondialement :**
+- ✅ Bien-être, éducation, mieux comprendre sa faim, habitudes saines.
+- ❌ Jamais : « diagnostiquer », « traiter l'obésité », « soigner », « prévenir
+  une maladie », ni allégation chiffrée de perte de poids.
+- ✅ La recherche (Mayo Clinic) est citée comme **inspiration**, pas comme
+  dispositif validé cliniquement.
+
+### 18.2 Cartographie par marché (logiciel santé / SaMD)
+| Marché | Autorité | Cadre | Voie recommandée |
+|---|---|---|---|
+| **États-Unis** | **FDA** | SaMD ; **politique « General Wellness »** (produits bien-être bas risque, sans référence à une maladie = non activement régulés) | Rester dans le périmètre « general wellness ». Pas de soumission FDA si aucune allégation médicale. |
+| **Union européenne** | Autorités nationales + Commission | **MDR 2017/745** ; guide **MDCG 2019-11** (qualification des logiciels) | Pas de « finalité médicale » → hors MDR, pas de marquage CE médical. |
+| **Suisse** | **Swissmedic** | **ODim / MedDO** (aligné sur le MDR) | Même logique : bien-être = hors champ Swissmedic. |
+| **Royaume-Uni** | **MHRA** | UK MDR 2002 + marquage **UKCA** | Carve-out bien-être ; pas de dispositif si pas de finalité médicale. |
+| **Canada** | **Santé Canada** | Medical Devices Regulations | Logiciel bien-être hors licence de dispositif. |
+| **Australie** | **TGA** | Therapeutic Goods ; exclusions logiciels | Bénéficier des exclusions/exemptions « wellness ». |
+| **Japon** | **PMDA / MHLW** | PMD Act | Non-médical si pas d'allégation thérapeutique. |
+| **Reste du monde** | Régulateurs locaux | Logique SaMD similaire (souvent calquée sur IMDRF) | Même stratégie « bien-être », confirmée localement. |
+
+### 18.3 Règles d'or produit (pour rester non-médical partout)
+1. **Copie & marketing audités** : bannir tout vocabulaire médical (voir liste
+   noire dans le guide de style à produire).
+2. **Disclaimer omniprésent** (§14) traduit dans chaque langue.
+3. **Pas de fonctions médicales** : pas de calcul de risque de maladie, pas de
+   lien avec des dispositifs médicaux/objets connectés santé au MVP.
+4. **Revue réglementaire par lot de marchés** avant chaque expansion.
+
+---
+
+## 19. Protection des données — par juridiction (lancement mondial)
+
+> ⚠️ Non juridique. Structure de conformité multi-régions. Un **DPO/avocat data**
+> par grande région est requis.
+
+| Région | Loi principale | Points spécifiques à gérer |
+|---|---|---|
+| **UE / EEE** | **RGPD** | Base légale, consentement données de santé, droits, registre, DPO si nécessaire. |
+| **Royaume-Uni** | **UK GDPR + DPA 2018** | + **Children's Code (AADC)** si mineurs. |
+| **Suisse** | **nLPD / revDSG** | Représentant en Suisse possible ; proche du RGPD. |
+| **États-Unis** | **CCPA/CPRA** (Californie) + lois d'État (VA, CO, CT…) ; **COPPA** (<13 ans) | Pas de « vente » de données santé ; opt-out ; **HIPAA ne s'applique pas** à une app grand public (pas d'entité couverte) — ne pas le prétendre. |
+| **Canada** | **PIPEDA** (+ Loi 25 Québec) | Consentement, transparence. |
+| **Brésil** | **LGPD** | Base légale, DPO local. |
+| **Japon** | **APPI** | Transferts, consentement. |
+| **Autres** | LGPD-like locales | Vérifier avant chaque marché. |
+
+**Principes transversaux (privacy by design) :**
+- **Minimisation** stricte (§12.4) et **chiffrement** au repos et en transit.
+- **Hébergement UE** par défaut, régionalisation possible ensuite.
+- **Bandeau de consentement** granulaire (santé, analytics, marketing, ATT).
+- **Suppression de compte in-app** partout.
+- **Cartographie des sous-traitants** identique par région (dont API Claude).
+
+---
+
+## 20. Mineurs (âge minimum 12 ans) — obligations & alertes
+
+> 🔴 **Alerte d'expert (à lire absolument).** Fixer l'âge minimum à **12 ans**
+> pour une app **de perte de poids** cumule trois risques majeurs. Ce cahier des
+> charges documente les exigences si vous maintenez 12+, **mais recommande** soit
+> **16+**, soit un **12+ recadré « habitudes saines / bien-être », sans aucun
+> discours minceur pour les mineurs.**
+
+### 20.1 Les trois risques du 12+
+1. **Juridique — données d'enfants.** Aux US, collecter des données de moins de
+   13 ans déclenche **COPPA** (consentement parental vérifiable, restrictions
+   lourdes). En UE, âge du consentement numérique **13–16 ans** selon le pays.
+   UK/Californie : **Age Appropriate Design Codes** (protection renforcée des
+   <18 ans).
+2. **Stores.** Apple/Google peuvent **refuser** ou restreindre une app de
+   régime/minceur destinée aux mineurs, et exiger une classification d'âge
+   élevée. Apple sanctionne les incitations à une perte de poids rapide.
+3. **Santé & éthique — TCA.** Promouvoir la « minceur » à des enfants de 12 ans
+   est un **facteur de risque de troubles du comportement alimentaire**.
+   Réputation et responsabilité majeures.
+
+### 20.2 Si vous maintenez 12+ : exigences minimales
+- **Recadrage du contenu pour les mineurs** : « comprendre sa faim / bouger /
+  bien manger », **pas** « maigrir / perdre X kg ».
+- **Vérification d'âge** à l'entrée (date de naissance) + **consentement
+  parental vérifiable** pour les <13 ans (US) et selon l'âge local en UE.
+- **Mode mineur** : pas de suivi de poids/objectif de perte, pas de contenu
+  restrictif, garde-fous **anti-TCA** renforcés (détection + redirection vers
+  aide + lignes d'écoute par pays).
+- **Pas de publicité comportementale** ni de marketing ciblant les mineurs.
+- **Design conforme AADC** (UK/Californie) : paramètres protecteurs par défaut.
+
+### 20.3 Recommandation par défaut du cahier des charges
+- **Option A (recommandée) : 16+** → supprime COPPA, simplifie les stores et
+  écarte le risque TCA principal. Positionnement minceur possible.
+- **Option B : 12+ « bien-être famille »** → contenu mineur recadré + garde-fous
+  ci-dessus + validation juridique par marché.
+- **Décision à acter par le porteur du projet, avec avis médical + juridique.**
+
+---
+
+## 21. Internationalisation (FR/EN) & déploiement mondial
+
+### 21.1 Langues
+- **MVP : Français + Anglais** (chaîne de traduction complète : UI, questions,
+  résultats, programmes, disclaimers, CGU, fiches store).
+- Architecture **i18n dès le départ** (fichiers de traduction externalisés,
+  aucune chaîne en dur), format **ICU** pour pluriels/genres.
+- Détection auto de la langue du téléphone + sélecteur manuel FR/EN.
+- Extensions faciles ensuite : ES, DE, IT, PT, puis autres.
+
+### 21.2 Adaptations locales
+- **Unités** : kg/cm (métrique) et **lb/ft-in** (US/UK) — sélection auto.
+- **Formats** date/heure/nombres par locale.
+- **Prix** par pays via RevenueCat (parité de pouvoir d'achat).
+- **Disclaimers & ressources d'aide (TCA)** localisés par pays.
+- **Textes légaux** adaptés par juridiction (§18-20).
+
+### 21.3 Déploiement mondial par vagues (soft launch → scale)
+1. **Vague 1 — pilote :** 1-2 pays anglophones à faible coût média (ex. Canada,
+   Australie) pour tester le funnel **avant** le gros budget.
+2. **Vague 2 :** **US** (marché clé, gros volume) + **France** + **Suisse**.
+3. **Vague 3 :** reste de l'**Europe** (via localisations), puis
+   **international**.
+4. À chaque vague : **revue réglementaire + data + langue** du/des marché(s)
+   avant ouverture. On n'ouvre pas un pays sans sa conformité.
+
+> Publier « dans toutes les régions du monde » d'un coup est **déconseillé** :
+> risque légal non maîtrisé + budget dispersé. Le rollout par vagues protège et
+> optimise le coût d'acquisition.
+
+---
+
 *Document rédigé sans hallucination : les éléments non vérifiables sont
 explicitement signalés comme choix produit ou comme à valider par un
-professionnel. Les sections juridiques (§13-14) donnent la structure et le
-contenu attendu mais **ne remplacent pas la validation par un avocat**
-spécialisé (santé + protection des données, UE et Suisse). « SDI » n'a pas été
-intégré faute d'identification fiable — à préciser par le porteur du projet.*
+professionnel. Les sections réglementaires et juridiques (§13-14, §18-20)
+donnent la structure et la logique de conformité mais **ne remplacent pas la
+validation par des conseils spécialisés** (réglementaire dispositifs médicaux +
+protection des données) **dans chaque marché visé**. « SDI » n'a pas été intégré
+faute d'identification fiable — à préciser par le porteur du projet. Le choix de
+l'âge minimum (12+ vs 16+) engage la responsabilité du porteur et doit être
+arrêté avec un avis médical et juridique (§20).*
