@@ -1,0 +1,456 @@
+<title>Mon Animal Minceur — Quel est ton type de faim ?</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+  :root{
+    --ground:#FBFAF6; --surface:#FFFFFF; --surface-2:#F5F2EA;
+    --ink:#211E17; --muted:#6E695D; --line:#E9E5DB;
+    --accent:#2F7D5B; --accent-soft:#DCEEE4;
+    --lion:#DB9A15; --loup:#587891; --renard:#DF6335; --ours:#9A6B3F;
+    --shadow:0 1px 2px rgba(30,25,15,.05), 0 12px 30px -12px rgba(30,25,15,.18);
+    --font-display:ui-rounded,"SF Pro Rounded","Hiragino Maru Gothic ProN",system-ui,-apple-system,sans-serif;
+    --font-body:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --r:18px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ground:#141210; --surface:#1E1B16; --surface-2:#26221B;
+      --ink:#F3EFE5; --muted:#A6A092; --line:#332F28;
+      --accent:#54BB8B; --accent-soft:#1E3329;
+      --lion:#EBB43C; --loup:#7C9CB6; --renard:#EE7A4E; --ours:#C08A54;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 16px 40px -16px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="light"]{
+    --ground:#FBFAF6; --surface:#FFFFFF; --surface-2:#F5F2EA;
+    --ink:#211E17; --muted:#6E695D; --line:#E9E5DB;
+    --accent:#2F7D5B; --accent-soft:#DCEEE4;
+    --lion:#DB9A15; --loup:#587891; --renard:#DF6335; --ours:#9A6B3F;
+    --shadow:0 1px 2px rgba(30,25,15,.05), 0 12px 30px -12px rgba(30,25,15,.18);
+  }
+  :root[data-theme="dark"]{
+    --ground:#141210; --surface:#1E1B16; --surface-2:#26221B;
+    --ink:#F3EFE5; --muted:#A6A092; --line:#332F28;
+    --accent:#54BB8B; --accent-soft:#1E3329;
+    --lion:#EBB43C; --loup:#7C9CB6; --renard:#EE7A4E; --ours:#C08A54;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 16px 40px -16px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:var(--font-body); line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    display:flex; justify-content:center;
+    padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));
+    min-height:100dvh;
+  }
+  .app{
+    width:100%; max-width:440px; display:flex; flex-direction:column;
+  }
+
+  /* ---- Top bar ---- */
+  .top{display:flex; align-items:center; gap:12px; min-height:44px; margin-bottom:14px}
+  .brand{display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-weight:700; letter-spacing:-.01em}
+  .brand .paw{font-size:20px}
+  .back{
+    appearance:none; border:1px solid var(--line); background:var(--surface); color:var(--ink);
+    width:38px; height:38px; border-radius:12px; font-size:18px; cursor:pointer; display:none;
+    align-items:center; justify-content:center; transition:background .15s;
+  }
+  .back:hover{background:var(--surface-2)}
+  .back.show{display:inline-flex}
+  .spacer{flex:1}
+  .count{font-size:13px; color:var(--muted); font-variant-numeric:tabular-nums}
+
+  /* ---- Progress ---- */
+  .progress{height:6px; background:var(--surface-2); border-radius:99px; overflow:hidden; margin-bottom:22px}
+  .progress > i{display:block; height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+  /* ---- Screens ---- */
+  .screen{display:none}
+  .screen.active{display:block; animation:fade .35s ease both}
+  @keyframes fade{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+
+  /* ---- Intro ---- */
+  .hero-badges{display:flex; justify-content:center; gap:6px; margin:6px 0 20px}
+  .hero-badges span{
+    font-size:30px; width:56px; height:56px; border-radius:50%; display:grid; place-items:center;
+    background:var(--surface); box-shadow:var(--shadow);
+  }
+  .hero-badges span:nth-child(1){transform:translateY(4px) rotate(-6deg)}
+  .hero-badges span:nth-child(3){transform:translateY(4px) rotate(6deg)}
+  h1{font-family:var(--font-display); font-size:29px; line-height:1.12; letter-spacing:-.02em; text-wrap:balance; margin:0 0 12px}
+  .lead{color:var(--muted); font-size:16px; margin:0 0 22px}
+  .lead b{color:var(--ink); font-weight:600}
+  .pills{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:26px}
+  .pill{font-size:13px; padding:7px 12px; border-radius:99px; background:var(--accent-soft); color:var(--accent); font-weight:600}
+
+  /* ---- Buttons ---- */
+  .cta{
+    appearance:none; border:none; cursor:pointer; width:100%;
+    font-family:var(--font-display); font-weight:700; font-size:17px;
+    background:var(--accent); color:#fff; padding:16px; border-radius:14px;
+    box-shadow:var(--shadow); transition:transform .12s, filter .15s;
+  }
+  .cta:hover{filter:brightness(1.05)}
+  .cta:active{transform:scale(.985)}
+  .cta.ghost{background:var(--surface); color:var(--ink); border:1px solid var(--line); box-shadow:none}
+  .microcopy{text-align:center; font-size:12.5px; color:var(--muted); margin-top:12px}
+
+  /* ---- Question ---- */
+  .q-title{font-family:var(--font-display); font-size:22px; line-height:1.22; letter-spacing:-.01em; text-wrap:balance; margin:0 0 20px}
+  .options{display:flex; flex-direction:column; gap:10px}
+  .opt{
+    appearance:none; text-align:left; cursor:pointer; width:100%;
+    background:var(--surface); color:var(--ink); border:1.5px solid var(--line);
+    padding:15px 16px; border-radius:14px; font-size:15.5px; line-height:1.35;
+    display:flex; align-items:center; gap:13px; transition:border-color .15s, background .15s, transform .1s;
+  }
+  .opt:hover{border-color:var(--accent); background:var(--surface-2)}
+  .opt:active{transform:scale(.99)}
+  .opt .dot{flex:none; width:22px; height:22px; border-radius:50%; border:2px solid var(--line); transition:.15s}
+  .opt.sel{border-color:var(--accent); background:var(--accent-soft)}
+  .opt.sel .dot{border-color:var(--accent); background:var(--accent); box-shadow:inset 0 0 0 3px var(--surface)}
+  .opt:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+
+  /* ---- Result ---- */
+  .result-hero{display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:8px}
+  .badge-big{
+    width:118px; height:118px; border-radius:50%; display:grid; place-items:center;
+    font-size:62px; box-shadow:var(--shadow); margin-bottom:14px; position:relative;
+    animation:pop .5s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes pop{from{opacity:0; transform:scale(.6)} to{opacity:1; transform:scale(1)}}
+  .badge-sec{
+    position:absolute; right:-6px; bottom:-2px; width:46px; height:46px; border-radius:50%;
+    display:grid; place-items:center; font-size:24px; background:var(--surface); box-shadow:var(--shadow);
+  }
+  .eyebrow{font-size:12.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:4px}
+  .result-name{font-family:var(--font-display); font-size:27px; letter-spacing:-.01em; margin:0 0 6px}
+  .result-sub{color:var(--muted); font-size:15px; margin:0 0 4px; text-wrap:balance}
+
+  .bars{display:flex; flex-direction:column; gap:9px; margin:22px 0 6px}
+  .bar-row{display:grid; grid-template-columns:96px 1fr 34px; align-items:center; gap:10px; font-size:13.5px}
+  .bar-row .lab{display:flex; align-items:center; gap:7px; color:var(--muted)}
+  .bar-track{height:9px; background:var(--surface-2); border-radius:99px; overflow:hidden}
+  .bar-track > i{display:block; height:100%; border-radius:99px; width:0; transition:width .7s cubic-bezier(.2,.7,.2,1)}
+  .bar-row .pct{text-align:right; font-variant-numeric:tabular-nums; color:var(--muted)}
+
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px; box-shadow:var(--shadow); margin-top:18px}
+  .card .kicker{display:flex; align-items:center; gap:9px; font-family:var(--font-display); font-weight:700; font-size:17px; margin-bottom:4px}
+  .card .kicker .em{font-size:22px}
+  .why{color:var(--muted); font-size:14.5px; margin:0 0 14px}
+  .plan{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:11px}
+  .plan li{display:flex; gap:11px; font-size:14.5px; align-items:flex-start}
+  .plan li .ic{flex:none; width:26px; height:26px; border-radius:8px; display:grid; place-items:center; font-size:14px; background:var(--accent-soft); color:var(--accent); font-weight:700}
+  .avoid{margin-top:14px; padding-top:14px; border-top:1px dashed var(--line); font-size:13.5px; color:var(--muted)}
+  .avoid b{color:var(--ink)}
+  .sec-note{background:var(--surface-2); border-radius:12px; padding:13px 15px; font-size:14px; margin-top:14px}
+  .sec-note b{font-weight:700}
+
+  .footer{margin-top:22px; display:flex; flex-direction:column; gap:10px}
+  .disclaimer{font-size:11.5px; color:var(--muted); text-align:center; line-height:1.5; margin-top:16px}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001ms !important; transition-duration:.001ms !important}
+  }
+</style>
+
+<div class="app">
+  <div class="top">
+    <button class="back" id="back" aria-label="Question précédente">←</button>
+    <div class="brand"><span class="paw">🐾</span><span>Mon Animal Minceur</span></div>
+    <span class="spacer"></span>
+    <span class="count" id="count"></span>
+  </div>
+
+  <div class="progress" id="progress" style="display:none"><i id="bar"></i></div>
+
+  <!-- INTRO -->
+  <section class="screen active" id="intro">
+    <div class="hero-badges"><span>🦁</span><span>🐺</span><span>🦊</span><span>🐻</span></div>
+    <h1>Comment as-tu faim&nbsp;?</h1>
+    <p class="lead">Pour maigrir durablement, il faut d'abord comprendre <b>pourquoi</b> tu manges. Réponds à 12 questions et découvre ton <b>type de faim</b> — un animal, ou deux.</p>
+    <div class="pills">
+      <span class="pill">⏱️ 2 minutes</span>
+      <span class="pill">🔒 Sans inscription</span>
+      <span class="pill">✅ Sans engagement</span>
+    </div>
+    <button class="cta" id="start">Découvrir mon animal</button>
+    <p class="microcopy">Basé sur les 4 phénotypes de la faim (recherche Mayo Clinic). Outil éducatif, pas un avis médical.</p>
+  </section>
+
+  <!-- QUESTION -->
+  <section class="screen" id="question">
+    <h2 class="q-title" id="q-title"></h2>
+    <div class="options" id="options"></div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="result">
+    <div class="result-hero">
+      <div class="badge-big" id="badgeBig"></div>
+      <div class="eyebrow">Ton type de faim</div>
+      <h2 class="result-name" id="resName"></h2>
+      <p class="result-sub" id="resSub"></p>
+    </div>
+
+    <div class="bars" id="bars"></div>
+
+    <div class="card" id="planCard"></div>
+    <div id="secBlock"></div>
+
+    <div class="footer">
+      <button class="cta ghost" id="restart">↺ Recommencer le test</button>
+    </div>
+    <p class="disclaimer">Cet outil est éducatif et ne remplace pas l'avis d'un professionnel de santé. Pour une perte de poids sûre, visez un rythme progressif (~0,5–1 kg/semaine) et consultez un médecin ou un(e) diététicien(ne).</p>
+  </section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // Types = 4 animals mapped to Mayo Clinic hunger phenotypes
+  var TYPES = {
+    lion:   {emoji:"🦁", name:"Lion",   pheno:"Cerveau affamé",   color:"var(--lion)"},
+    loup:   {emoji:"🐺", name:"Loup",   pheno:"Intestin affamé",  color:"var(--loup)"},
+    renard: {emoji:"🦊", name:"Renard", pheno:"Faim émotionnelle", color:"var(--renard)"},
+    ours:   {emoji:"🐻", name:"Ours",   pheno:"Métabolisme lent",  color:"var(--ours)"}
+  };
+
+  // Each option adds weight to one or more types
+  var QUESTIONS = [
+    {q:"À la fin d'un repas normal, comment te sens-tu ?", o:[
+      {t:"Encore un peu faim, je pourrais reprendre", s:{lion:2}},
+      {t:"Rassasié… mais j'ai de nouveau faim très vite", s:{loup:2}},
+      {t:"Ça dépend surtout de mon humeur", s:{renard:2}},
+      {t:"Bien calé longtemps, pourtant je prends du poids", s:{ours:2}}
+    ]},
+    {q:"Tes portions habituelles, c'est plutôt…", o:[
+      {t:"Grandes — il m'en faut beaucoup pour être calé", s:{lion:2}},
+      {t:"Normales, mais je grignote après", s:{loup:2}},
+      {t:"Variables, selon le stress et l'envie", s:{renard:2}},
+      {t:"Petites — je mange peu, en réalité", s:{ours:2}}
+    ]},
+    {q:"Combien de temps après un repas as-tu de nouveau faim ?", o:[
+      {t:"Moins de 2 heures", s:{loup:2}},
+      {t:"3 à 4 heures, c'est régulier", s:{lion:1}},
+      {t:"Je n'ai pas vraiment faim, je mange par habitude", s:{renard:2}},
+      {t:"J'ai peu faim, mais je stocke facilement", s:{ours:2}}
+    ]},
+    {q:"Quand tu es stressé(e), triste ou tu t'ennuies…", o:[
+      {t:"Je mange pour me réconforter", s:{renard:2}},
+      {t:"Je mange plus, en grande quantité", s:{renard:1,lion:1}},
+      {t:"Ça me coupe plutôt l'appétit", s:{ours:1}},
+      {t:"Aucun effet, je mange pareil", s:{loup:1}}
+    ]},
+    {q:"Le grignotage entre les repas…", o:[
+      {t:"Souvent — un petit creux revient vite", s:{loup:2}},
+      {t:"Surtout par ennui ou émotion", s:{renard:2}},
+      {t:"De grosses quantités quand je m'y mets", s:{lion:2}},
+      {t:"Rarement, ce n'est pas mon truc", s:{ours:1}}
+    ]},
+    {q:"Devant un buffet à volonté, tu te vois plutôt…", o:[
+      {t:"Me resservir plusieurs fois", s:{lion:2}},
+      {t:"Bien manger, puis avoir faim 2 h après", s:{loup:2}},
+      {t:"Manger selon l'ambiance et l'humeur", s:{renard:2}},
+      {t:"Manger peu, mais le corps stocke", s:{ours:2}}
+    ]},
+    {q:"Ton énergie au quotidien ?", o:[
+      {t:"Bonne, plutôt stable", s:{lion:1}},
+      {t:"Souvent fatigué(e), j'ai facilement froid", s:{ours:2}},
+      {t:"En dents de scie selon l'humeur", s:{renard:2}},
+      {t:"Basse quand j'ai faim, ça me déconcentre", s:{loup:2}}
+    ]},
+    {q:"Ton niveau d'activité physique ?", o:[
+      {t:"Actif(ve) presque tous les jours", s:{lion:1}},
+      {t:"Sédentaire, je bouge peu", s:{ours:2}},
+      {t:"Ça dépend de ma motivation du moment", s:{renard:1}},
+      {t:"Variable, mais j'ai toujours faim après le sport", s:{loup:1}}
+    ]},
+    {q:"Prends-tu du poids facilement, même en mangeant peu ?", o:[
+      {t:"Oui, clairement, c'est frustrant", s:{ours:2}},
+      {t:"Seulement quand je mange de grosses portions", s:{lion:2}},
+      {t:"Surtout quand je grignote par émotion", s:{renard:2}},
+      {t:"Quand j'ai des fringales incontrôlables", s:{loup:2}}
+    ]},
+    {q:"Te réveilles-tu la nuit, ou très tôt, avec la faim ?", o:[
+      {t:"Oui, ça m'arrive souvent", s:{loup:2}},
+      {t:"Non, mais je mange tard le soir par envie", s:{renard:2}},
+      {t:"Non, je n'ai pas très faim le matin", s:{ours:1}},
+      {t:"Non, et le matin j'ai une grosse faim", s:{lion:1}}
+    ]},
+    {q:"Après avoir (trop) mangé, ressens-tu de la culpabilité ?", o:[
+      {t:"Oui, souvent", s:{renard:2}},
+      {t:"Seulement les jours où je me suis lâché(e)", s:{lion:1}},
+      {t:"Rarement", s:{loup:1}},
+      {t:"Non, mais je m'en veux de ne pas maigrir", s:{ours:1}}
+    ]},
+    {q:"Selon toi, qu'est-ce qui t'aiderait le plus à maigrir ?", o:[
+      {t:"Manger à ma faim, mais moins calorique", s:{lion:2}},
+      {t:"Tenir plus longtemps sans fringale", s:{loup:2}},
+      {t:"Mieux gérer mes émotions face à la nourriture", s:{renard:2}},
+      {t:"Relancer mon métabolisme et bouger plus", s:{ours:2}}
+    ]}
+  ];
+
+  // Personalized programs per animal (compliant, non-medical)
+  var PLANS = {
+    lion:{
+      why:"Ton cerveau réclame du volume avant de se sentir rassasié. La clé : manger à ta faim, mais avec des aliments qui remplissent l'assiette sans exploser les calories.",
+      tips:[
+        "Commence chaque repas par une grande portion de légumes ou une soupe.",
+        "Remplis la moitié de l'assiette de légumes, un quart de protéines, un quart de féculents.",
+        "Mise sur les aliments rassasiants et peu denses : légumes, fruits, légumineuses, protéines maigres.",
+        "Bois un grand verre d'eau avant de te resservir — laisse 10 min à la satiété."
+      ],
+      avoid:"les aliments très caloriques et peu volumineux (chips, sauces, sucreries) qui ne te calent jamais."
+    },
+    loup:{
+      why:"Ta satiété ne dure pas : la faim revient vite. L'objectif est de stabiliser ta glycémie pour tenir plus longtemps entre les repas.",
+      tips:[
+        "Mets des protéines à chaque repas (œufs, poisson, volaille, tofu, yaourt grec).",
+        "Ajoute des fibres et des bonnes graisses (légumes, avoine, oléagineux) qui ralentissent la digestion.",
+        "Structure 3 vrais repas plutôt que de multiplier les grignotages.",
+        "Évite les sucres rapides seuls : ils créent un pic puis une fringale."
+      ],
+      avoid:"les collations sucrées à jeun (viennoiseries, sodas, bonbons) qui relancent la faim une heure après."
+    },
+    renard:{
+      why:"Ta faim est souvent déclenchée par les émotions, pas par le corps. Apprendre à repérer et détourner ces envies change tout.",
+      tips:[
+        "Avant de manger, demande-toi : « Faim du ventre, ou de la tête ? »",
+        "Repère tes déclencheurs (stress, ennui, fatigue) et note-les 3 jours.",
+        "Prépare une alternative rapide : marche de 5 min, respiration, verre d'eau, appel à un proche.",
+        "Mange en pleine conscience, sans écran, pour vraiment ressentir la satiété."
+      ],
+      avoid:"le grignotage automatique devant les écrans — sers-toi une portion dans une assiette, jamais à même le paquet."
+    },
+    ours:{
+      why:"Ton corps brûle lentement : tu peux grossir en mangeant peu. La priorité n'est pas de manger moins, mais de réveiller ton métabolisme.",
+      tips:[
+        "Bouge chaque jour : vise 7 000–10 000 pas, en augmentant progressivement.",
+        "Ajoute 2 séances de renforcement musculaire par semaine — le muscle brûle plus au repos.",
+        "Soigne ton sommeil (7–8 h) : le manque de sommeil ralentit le métabolisme.",
+        "Garde assez de protéines pour préserver ta masse musculaire pendant la perte de poids."
+      ],
+      avoid:"les régimes trop restrictifs : ils ralentissent encore ton métabolisme et provoquent l'effet yo-yo."
+    }
+  };
+
+  var state = {idx:0, answers:[]};
+  var $ = function(id){return document.getElementById(id)};
+  var screens = {intro:$("intro"), question:$("question"), result:$("result")};
+
+  function show(name){
+    Object.keys(screens).forEach(function(k){screens[k].classList.toggle("active", k===name)});
+    window.scrollTo(0,0);
+  }
+
+  function renderQuestion(){
+    var Q = QUESTIONS[state.idx];
+    $("q-title").textContent = Q.q;
+    $("count").textContent = (state.idx+1) + " / " + QUESTIONS.length;
+    $("bar").style.width = ((state.idx)/QUESTIONS.length*100) + "%";
+    $("back").classList.toggle("show", state.idx>0);
+    var box = $("options"); box.innerHTML = "";
+    Q.o.forEach(function(opt, i){
+      var b = document.createElement("button");
+      b.className = "opt" + (state.answers[state.idx]===i ? " sel":"");
+      b.innerHTML = '<span class="dot"></span><span>'+opt.t+'</span>';
+      b.addEventListener("click", function(){ choose(i); });
+      box.appendChild(b);
+    });
+  }
+
+  function choose(i){
+    state.answers[state.idx] = i;
+    var opts = $("options").children;
+    for(var k=0;k<opts.length;k++) opts[k].classList.toggle("sel", k===i);
+    setTimeout(function(){
+      if(state.idx < QUESTIONS.length-1){ state.idx++; renderQuestion(); }
+      else finish();
+    }, 240);
+  }
+
+  function computeScores(){
+    var sc = {lion:0, loup:0, renard:0, ours:0};
+    state.answers.forEach(function(ai, qi){
+      var s = QUESTIONS[qi].o[ai].s;
+      for(var t in s) sc[t]+=s[t];
+    });
+    return sc;
+  }
+
+  function finish(){
+    $("bar").style.width = "100%";
+    var sc = computeScores();
+    var order = Object.keys(sc).sort(function(a,b){return sc[b]-sc[a]});
+    var dom = order[0], sec = order[1];
+    var hasSec = sc[sec] > 0 && sc[sec] >= 0.6*sc[dom];
+    var max = sc[dom] || 1;
+
+    // hero
+    var big = $("badgeBig");
+    big.style.background = "color-mix(in srgb, "+TYPES[dom].color+" 20%, var(--surface))";
+    big.innerHTML = TYPES[dom].emoji + (hasSec ? '<span class="badge-sec">'+TYPES[sec].emoji+'</span>' : '');
+    $("resName").textContent = hasSec
+      ? TYPES[dom].name + " · " + TYPES[sec].name
+      : "Tu es un " + TYPES[dom].name;
+    $("resSub").textContent = hasSec
+      ? "Profil « "+TYPES[dom].pheno.toLowerCase()+" », avec une part de "+TYPES[sec].name+" ("+TYPES[sec].pheno.toLowerCase()+")."
+      : "Profil « "+TYPES[dom].pheno.toLowerCase()+" ». C'est ta façon dominante d'avoir faim.";
+
+    // bars
+    var bars = $("bars"); bars.innerHTML = "";
+    order.forEach(function(t){
+      var pct = Math.round(sc[t]/max*100);
+      var row = document.createElement("div");
+      row.className = "bar-row";
+      row.innerHTML =
+        '<span class="lab">'+TYPES[t].emoji+' '+TYPES[t].name+'</span>'+
+        '<span class="bar-track"><i style="background:'+TYPES[t].color+'"></i></span>'+
+        '<span class="pct">'+pct+'%</span>';
+      bars.appendChild(row);
+      requestAnimationFrame(function(){
+        setTimeout(function(){ row.querySelector("i").style.width = pct+"%"; }, 60);
+      });
+    });
+
+    // plan card (dominant)
+    var P = PLANS[dom];
+    var card = $("planCard");
+    card.innerHTML =
+      '<div class="kicker"><span class="em">'+TYPES[dom].emoji+'</span> Ton programme '+TYPES[dom].name+'</div>'+
+      '<p class="why">'+P.why+'</p>'+
+      '<ul class="plan">'+P.tips.map(function(x){return '<li><span class="ic">✓</span><span>'+x+'</span></li>'}).join("")+'</ul>'+
+      '<p class="avoid">🚫 <b>À limiter :</b> '+P.avoid+'</p>';
+
+    // secondary short note
+    var secBlock = $("secBlock");
+    if(hasSec){
+      var S = PLANS[sec];
+      secBlock.innerHTML =
+        '<div class="sec-note">➕ <b>Ta part de '+TYPES[sec].name+' :</b> '+S.tips[0].charAt(0).toLowerCase()+S.tips[0].slice(1)+'</div>';
+    } else secBlock.innerHTML = "";
+
+    show("result");
+  }
+
+  // Navigation
+  $("start").addEventListener("click", function(){
+    state.idx=0; state.answers=[];
+    $("progress").style.display="block";
+    renderQuestion(); show("question");
+  });
+  $("back").addEventListener("click", function(){
+    if(state.idx>0){ state.idx--; renderQuestion(); }
+  });
+  $("restart").addEventListener("click", function(){
+    state.idx=0; state.answers=[]; $("count").textContent="";
+    $("progress").style.display="none";
+    show("intro");
+  });
+})();
+</script>
