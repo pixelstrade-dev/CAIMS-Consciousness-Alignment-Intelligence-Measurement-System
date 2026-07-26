@@ -1,0 +1,160 @@
+<title>HungerPrint — Pictos animaux & icône</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --ground:#FBFAF6; --surface:#FFFFFF; --ink:#211E17; --muted:#6E695D; --line:#E9E5DB;
+    --accent:#2F7D5B;
+    --lion:#DB9A15; --lion-d:#B77F0C; --lion-f:#EBBB55;
+    --loup:#587891; --loup-d:#42586C; --loup-f:#7C9CB6;
+    --renard:#DF6335; --renard-d:#C24E24; --renard-f:#EC7D51;
+    --ours:#9A6B3F; --ours-d:#7C5430; --ours-f:#C39668;
+    --font-display:ui-rounded,"SF Pro Rounded",system-ui,-apple-system,sans-serif;
+    --font-body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --shadow:0 1px 2px rgba(30,25,15,.05), 0 12px 30px -12px rgba(30,25,15,.18);
+  }
+  @media (prefers-color-scheme:dark){:root{--ground:#141210;--surface:#1E1B16;--ink:#F3EFE5;--muted:#A6A092;--line:#332F28;--accent:#54BB8B;--shadow:0 1px 2px rgba(0,0,0,.3),0 16px 40px -16px rgba(0,0,0,.6)}}
+  :root[data-theme="light"]{--ground:#FBFAF6;--surface:#FFFFFF;--ink:#211E17;--muted:#6E695D;--line:#E9E5DB;--accent:#2F7D5B}
+  :root[data-theme="dark"]{--ground:#141210;--surface:#1E1B16;--ink:#F3EFE5;--muted:#A6A092;--line:#332F28;--accent:#54BB8B;--shadow:0 1px 2px rgba(0,0,0,.3),0 16px 40px -16px rgba(0,0,0,.6)}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--font-body);line-height:1.5;
+    -webkit-font-smoothing:antialiased;padding:32px 20px 48px;display:flex;justify-content:center}
+  .wrap{width:100%;max-width:760px}
+  h1{font-family:var(--font-display);font-size:28px;letter-spacing:-.02em;margin:0 0 4px}
+  .sub{color:var(--muted);margin:0 0 28px;font-size:15px}
+  h2{font-family:var(--font-display);font-size:16px;letter-spacing:.02em;text-transform:uppercase;color:var(--muted);margin:32px 0 14px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media(max-width:520px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow);
+    display:flex;align-items:center;gap:16px}
+  .card svg{width:88px;height:88px;flex:none}
+  .card .name{font-family:var(--font-display);font-weight:800;font-size:19px;margin:0}
+  .card .ph{color:var(--muted);font-size:13px;margin:2px 0 0}
+  .icons{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-end}
+  .icon-tile{text-align:center}
+  .icon-tile .lbl{font-size:12px;color:var(--muted);margin-top:8px}
+  .appicon{width:120px;height:120px;border-radius:27px;box-shadow:var(--shadow);display:block}
+  .appicon.sm{width:64px;height:64px;border-radius:15px}
+  .note{margin-top:28px;font-size:13px;color:var(--muted);background:var(--surface);border:1px solid var(--line);
+    border-radius:14px;padding:14px 16px}
+</style>
+<div class="wrap">
+  <h1>🐾 HungerPrint — système d'icônes</h1>
+  <p class="sub">Pictogrammes vectoriels (SVG) des 4 types de faim + icône d'application. Style géométrique plat, lisibles à petite taille, 100 % vous appartiennent.</p>
+
+  <h2>Les 4 animaux</h2>
+  <div class="grid">
+    <!-- LION -->
+    <div class="card">
+      <svg viewBox="0 0 100 100" role="img" aria-label="Lion">
+        <g>
+          <!-- mane -->
+          <g fill="var(--lion-d)">
+            <circle cx="50" cy="16" r="8"/><circle cx="72" cy="22" r="8"/><circle cx="84" cy="40" r="8"/>
+            <circle cx="86" cy="60" r="8"/><circle cx="76" cy="78" r="8"/><circle cx="58" cy="86" r="8"/>
+            <circle cx="42" cy="86" r="8"/><circle cx="24" cy="78" r="8"/><circle cx="14" cy="60" r="8"/>
+            <circle cx="16" cy="40" r="8"/><circle cx="28" cy="22" r="8"/>
+          </g>
+          <circle cx="50" cy="50" r="30" fill="var(--lion)"/>
+          <!-- ears -->
+          <circle cx="34" cy="30" r="7" fill="var(--lion-f)"/><circle cx="66" cy="30" r="7" fill="var(--lion-f)"/>
+          <!-- face -->
+          <circle cx="50" cy="52" r="24" fill="var(--lion-f)"/>
+          <circle cx="41" cy="49" r="3.2" fill="#3a2a08"/><circle cx="59" cy="49" r="3.2" fill="#3a2a08"/>
+          <ellipse cx="50" cy="62" rx="11" ry="9" fill="var(--lion)"/>
+          <path d="M44 60 h12 l-6 6 z" fill="#3a2a08"/>
+        </g>
+      </svg>
+      <div><p class="name">🦁 Lion</p><p class="ph">Cerveau affamé · Hungry Brain</p></div>
+    </div>
+
+    <!-- LOUP -->
+    <div class="card">
+      <svg viewBox="0 0 100 100" role="img" aria-label="Loup">
+        <g>
+          <!-- ears -->
+          <path d="M26 18 L44 42 L20 44 Z" fill="var(--loup-d)"/>
+          <path d="M74 18 L56 42 L80 44 Z" fill="var(--loup-d)"/>
+          <path d="M30 24 L42 42 L26 43 Z" fill="var(--loup-f)"/>
+          <path d="M70 24 L58 42 L74 43 Z" fill="var(--loup-f)"/>
+          <!-- head -->
+          <path d="M28 38 H72 L64 64 L50 76 L36 64 Z" fill="var(--loup)"/>
+          <!-- snout -->
+          <path d="M42 60 H58 L54 72 L50 76 L46 72 Z" fill="var(--loup-f)"/>
+          <circle cx="50" cy="66" r="3.4" fill="#20303c"/>
+          <!-- eyes -->
+          <path d="M36 50 l8 -3 l-1 5 z" fill="#20303c"/>
+          <path d="M64 50 l-8 -3 l1 5 z" fill="#20303c"/>
+        </g>
+      </svg>
+      <div><p class="name">🐺 Loup</p><p class="ph">Intestin affamé · Hungry Gut</p></div>
+    </div>
+
+    <!-- RENARD -->
+    <div class="card">
+      <svg viewBox="0 0 100 100" role="img" aria-label="Renard">
+        <g>
+          <!-- ears -->
+          <path d="M24 14 L46 40 L18 42 Z" fill="var(--renard-d)"/>
+          <path d="M76 14 L54 40 L82 42 Z" fill="var(--renard-d)"/>
+          <path d="M28 22 L42 40 L26 41 Z" fill="#fff"/>
+          <path d="M72 22 L58 40 L74 41 Z" fill="#fff"/>
+          <!-- face upper -->
+          <path d="M26 36 H74 L50 66 Z" fill="var(--renard)"/>
+          <!-- white cheeks / snout -->
+          <path d="M38 50 H62 L50 74 Z" fill="#fff"/>
+          <path d="M44 58 H56 L50 74 Z" fill="var(--renard-f)"/>
+          <circle cx="50" cy="66" r="3.4" fill="#3a1c0c"/>
+          <circle cx="40" cy="47" r="3" fill="#3a1c0c"/><circle cx="60" cy="47" r="3" fill="#3a1c0c"/>
+        </g>
+      </svg>
+      <div><p class="name">🦊 Renard</p><p class="ph">Faim émotionnelle · Emotional Hunger</p></div>
+    </div>
+
+    <!-- OURS -->
+    <div class="card">
+      <svg viewBox="0 0 100 100" role="img" aria-label="Ours">
+        <g>
+          <circle cx="28" cy="28" r="13" fill="var(--ours-d)"/><circle cx="72" cy="28" r="13" fill="var(--ours-d)"/>
+          <circle cx="28" cy="28" r="6.5" fill="var(--ours-f)"/><circle cx="72" cy="28" r="6.5" fill="var(--ours-f)"/>
+          <circle cx="50" cy="52" r="30" fill="var(--ours)"/>
+          <circle cx="41" cy="47" r="3.4" fill="#2e1c0c"/><circle cx="59" cy="47" r="3.4" fill="#2e1c0c"/>
+          <ellipse cx="50" cy="62" rx="13" ry="11" fill="var(--ours-f)"/>
+          <ellipse cx="50" cy="57" rx="5" ry="3.6" fill="#2e1c0c"/>
+        </g>
+      </svg>
+      <div><p class="name">🐻 Ours</p><p class="ph">Métabolisme lent · Slow Burn</p></div>
+    </div>
+  </div>
+
+  <h2>Icône de l'application</h2>
+  <div class="icons">
+    <div class="icon-tile">
+      <svg class="appicon" viewBox="0 0 120 120" role="img" aria-label="Icône HungerPrint">
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#3E9E72"/><stop offset="1" stop-color="#256B4C"/></linearGradient></defs>
+        <rect width="120" height="120" rx="27" fill="url(#g)"/>
+        <!-- paw -->
+        <g fill="#fff">
+          <ellipse cx="60" cy="74" rx="20" ry="16"/>
+          <circle cx="38" cy="52" r="8"/><circle cx="52" cy="42" r="8.5"/>
+          <circle cx="68" cy="42" r="8.5"/><circle cx="82" cy="52" r="8"/>
+        </g>
+      </svg>
+      <div class="lbl">120 px</div>
+    </div>
+    <div class="icon-tile">
+      <svg class="appicon sm" viewBox="0 0 120 120" aria-hidden="true">
+        <rect width="120" height="120" rx="27" fill="url(#g)"/>
+        <g fill="#fff"><ellipse cx="60" cy="74" rx="20" ry="16"/><circle cx="38" cy="52" r="8"/><circle cx="52" cy="42" r="8.5"/><circle cx="68" cy="42" r="8.5"/><circle cx="82" cy="52" r="8"/></g>
+      </svg>
+      <div class="lbl">64 px (lisible)</div>
+    </div>
+  </div>
+
+  <div class="note">
+    Ces pictos sont un <b>point de départ</b> (style flat géométrique, cohérent, ownable). Pour le store, un(e) illustrateur(rice) pourra les affiner. L'icône d'app utilise une <b>patte</b> — elle représente les 4 animaux à la fois et reste nette en petit. Couleurs de marque : Lion ambre, Loup ardoise, Renard corail, Ours bronze, accent vert.
+  </div>
+</div>
+<script>
+// keep gradient id unique reference working across both icons (shared defs)
+</script>

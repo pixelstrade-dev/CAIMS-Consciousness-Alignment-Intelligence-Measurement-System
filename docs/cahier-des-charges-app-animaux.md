@@ -47,6 +47,12 @@ Mayo Clinic Press <https://mcpress.mayoclinic.org/nutrition-fitness/understandin
 **Cible :** adultes (**16+**) voulant perdre du poids, grand public FR puis EN,
 déploiement mondial.
 
+**Marque (recommandation) : « HungerPrint »** — *l'empreinte unique de ta faim*.
+Nom distinctif (mot composé = protégeable), court, prononçable FR/EN, sans
+collision constatée dans les stores. Backup : « Hungroo ». ⚠️ Clearance officielle
+(WIPO/USPTO/EUIPO/IPI Suisse), domaine `.com` et handles sociaux **à confirmer
+avec un conseil en marques** avant dépôt.
+
 ---
 
 ## 2. Base scientifique → habillage animal
@@ -161,6 +167,32 @@ Plateforme **CI/CD** qui **build l'IPA (App Store) et l'APK/AAB (Google Play)** 
       └── Push (FCM / OneSignal)        → rétention (voir §8)
 ```
 
+### 7.5 Écosystème complet — récapitulatif (Google-first)
+Pour « finir » tout l'écosystème monétisation + traçabilité + monitoring en
+restant au maximum dans l'environnement Google :
+
+| Besoin | Plateforme recommandée | Écosystème |
+|---|---|---|
+| Backend / Auth / DB | **Firebase** (ou Supabase) | Google |
+| Abonnements / achats | **RevenueCat** *(déjà créé)* | tiers (standard) |
+| Publicité | **Google AdMob** + médiation/bidding | Google |
+| Médiation ads (option scale) | **AppLovin MAX** | tiers |
+| Consentement (CMP) | **Google UMP** (IAB TCF v2.2) | Google |
+| Analytics produit | **Google Analytics for Firebase (GA4)** | Google |
+| A/B testing / réglages live | **Firebase Remote Config + A/B Testing** | Google |
+| Push notifications | **Firebase Cloud Messaging** (ou OneSignal) | Google |
+| Crash / stabilité | **Firebase Crashlytics** | Google |
+| Performance | **Firebase Performance Monitoring** | Google |
+| Attribution UA (payant) | **AppsFlyer** ou **Adjust** (+ SKAdNetwork) | tiers |
+| IA (option premium) | **API Claude (Anthropic)** | tiers |
+
+> En pratique : **Firebase couvre presque tout** (auth, data, analytics, push,
+> crash, perf, remote config), **AdMob + UMP** couvrent la pub et le
+> consentement, **RevenueCat** couvre les abonnements. C'est un écosystème quasi
+> intégré, simple à opérer. Les seuls « tiers » vraiment utiles : RevenueCat
+> (déjà là) et, plus tard, un MMP d'attribution (AppsFlyer/Adjust) quand vous
+> lancerez l'acquisition payante.
+
 ---
 
 ## 8. Notifications push (rétention — priorité haute)
@@ -197,13 +229,33 @@ Combinaison de revenus, du plus sain au plus accessoire :
 |---|---|---|
 | **Freemium / abonnement** | Résultat gratuit (viral) ; **programme complet + coach** payant. ~4,99–9,99 €/mois, ~39,99 €/an. Essai gratuit. | ⭐⭐⭐ |
 | **Achat unique** | Débloquer le programme une fois (~19,99 €). | ⭐⭐ |
-| **Publicité in-app** | **AdMob** (bannières/interstitiels/récompensées) pour les utilisateurs gratuits. **Contextuelle/consentie, sans données de santé.** | ⭐⭐ |
+| **Publicité in-app** | **AdMob** (bannières/interstitiels/récompensées/app-open/natives) pour les utilisateurs gratuits. **Contextuelle/consentie, sans données de santé.** | ⭐⭐ |
 | **Affiliation** | Produits/services bien-être pertinents (compléments, apps sport), avec transparence. | ⭐ |
 | **Web funnel** (avancé) | Test sur le web puis paiement web (hors commission stores). Modèle très rentable des leaders minceur. | ⭐⭐ |
 
-- Paiements stores via **RevenueCat** (obligatoire pour la conformité de
-  facturation Apple/Google ; A/B testing des prix/essais).
+- Paiements stores via **RevenueCat** (déjà en place ; conformité de facturation
+  Apple/Google ; A/B testing des prix/essais).
 - **Paywall au pic de motivation** (juste après le résultat).
+- **Le premium retire la pub** → double levier (revenu pub + incitation à
+  s'abonner).
+
+### 10.1 Stratégie publicitaire avancée (maximiser l'ARPDAU)
+Objectif : tirer le meilleur revenu **par utilisateur gratuit** sans casser la
+rétention. Écosystème **Google-first** + médiation.
+
+| Levier | Détail |
+|---|---|
+| **Formats multiples** | **App-open** (au lancement, capé), **native** (dans la liste du programme), **rewarded** (débloquer un conseil bonus / une 2ᵉ lecture), **interstitiel** (entre sessions, jamais en plein test), **bannière** (écrans secondaires). |
+| **Médiation & bidding** | **AdMob Mediation + bidding** avec plusieurs réseaux en concurrence (Meta Audience Network, AppLovin, Unity, Liftoff…) → **eCPM maximal**. Alternative leader : **AppLovin MAX**. |
+| **Frequency capping** | Plafonner interstitiels/app-open pour protéger l'expérience et la rétention (le churn tue l'ARPDAU). |
+| **Segmentation** | Plus de pub pour les gratuits ; **zéro pub** pour les premium. |
+| **Rewarded = clé** | Les pubs **récompensées** ont le meilleur eCPM et sont acceptées par les utilisateurs (échange de valeur). |
+| **Mesure** | Suivre **ARPDAU**, eCPM par format/réseau, impact rétention. Optimiser via A/B (Firebase Remote Config). |
+
+> ⚠️ Réalité honnête : **le revenu publicitaire suit le volume et la rétention.**
+> « Un maximum de revenus dès le début » suppose d'abord **des téléchargements et
+> une rétention** (d'où l'importance du §19 ASO + viralité). L'adtech optimise le
+> revenu *par utilisateur* ; le go-to-market crée le *nombre* d'utilisateurs.
 
 ---
 
@@ -251,7 +303,11 @@ C'est **ça**, la « couche de connaissance » monétisable — pas sa revente.
 > first-party **sans** enfreindre les règles.
 
 ### 12.1 Consentement (obligatoire avant tout tracking)
-- **CMP (Consent Management Platform)** implémentant **IAB TCF v2.2** pour l'UE/UK.
+- **CMP recommandé : Google UMP (User Messaging Platform)** — le CMP **de Google
+  lui-même**, **gratuit**, intégré nativement à **AdMob** et à **Consent Mode**,
+  certifié **IAB TCF v2.2**. → on **reste dans l'écosystème Google** (Analytics,
+  AdMob, Firebase). Alternatives plus puissantes mais payantes si besoin :
+  **Usercentrics, Didomi, Sourcepoint**.
 - **Google Consent Mode v2** (obligatoire pour AdMob/Analytics dans l'EEE).
 - **ATT (App Tracking Transparency)** d'Apple : prompt requis pour tout suivi
   cross-app (IDFA).
@@ -268,8 +324,8 @@ C'est **ça**, la « couche de connaissance » monétisable — pas sa revente.
 |---|---|
 | Analytics produit | **Firebase Analytics** + **PostHog / Amplitude / Mixpanel** |
 | Attribution (UA payante) | **AppsFlyer** ou **Adjust** (SKAdNetwork iOS) |
-| Publicité | **AdMob** (+ médiation) avec CMP |
-| Consentement | CMP certifiée **IAB TCF v2.2** + **Consent Mode v2** |
+| Publicité | **AdMob** (+ médiation/bidding) avec CMP |
+| Consentement | **Google UMP** (IAB TCF v2.2) + **Consent Mode v2** |
 
 ### 12.4 Gouvernance
 - **Registre des traitements**, politique de conservation, chiffrement.
@@ -449,7 +505,6 @@ Ce qu'il reste à réunir pour publier **et** réussir en téléchargements :
    diététicien(ne)/médecin (indispensable, aussi pour crédibilité ASO).
 3. **Validation juridique par marché** : CGU/Confidentialité/CGV, qualification
    « non-dispositif médical », CMP/consentement (avocat santé + data).
-   → *Préciser ici ce que « SDI » désigne pour l'intégrer.*
 4. **Comptes & accès** : Apple Developer (99 $/an), Google Play (25 $),
    AdMob, RevenueCat, CMP, analytics, attribution, FCM/OneSignal.
 5. **Contenu marketing** : batterie de vidéos courtes, liste d'influenceurs,
@@ -466,5 +521,4 @@ réglementaires/juridiques (§11, §14-17) donnent la logique de conformité mai
 remplacent pas la validation par des conseils spécialisés** (dispositifs médicaux
 + données) **par marché**. La revente de données de santé/profiling aux
 publicitaires est écartée car interdite par les stores et la loi (§11) ; la valeur
-monétisable réside dans la donnée first-party consentie (§11-12). « SDI » reste à
-préciser par le porteur du projet.*
+monétisable réside dans la donnée first-party consentie (§11-12).*
