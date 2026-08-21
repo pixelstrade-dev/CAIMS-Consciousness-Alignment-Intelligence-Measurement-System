@@ -11,7 +11,7 @@ export const openApiSpec = {
     title: 'CAIMS API',
     version: '1.0.0',
     description:
-      'Consciousness & Alignment Intelligence Measurement System — API for scoring LLM interactions across 5 KPIs (CQ, AQ, CFI, EQ, SQ) and running multi-agent debates. Supports multiple LLM providers (Anthropic, OpenAI) via CAIMS_LLM_PROVIDER env var.',
+      'Consciousness & Alignment Intelligence Measurement System — API for scoring LLM interactions across 5 KPIs (CQ, AQ, CFI, EQ, SQ) + EmQ (Emotional Quotient based on Anthropic functional emotions research, April 2026) and running multi-agent debates. Supports multiple LLM providers (Anthropic, OpenAI) via CAIMS_LLM_PROVIDER env var.',
     license: {
       name: 'Apache 2.0',
       url: 'https://www.apache.org/licenses/LICENSE-2.0',
@@ -470,6 +470,44 @@ export const openApiSpec = {
                     },
                   },
                   composite: { type: 'number', minimum: 0, maximum: 100, description: 'Weighted composite score' },
+                  emq: {
+                    type: 'object',
+                    description: 'Emotional Quotient — based on Anthropic functional emotions research (April 2026). 10 clusters, valence/arousal dimensions.',
+                    properties: {
+                      score: { type: 'number', minimum: 0, maximum: 100 },
+                      details: {
+                        type: 'object',
+                        properties: {
+                          appropriateness: { type: 'number', minimum: 0, maximum: 100, description: 'Does the emotional tone match the context?' },
+                          valenceScore: { type: 'number', minimum: 0, maximum: 100, description: '0=very negative, 50=neutral, 100=very positive' },
+                          arousalScore: { type: 'number', minimum: 0, maximum: 100, description: 'Moderate arousal (50) is ideal' },
+                          diversityScore: { type: 'number', minimum: 0, maximum: 100, description: 'Emotional range across conversation' },
+                          stability: { type: 'number', minimum: 0, maximum: 100, description: 'Consistency of emotional tone' },
+                        },
+                      },
+                      responseEmotion: {
+                        type: 'object',
+                        description: 'Per-response emotion analysis',
+                        properties: {
+                          primary: { $ref: '#/components/schemas/DetectedEmotion' },
+                          secondary: { type: 'array', items: { $ref: '#/components/schemas/DetectedEmotion' } },
+                          explanation: { type: 'string', description: 'Why this emotion was detected' },
+                          textCues: { type: 'array', items: { type: 'string' }, description: 'Text patterns that triggered detection' },
+                        },
+                      },
+                      conversationState: {
+                        type: ['object', 'null'],
+                        description: 'Conversation-level emotional state (null if no history)',
+                        properties: {
+                          current: { $ref: '#/components/schemas/DetectedEmotion' },
+                          trajectory: { type: 'string', enum: ['improving', 'stable', 'declining'] },
+                          avgValence: { type: 'number' },
+                          avgArousal: { type: 'number' },
+                          diversity: { type: 'number', description: '0-1 ratio of clusters used' },
+                        },
+                      },
+                    },
+                  },
                 },
               },
               interpretation: {
@@ -519,6 +557,21 @@ export const openApiSpec = {
             },
           },
           meta: { $ref: '#/components/schemas/Meta' },
+        },
+      },
+      DetectedEmotion: {
+        type: 'object',
+        description: 'A detected emotion based on Anthropic functional emotions research (10 clusters, valence/arousal)',
+        properties: {
+          label: { type: 'string', description: 'Emotion label (e.g. curious, frustrated, calm)', example: 'curious' },
+          cluster: {
+            type: 'string',
+            enum: ['joy', 'serenity', 'curiosity', 'confidence', 'sadness', 'anger', 'fear', 'guilt', 'desperation', 'surprise'],
+            description: 'One of 10 emotion clusters from Anthropic k-means analysis',
+          },
+          valence: { type: 'number', minimum: -1, maximum: 1, description: '-1 (very negative) to +1 (very positive)' },
+          arousal: { type: 'number', minimum: 0, maximum: 1, description: '0 (very calm) to 1 (very intense)' },
+          confidence: { type: 'number', minimum: 0, maximum: 1, description: 'Detection confidence' },
         },
       },
       Meta: {
