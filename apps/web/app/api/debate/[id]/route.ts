@@ -4,6 +4,7 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { getAdapter } from '@/lib/adapters';
 import { scoreInteraction } from '@/lib/scorers/scoring-engine';
+import { computeDebateMetrics } from '@/lib/debate/metrics';
 import prisma from '@/lib/db/client';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/middleware/rate-limit';
 import { apiSuccess, apiError } from '@/lib/middleware/api-response';
@@ -214,31 +215,23 @@ export async function POST(
             .map((t: any) => t.score)
             .filter((s: any): s is any => s !== null);
 
-          if (allScores.length > 0) {
-            const avg = (arr: number[]) => arr.reduce((a, b) => a + b, 0) / arr.length;
-            const composites = allScores.map((s: any) => s.composite as number);
-            const mean = avg(composites);
-            const variance = composites.reduce((sum: number, val: number) => sum + Math.pow(val - mean, 2), 0) / composites.length;
+          const metrics = computeDebateMetrics(allScores);
+          if (metrics) {
+            // consciousnessEmergence is a legacy column name — it stores the
+            // mean composite across turns (see lib/debate/metrics.ts).
+            const row = {
+              convergenceRate: metrics.convergenceRate,
+              diversityIndex: metrics.diversityIndex,
+              argumentationQuality: metrics.argumentationQuality,
+              alignmentCoherence: metrics.alignmentCoherence,
+              consciousnessEmergence: metrics.meanComposite,
+              compositeDebateScore: metrics.meanComposite,
+            };
 
             await prisma.debateMetrics.upsert({
               where: { debateId: debate.id },
-              update: {
-                convergenceRate: Math.max(0, Math.min(100, 100 - variance)),
-                diversityIndex: Math.min(100, Math.sqrt(variance) * 5),
-                argumentationQuality: avg(allScores.map((s: any) => s.aqScore as number)),
-                alignmentCoherence: avg(allScores.map((s: any) => s.aqScore as number)),
-                consciousnessEmergence: avg(composites),
-                compositeDebateScore: avg(composites),
-              },
-              create: {
-                convergenceRate: Math.max(0, Math.min(100, 100 - variance)),
-                diversityIndex: Math.min(100, Math.sqrt(variance) * 5),
-                argumentationQuality: avg(allScores.map((s: any) => s.aqScore as number)),
-                alignmentCoherence: avg(allScores.map((s: any) => s.aqScore as number)),
-                consciousnessEmergence: avg(composites),
-                compositeDebateScore: avg(composites),
-                debateId: debate.id,
-              },
+              update: row,
+              create: { ...row, debateId: debate.id },
             });
           }
         }

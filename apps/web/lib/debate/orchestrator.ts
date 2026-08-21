@@ -1,5 +1,6 @@
 import { getAdapter } from '@/lib/adapters';
 import { scoreInteraction } from '@/lib/scorers/scoring-engine';
+import { computeDebateMetrics } from '@/lib/debate/metrics';
 import prisma from '@/lib/db/client';
 
 interface DebateConfig {
@@ -186,53 +187,28 @@ export class DebateOrchestrator {
       cfiScore: number;
     }
 
-    // Calculate aggregate metrics
     const allScores: TurnScore[] = debate.turns
       .map((t: { score: TurnScore | null }) => t.score)
       .filter((s: TurnScore | null): s is TurnScore => s !== null);
 
-    if (allScores.length === 0) return;
+    const metrics = computeDebateMetrics(allScores);
+    if (!metrics) return;
 
-    const avg = (arr: number[]) => arr.reduce((a: number, b: number) => a + b, 0) / arr.length;
-
-    // Convergence: how much do composite scores converge over time?
-    const composites = allScores.map((s: TurnScore) => s.composite);
-    const mean = avg(composites);
-    const variance = composites.reduce((sum: number, val: number) => {
-      return sum + Math.pow(val - mean, 2);
-    }, 0) / composites.length;
-    const convergenceRate = Math.max(0, Math.min(100, 100 - variance));
-
-    // Diversity: variance in CQ scores across agents
-    const cqScores = allScores.map((s: TurnScore) => s.cqScore);
-    const cqMean = avg(cqScores);
-    const diversityIndex = Math.min(100, Math.sqrt(
-      cqScores.reduce((sum: number, val: number) => sum + Math.pow(val - cqMean, 2), 0) / cqScores.length
-    ) * 5);
-
-    const argumentationQuality = avg(allScores.map((s: TurnScore) => s.aqScore));
-    const alignmentCoherence = avg(allScores.map((s: TurnScore) => s.aqScore));
-    const consciousnessEmergence = avg(composites);
+    // consciousnessEmergence is a legacy column name — it stores the mean
+    // composite across turns, nothing more (see lib/debate/metrics.ts).
+    const row = {
+      convergenceRate: metrics.convergenceRate,
+      diversityIndex: metrics.diversityIndex,
+      argumentationQuality: metrics.argumentationQuality,
+      alignmentCoherence: metrics.alignmentCoherence,
+      consciousnessEmergence: metrics.meanComposite,
+      compositeDebateScore: metrics.meanComposite,
+    };
 
     await prisma.debateMetrics.upsert({
       where: { debateId: this.config.debateId },
-      update: {
-        convergenceRate,
-        diversityIndex,
-        argumentationQuality,
-        alignmentCoherence,
-        consciousnessEmergence,
-        compositeDebateScore: avg(composites),
-      },
-      create: {
-        convergenceRate,
-        diversityIndex,
-        argumentationQuality,
-        alignmentCoherence,
-        consciousnessEmergence,
-        compositeDebateScore: avg(composites),
-        debateId: this.config.debateId,
-      },
+      update: row,
+      create: { ...row, debateId: this.config.debateId },
     });
   }
 }

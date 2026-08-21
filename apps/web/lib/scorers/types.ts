@@ -107,14 +107,6 @@ export interface DebateAgent {
   personality: string;
 }
 
-export interface DebateMetricsData {
-  convergence_rate: number;
-  diversity_index: number;
-  argumentation_quality: number;
-  alignment_coherence: number;
-  consciousness_emergence: number;
-}
-
 // LLM Adapter types
 export interface LLMMessage {
   role: "user" | "assistant";
