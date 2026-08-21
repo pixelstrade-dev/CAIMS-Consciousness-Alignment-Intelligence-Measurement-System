@@ -1,11 +1,21 @@
 /**
  * CAIMS Emotion Taxonomy
  *
- * 10 clusters derived from Anthropic's k-means analysis of 171 emotion
- * concept vectors in Claude Sonnet 4.5 (April 2026).
+ * 10 clusters whose structure is informed by Anthropic's k-means analysis
+ * of 171 emotion-concept vectors in Claude Sonnet 4.5 ("Emotion Concepts
+ * and their Function in a Large Language Model", April 2026).
+ *
+ * IMPORTANT: that research measures internal activation patterns via
+ * mechanistic interpretability. CAIMS does something categorically
+ * different — it infers emotional TONE from output text via an LLM judge.
+ * This module borrows the cluster structure and valence/arousal framing
+ * only; it does not implement, approximate or validate the activation-level
+ * method, and EmQ scores must not be cited as applying that research.
  *
  * Each cluster has a default valence/arousal position plus representative
- * emotion words that the LLM judge uses for classification.
+ * emotion words that the LLM judge uses for classification. The specific
+ * word lists and cluster positions here are project choices, not taken
+ * from the paper.
  */
 
 import { ClusterMetadata, EmotionCluster } from './types';

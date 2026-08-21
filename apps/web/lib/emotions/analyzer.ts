@@ -231,7 +231,10 @@ export function computeEmQScore(
   responseAnalysis: ResponseEmotionAnalysis,
   conversationState: ConversationEmotionState | null
 ): { emqScore: number; details: EmQDetails } {
-  // 1. Appropriateness (from LLM judge, already 0-100)
+  // 1. Appropriateness — PLACEHOLDER: currently derived from the judge's
+  //    detection confidence, not from the judge's own appropriateness
+  //    rating. A validated appropriateness rubric is future work; treat
+  //    this sub-score as experimental.
   // We estimate it from confidence + cluster matching
   const appropriateness = clamp(responseAnalysis.primary.confidence * 100);
 
