@@ -4,7 +4,7 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { scoreInteraction } from '@/lib/scorers/scoring-engine';
 import { interpretScore, checkContextAlert } from '@/lib/scorers/composite';
-import { checkRateLimit, getRateLimitHeaders } from '@/lib/middleware/rate-limit';
+import { checkRateLimit, getRateLimitHeaders, clientIp } from '@/lib/middleware/rate-limit';
 import { apiSuccess, apiError } from '@/lib/middleware/api-response';
 import { logger } from '@/lib/logger';
 
@@ -24,7 +24,7 @@ const ScoreRequestSchema = z.object({
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
 
-  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'anonymous';
+  const ip = clientIp(req.headers);
   const rateCheck = checkRateLimit(`score:${ip}`, { windowMs: 60_000, maxRequests: 20 });
   if (!rateCheck.allowed) {
     return apiError('RATE_LIMITED', 'Too many requests', 429, getRateLimitHeaders(rateCheck));

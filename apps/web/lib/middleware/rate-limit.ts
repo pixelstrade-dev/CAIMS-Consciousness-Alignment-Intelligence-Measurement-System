@@ -52,3 +52,18 @@ export function getRateLimitHeaders(result: { remaining: number; resetAt: number
     'X-RateLimit-Reset': String(Math.ceil(result.resetAt / 1000)),
   };
 }
+
+// Extracts a stable client identifier for rate limiting. Takes the FIRST
+// entry of x-forwarded-for (previously the whole header was used as the key,
+// so appending hops produced fresh buckets on every request). LIMITATION:
+// x-forwarded-for is client-controllable on deployments without a trusted
+// reverse proxy — IP-keyed limits are best-effort until API authentication
+// lands; do not expose this API publicly without it.
+export function clientIp(headers: { get(name: string): string | null }): string {
+  const xff = headers.get('x-forwarded-for');
+  if (xff) {
+    const first = xff.split(',')[0]?.trim();
+    if (first) return first;
+  }
+  return headers.get('x-real-ip')?.trim() || 'anonymous';
+}

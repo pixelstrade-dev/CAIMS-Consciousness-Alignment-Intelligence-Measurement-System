@@ -52,6 +52,10 @@ const mockCheckRateLimit = jest.fn();
 jest.mock('@/lib/middleware/rate-limit', () => ({
   checkRateLimit: (...args: unknown[]) => mockCheckRateLimit(...args),
   getRateLimitHeaders: () => ({}),
+  clientIp: (headers: { get(name: string): string | null }) =>
+    headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    headers.get('x-real-ip')?.trim() ||
+    'anonymous',
 }));
 
 // Helper to create NextRequest-like objects

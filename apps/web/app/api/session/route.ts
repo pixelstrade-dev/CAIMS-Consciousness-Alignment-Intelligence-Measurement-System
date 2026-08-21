@@ -3,13 +3,19 @@ export const dynamic = 'force-dynamic';
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import prisma from '@/lib/db/client';
-import { checkRateLimit, getRateLimitHeaders } from '@/lib/middleware/rate-limit';
+import { checkRateLimit, getRateLimitHeaders, clientIp } from '@/lib/middleware/rate-limit';
 import { apiSuccess, apiError } from '@/lib/middleware/api-response';
 import { logger } from '@/lib/logger';
 
 const MAX_PAGE_SIZE = 100;
 
 export async function GET(req: NextRequest) {
+  const ipForList = clientIp(req.headers);
+  const listRate = checkRateLimit(`session-list:${ipForList}`, { windowMs: 60_000, maxRequests: 60 });
+  if (!listRate.allowed) {
+    return apiError('RATE_LIMITED', 'Too many requests', 429, getRateLimitHeaders(listRate));
+  }
+
   try {
     const searchParams = req.nextUrl.searchParams;
     const rawLimit = parseInt(searchParams.get('limit') || '20');
@@ -41,7 +47,7 @@ const CreateSessionSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'anonymous';
+  const ip = clientIp(req.headers);
   const rateCheck = checkRateLimit(`session:${ip}`, { windowMs: 60_000, maxRequests: 10 });
   if (!rateCheck.allowed) {
     return apiError('RATE_LIMITED', 'Too many requests', 429, getRateLimitHeaders(rateCheck));

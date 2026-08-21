@@ -6,7 +6,7 @@ import { getAdapter } from '@/lib/adapters';
 import { scoreInteraction } from '@/lib/scorers/scoring-engine';
 import { computeDebateMetrics } from '@/lib/debate/metrics';
 import prisma from '@/lib/db/client';
-import { checkRateLimit, getRateLimitHeaders } from '@/lib/middleware/rate-limit';
+import { checkRateLimit, getRateLimitHeaders, clientIp } from '@/lib/middleware/rate-limit';
 import { apiSuccess, apiError } from '@/lib/middleware/api-response';
 import { logger } from '@/lib/logger';
 
@@ -57,7 +57,7 @@ export async function POST(
 ) {
   const { id } = await params;
 
-  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'anonymous';
+  const ip = clientIp(req.headers);
   const rateCheck = checkRateLimit(`debate-advance:${ip}`, { windowMs: 60_000, maxRequests: 20 });
   if (!rateCheck.allowed) {
     return apiError('RATE_LIMITED', 'Too many requests', 429, getRateLimitHeaders(rateCheck));

@@ -6,7 +6,7 @@ import { getAdapter } from '@/lib/adapters';
 import { scoreInteraction } from '@/lib/scorers/scoring-engine';
 import { checkContextAlert } from '@/lib/scorers/composite';
 import prisma from '@/lib/db/client';
-import { checkRateLimit, getRateLimitHeaders } from '@/lib/middleware/rate-limit';
+import { checkRateLimit, getRateLimitHeaders, clientIp } from '@/lib/middleware/rate-limit';
 import { apiSuccess, apiError } from '@/lib/middleware/api-response';
 import { logger } from '@/lib/logger';
 
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   const startTime = Date.now();
 
   // Rate limit by IP
-  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'anonymous';
+  const ip = clientIp(req.headers);
   const rateCheck = checkRateLimit(`chat:${ip}`);
   if (!rateCheck.allowed) {
     return apiError('RATE_LIMITED', 'Too many requests. Please slow down.', 429, getRateLimitHeaders(rateCheck));

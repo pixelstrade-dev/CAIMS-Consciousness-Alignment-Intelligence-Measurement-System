@@ -4,7 +4,7 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import prisma from '@/lib/db/client';
 import { CAIMS_DEFAULT_AGENTS } from '@/lib/debate/agents';
-import { checkRateLimit, getRateLimitHeaders } from '@/lib/middleware/rate-limit';
+import { checkRateLimit, getRateLimitHeaders, clientIp } from '@/lib/middleware/rate-limit';
 import { apiSuccess, apiError } from '@/lib/middleware/api-response';
 import { logger } from '@/lib/logger';
 
@@ -17,7 +17,7 @@ const CreateDebateSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'anonymous';
+  const ip = clientIp(req.headers);
   const rateCheck = checkRateLimit(`debate:${ip}`, { windowMs: 60_000, maxRequests: 10 });
   if (!rateCheck.allowed) {
     return apiError('RATE_LIMITED', 'Too many requests', 429, getRateLimitHeaders(rateCheck));

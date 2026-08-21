@@ -101,3 +101,27 @@ describe('getRateLimitHeaders', () => {
     expect(headers['X-RateLimit-Reset']).toBe('1700000001');
   });
 });
+
+import { clientIp } from '../rate-limit';
+
+describe('clientIp', () => {
+  const headersOf = (map: Record<string, string>) => ({
+    get: (name: string) => map[name] ?? null,
+  });
+
+  it('takes only the first entry of a multi-hop x-forwarded-for', () => {
+    expect(clientIp(headersOf({ 'x-forwarded-for': '203.0.113.7, 10.0.0.1, 10.0.0.2' }))).toBe('203.0.113.7');
+  });
+
+  it('falls back to x-real-ip', () => {
+    expect(clientIp(headersOf({ 'x-real-ip': '198.51.100.4' }))).toBe('198.51.100.4');
+  });
+
+  it('returns anonymous when no header is present', () => {
+    expect(clientIp(headersOf({}))).toBe('anonymous');
+  });
+
+  it('trims whitespace around the forwarded entry', () => {
+    expect(clientIp(headersOf({ 'x-forwarded-for': '  203.0.113.9 , 10.0.0.1' }))).toBe('203.0.113.9');
+  });
+});
