@@ -5,6 +5,12 @@ function clamp(value: number): number {
   return Math.max(0, Math.min(100, Math.round(value)));
 }
 
+// The weights actually applied for this process (env override or defaults) —
+// exposed so the scoring engine can record them in each score's provenance.
+export function getActiveWeights(): KPIWeights {
+  return getWeightsFromEnv();
+}
+
 export function computeCompositeScore(
   scores: { cq: number; aq: number; cfi: number; eq: number; sq: number },
   weights?: KPIWeights

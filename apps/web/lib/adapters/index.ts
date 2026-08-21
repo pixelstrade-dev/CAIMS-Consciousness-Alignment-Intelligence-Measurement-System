@@ -27,7 +27,7 @@ export function getAdapter(providerOverride?: LLMProvider): LLMAdapter {
   }
 }
 
-function getProviderFromEnv(): LLMProvider {
+export function getProviderFromEnv(): LLMProvider {
   const value = process.env.CAIMS_LLM_PROVIDER?.toLowerCase().trim();
   if (!value || value === 'anthropic') return 'anthropic';
   if (value === 'openai') return 'openai';

@@ -39,6 +39,7 @@ const mockChat = jest.fn();
 const mockJudge = jest.fn();
 jest.mock('@/lib/adapters', () => ({
   getAdapter: () => ({ chat: mockChat, judge: mockJudge }),
+  getProviderFromEnv: () => 'anthropic',
 }));
 
 // Mock logger (suppress output)

@@ -45,6 +45,16 @@ export interface ScoreMetadata {
   reasoning: string;
   modelUsed: string;
   latencyMs: number;
+  /** Semver of the scoring protocol (rubric + sub-weights) that produced this score. */
+  protocolVersion?: string;
+  /** SHA-256 of the exact judge rubric prompt, so silent rubric edits are detectable. */
+  promptHash?: string;
+  /** LLM provider that served the judge call (anthropic | openai). */
+  provider?: string;
+  /** Sampling temperature used for the judge call. */
+  temperature?: number;
+  /** The 5 composite weights actually applied when this score was computed. */
+  weightsUsed?: KPIWeights;
 }
 
 export interface KPIScores {

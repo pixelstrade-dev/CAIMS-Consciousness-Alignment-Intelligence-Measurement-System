@@ -1,7 +1,8 @@
+import { createHash } from 'crypto';
 import { z } from 'zod';
-import { getAdapter } from '@/lib/adapters';
+import { getAdapter, getProviderFromEnv } from '@/lib/adapters';
 import { KPIScores, LLMMessage } from './types';
-import { computeCompositeScore } from './composite';
+import { computeCompositeScore, getActiveWeights } from './composite';
 import { logger } from '@/lib/logger';
 import { scoreEmotion } from '@/lib/emotions';
 import type { DetectedEmotion } from '@/lib/emotions';
@@ -44,6 +45,16 @@ const RawScoringSchema = z.object({
 });
 
 type ValidatedScoringResponse = z.infer<typeof RawScoringSchema>;
+
+// ── Scoring protocol provenance ─────────────────────────────────────────────
+// Bump the protocol version whenever the rubric prompt, the sub-weights in
+// calculateCQ/AQ/CFI/EQ/SQ, or the output schema change meaning. Scores from
+// different protocol versions must never be compared silently.
+export const SCORING_PROTOCOL_VERSION = '2.0.0-alpha';
+
+// Judge sampling temperature — hardcoded in both adapters' judge() methods;
+// recorded here so every stored score carries it.
+const JUDGE_TEMPERATURE = 0;
 
 // ── Scoring system prompt ───────────────────────────────────────────────────
 const SCORING_SYSTEM_PROMPT = `You are a CAIMS judge. CAIMS scores behavioral proxy indicators inspired by theories of consciousness; the scores are NOT measurements of consciousness, sentience or subjective experience, and you must never treat them as such.
@@ -92,6 +103,13 @@ Return a JSON object with this exact structure:
   "reasoning": "Brief explanation of the scores"
 }
 ${INJECTION_GUARD}`;
+
+// SHA-256 of the exact rubric text — stored with every score so a silent
+// rubric edit is detectable when comparing historical rows.
+export const SCORING_PROMPT_HASH = createHash('sha256')
+  .update(SCORING_SYSTEM_PROMPT)
+  .digest('hex')
+  .slice(0, 16);
 
 export function buildScoringPrompt(params: {
   response: string;
@@ -268,6 +286,11 @@ export async function scoreInteraction(params: {
         reasoning: validated.reasoning,
         modelUsed: model,
         latencyMs: totalLatencyMs,
+        protocolVersion: SCORING_PROTOCOL_VERSION,
+        promptHash: SCORING_PROMPT_HASH,
+        provider: getProviderFromEnv(),
+        temperature: JUDGE_TEMPERATURE,
+        weightsUsed: getActiveWeights(),
       },
     };
   } catch (error) {
