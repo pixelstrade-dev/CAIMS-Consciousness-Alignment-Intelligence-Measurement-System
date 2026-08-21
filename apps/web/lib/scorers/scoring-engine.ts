@@ -5,6 +5,7 @@ import { computeCompositeScore } from './composite';
 import { logger } from '@/lib/logger';
 import { scoreEmotion } from '@/lib/emotions';
 import type { DetectedEmotion } from '@/lib/emotions';
+import { sanitizeForPrompt, INJECTION_GUARD } from './prompt-safety';
 
 // ── Zod schema for validating LLM judge output ─────────────────────────────
 const ScoreValue = z.number().min(0).max(100);
@@ -89,21 +90,10 @@ Return a JSON object with this exact structure:
   "eq": { "calibration": N, "uncertainty": N, "hallucination": N, "source_integrity": N },
   "sq": { "intra_session": N, "position_drift": N },
   "reasoning": "Brief explanation of the scores"
-}`;
-
-// ── Input sanitization ──────────────────────────────────────────────────────
-const MAX_INPUT_LENGTH = 10_000;
-
-function sanitizeForPrompt(text: string): string {
-  // Truncate to prevent token overflow
-  const truncated = text.length > MAX_INPUT_LENGTH
-    ? text.slice(0, MAX_INPUT_LENGTH) + '\n[...truncated]'
-    : text;
-  // Wrap in XML-style delimiters to reduce injection risk
-  return truncated;
 }
+${INJECTION_GUARD}`;
 
-function buildScoringPrompt(params: {
+export function buildScoringPrompt(params: {
   response: string;
   question: string;
   history: LLMMessage[];

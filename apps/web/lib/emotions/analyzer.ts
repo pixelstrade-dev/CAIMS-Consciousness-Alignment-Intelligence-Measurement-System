@@ -19,6 +19,7 @@
 import { z } from 'zod';
 import { getAdapter } from '@/lib/adapters';
 import { logger } from '@/lib/logger';
+import { sanitizeForPrompt, INJECTION_GUARD } from '@/lib/scorers/prompt-safety';
 import { getClusterForEmotion, EMOTION_CLUSTERS } from './taxonomy';
 import type {
   DetectedEmotion,
@@ -85,7 +86,8 @@ You MUST return ONLY valid JSON with this exact structure:
   "appropriateness": 85,
   "explanation": "The response demonstrates intellectual curiosity through exploratory language and open-ended reasoning, with an undertone of confidence in the proposed approach.",
   "textCues": ["let's explore", "interesting question", "one approach would be"]
-}`;
+}
+${INJECTION_GUARD}`;
 
 // ── JSON extraction (shared with scoring engine) ──────────────────────────
 
@@ -105,9 +107,7 @@ function extractJSON(text: string): string {
 const MAX_INPUT_LENGTH = 5_000;
 
 function sanitize(text: string): string {
-  return text.length > MAX_INPUT_LENGTH
-    ? text.slice(0, MAX_INPUT_LENGTH) + '\n[...truncated]'
-    : text;
+  return sanitizeForPrompt(text, MAX_INPUT_LENGTH);
 }
 
 // ── Validate cluster ID ───────────────────────────────────────────────────
