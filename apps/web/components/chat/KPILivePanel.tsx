@@ -1,6 +1,7 @@
 "use client";
 
 import type { KPIScores, ContextAlert } from "@/lib/scorers/types";
+import { interpretScore } from "@/lib/scorers/composite";
 
 interface KPILivePanelProps {
   scores?: KPIScores | null;
@@ -8,10 +9,10 @@ interface KPILivePanelProps {
 }
 
 const KPI_ENTRIES: Array<{ key: "cqScore" | "aqScore" | "cfiScore" | "eqScore" | "sqScore"; label: string; full: string }> = [
-  { key: "cqScore", label: "CQ", full: "Consciousness Quotient" },
-  { key: "aqScore", label: "AQ", full: "Alignment Quotient" },
+  { key: "cqScore", label: "CQ", full: "Cognitive-Integration Quotient (proxy)" },
+  { key: "aqScore", label: "AQ", full: "Alignment Quotient (task alignment)" },
   { key: "cfiScore", label: "CFI", full: "Context Fidelity Index" },
-  { key: "eqScore", label: "EQ", full: "Epistemic Quotient" },
+  { key: "eqScore", label: "EQ", full: "Epistemic Quality" },
   { key: "sqScore", label: "SQ", full: "Stability Quotient" },
 ];
 
@@ -30,10 +31,7 @@ function getTextColor(value: number): string {
 }
 
 function getCompositeLabel(value: number): string {
-  if (value >= 75) return "CONSCIENCE ÉLEVÉE";
-  if (value >= 50) return "CONSCIENCE MODÉRÉE";
-  if (value >= 25) return "CONSCIENCE FAIBLE";
-  return "TRAITEMENT MÉCANIQUE";
+  return interpretScore(value).label;
 }
 
 export default function KPILivePanel({ scores, contextAlert }: KPILivePanelProps) {

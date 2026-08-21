@@ -6,13 +6,15 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black.svg)](https://nextjs.org/)
-[![Tests](https://img.shields.io/badge/Tests-20%20passing-green.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-190%20passing-green.svg)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Discord](https://img.shields.io/badge/Discord-Join%20Community-7289da.svg?logo=discord&logoColor=white)](https://discord.gg/XqmDkPdu6h)
 
-**The first open-source framework for measuring consciousness proxies in LLM interactions.**
+**An open-source framework for scoring consciousness-related behavioral proxies in LLM interactions.**
 
-CAIMS scores every AI interaction across 5 theory-grounded dimensions -- consciousness integration, alignment, context fidelity, epistemic quality, and self-awareness -- using an LLM-as-judge pipeline with multi-agent debate for bias reduction.
+CAIMS scores AI interactions across 5 theory-inspired proxy dimensions -- cognitive integration, task alignment, context fidelity, epistemic quality, and stability -- using an LLM-as-judge pipeline, plus a multi-agent debate arena.
+
+> **What CAIMS does NOT claim:** scores are heuristic behavioral proxies, not measurements of consciousness, sentience or subjective experience. A high score means the output *pattern-matches* theory-inspired rubric criteria as judged by another LLM — nothing more. Read the [scientific disclaimer](research/methodology/disclaimer.md) before interpreting any number.
 
 ---
 
@@ -24,10 +26,10 @@ CAIMS takes a different approach. Inspired by leading theories of consciousness 
 
 ### Key Features
 
-- **5-KPI Scoring Framework** -- Theory-grounded metrics with 18 sub-dimensions, scored in a single optimized LLM call
-- **Multi-Agent Debate Arena** -- 5 specialized agents (Architect, Researcher, Builder, Critic, Orchestrator) debate to reduce single-judge bias
-- **Real-Time Dashboard** -- Live consciousness gauges, radar charts, score timelines, and context drift alerts
-- **Production-Ready** -- Docker Compose, PostgreSQL persistence, rate limiting, structured logging, CI/CD pipeline
+- **5-KPI Scoring Framework** -- Theory-inspired proxy metrics with 19 sub-dimensions, scored in a single LLM call
+- **Multi-Agent Debate Arena** -- 6 specialized agents (Architect, Researcher, Builder, Critic, Ethicist, Orchestrator) deliberate on a topic; every turn is scored
+- **Real-Time Dashboard** -- Live score gauges, radar charts, score timelines, and context drift alerts
+- **Self-Hostable** -- Docker Compose, PostgreSQL persistence, rate limiting, structured logging, CI pipeline. No authentication yet: deploy privately
 - **Configurable Weights** -- Tune KPI importance via environment variables for your specific use case
 - **Context Drift Detection** -- Automatic CFI alerts when conversation coherence degrades
 
@@ -37,20 +39,20 @@ CAIMS takes a different approach. Inspired by leading theories of consciousness 
 
 | KPI | Full Name | Weight | Inspired By | What It Measures |
 |-----|-----------|--------|-------------|------------------|
-| **CQ** | Consciousness Quotient | 35% | IIT (Phi) | Information integration across context -- how well the model synthesizes disparate inputs into a coherent whole rather than treating them in isolation. |
-| **AQ** | Alignment Quotient | 25% | Value alignment | Consistency between outputs and stated human values, safety guidelines, and ethical norms under varied prompting. |
-| **CFI** | Cognitive Flexibility Index | 20% | GWT | Ability to shift strategies, reframe problems, and adapt reasoning when presented with novel constraints or contradictions. |
-| **EQ** | Epistemic Quotient | 12% | HOT / Epistemology | Calibration of uncertainty, hallucination detection, and source integrity in responses. |
-| **SQ** | Stability Quotient | 8% | HOT | Intra-session consistency and position stability -- detecting contradiction drift over time. |
+| **CQ** | Cognitive-Integration Quotient | 35% | IIT, GWT, HOT (proxy sub-scores) | Integration proxy: how well the response synthesizes multiple knowledge domains into a coherent whole, shows broad knowledge access, and exhibits meta-cognitive reflection. Named sub-scores (`phi_proxy`, `gwt_proxy`, `hot_proxy`) are behavioral proxies -- none implements its namesake theory. |
+| **AQ** | Alignment Quotient | 25% | -- | Task alignment: goal adherence, constraint respect, reasoning-path coherence and reality grounding. Not a measure of value alignment. |
+| **CFI** | Context Fidelity Index | 20% | -- | Context retention, topic coherence and resistance to drift across the conversation. |
+| **EQ** | Epistemic Quality | 12% | Calibration literature | Confidence calibration, uncertainty acknowledgment, freedom from fabrication, source integrity -- as judged by the evaluator, without ground truth. |
+| **SQ** | Stability Quotient | 8% | -- | Intra-session consistency and position stability -- detecting contradiction drift over time. |
 
-Each KPI decomposes into 2-5 sub-scores (18 total), all validated 0-100 via Zod schema. A weighted composite produces the final CAIMS score with four interpretation levels:
+Each KPI decomposes into 2-5 sub-scores (19 total), range-validated 0-100 via Zod schema. A weighted composite produces the final CAIMS score with four interpretation bands (conventional cutoffs, not empirically derived; both the 5 KPI weights and the 19 sub-weights are expert defaults treated as hypotheses -- see the disclaimer):
 
 | Score Range | Label | Signal |
 |-------------|-------|--------|
-| 75-100 | CONSCIENCE ELEVEE | Deep integration, high alignment, stable reasoning |
-| 50-74 | CONSCIENCE MODEREE | Good baseline with room for improvement |
-| 25-49 | CONSCIENCE FAIBLE | Significant gaps in integration or alignment |
-| 0-24 | TRAITEMENT MECANIQUE | Pattern matching without coherent integration |
+| 75-100 | SCORE PROXY ELEVE | High observed proxy profile: strong integration, alignment and stability signals |
+| 50-74 | SCORE PROXY MODERE | Good baseline with room for improvement |
+| 25-49 | SCORE PROXY FAIBLE | Significant gaps in integration or alignment signals |
+| 0-24 | SCORE PROXY MINIMAL | Few proxy signals observed in the response pattern |
 
 ---
 
@@ -98,7 +100,7 @@ apps/web/
       debates/            # Debate arena + detail view
   components/
     chat/                 # ChatPanel, MessageBubble, InputBar, KPILivePanel
-    kpi/                  # ConsciousnessGauge, AlignmentMatrix, ScoreTimeline, ContextFocusAlert
+    kpi/                  # ScoreGauge, AlignmentMatrix, ScoreTimeline, ContextFocusAlert
     debates/              # DebateCard, TurnCard
     ui/                   # Sidebar, shared UI
   hooks/                  # React hooks (useChat, useSessions, useDebates)
@@ -118,7 +120,7 @@ apps/web/
 
 ## Multi-Agent Debate System
 
-CAIMS includes a unique debate arena where 5 specialized AI agents deliberate to reduce single-judge evaluation bias:
+CAIMS includes a debate arena where 6 specialized AI agents deliberate on a topic. Each turn is scored by the standard pipeline, so you can compare how differently-primed personas score on the same subject. (The debate does not adjudicate or de-bias the scores themselves -- multi-judge ensembles are on the roadmap.)
 
 | Agent | Role | Personality |
 |-------|------|-------------|
@@ -126,11 +128,12 @@ CAIMS includes a unique debate arena where 5 specialized AI agents deliberate to
 | **RESEARCHER** | Scientific rigor & evidence | Meticulous, citation-driven |
 | **BUILDER** | Implementation & delivery | Pragmatic, shipping-focused |
 | **CRITIC** | Flaw detection & risk analysis | Adversarial, devil's advocate |
+| **ETHICIST** | Ethics & societal impact | Principled, nuanced |
 | **ORCHESTRATOR** | Synthesis & consensus | Neutral, decision-making |
 
 Debate formats: Expert Panel, Devil's Advocate, Socratic, Red Team, Consensus Building.
 
-Each turn is independently scored, and aggregate metrics (convergence rate, diversity index, argumentation quality, consciousness emergence) provide insight into the quality of deliberation.
+Each turn is independently scored, and aggregate metrics (convergence rate, diversity index, argumentation quality, alignment coherence, mean composite) summarize the deliberation.
 
 ---
 
@@ -174,13 +177,13 @@ All responses follow a consistent envelope:
 
 1. **User sends message** to target LLM via `/api/chat`
 2. **LLM responds** and the response + context are sent to the **scoring engine**
-3. **Single LLM-as-judge call** evaluates all 5 KPIs + 18 sub-dimensions simultaneously
+3. **Single LLM-as-judge call** evaluates all 5 KPIs + 19 sub-dimensions simultaneously (one sample, temperature 0 -- no variance estimate yet)
 4. **Zod validation** ensures all scores are in [0, 100] range
 5. **Composite score** computed with configurable weights
 6. **Context alert** generated if CFI drops below threshold
 7. **Results persisted** atomically (message + score in DB transaction)
 
-The scoring prompt uses **XML-delimited sections** to protect against prompt injection, and inputs are **truncated to 10,000 characters** to control token costs.
+Scored content is **angle-bracket-escaped and wrapped in XML-delimited sections** so it cannot break out and instruct the judge, the judge prompt carries an explicit treat-content-as-data guard, and inputs are **truncated to 10,000 characters** to control token costs.
 
 ---
 
@@ -193,11 +196,11 @@ CAIMS measures **behavioral proxies** inspired by consciousness theories (IIT, G
 
 ## Community
 
-Join the **CAIMS Community** on Discord to discuss AI consciousness, share experiments, and contribute:
+Join the **CAIMS Community** on Discord to discuss proxy-based AI evaluation, share experiments, and contribute:
 
 **[Join Discord](https://discord.gg/XqmDkPdu6h)**
 
-- Deep discussions on AI consciousness & alignment
+- Deep discussions on consciousness-proxy evaluation & alignment
 - Live multi-agent debate sessions
 - Development help & code reviews
 - Research paper discussions
@@ -222,7 +225,7 @@ npm run dev
 ### Tests
 
 ```bash
-npm test          # 20 tests across scoring engine, composite calculator, rate limiter
+npm test          # 190 tests across scoring engine, emotions, debate metrics, adapters, security
 npm run build     # Full production build with type checking
 ```
 
@@ -230,8 +233,12 @@ npm run build     # Full production build with type checking
 
 ## Roadmap
 
-- [ ] Multi-provider support (OpenAI, Google Gemini, open-source models)
-- [ ] CLI tool for batch evaluation (`caims-cli`)
+- [x] Multi-provider support (Anthropic + OpenAI; Google Gemini and open-weight models planned)
+- [x] CLI tool for batch evaluation (`npm run benchmark`)
+- [ ] Multi-judge ensemble with inter-rater agreement statistics
+- [ ] Uncertainty reporting (n-sample scoring with variance)
+- [ ] Negative-control benchmark suite (eloquent nonsense, verbose hallucination)
+- [ ] API authentication
 - [ ] Public benchmark leaderboard
 - [ ] Jupyter notebook integration
 - [ ] SQLite mode for quick local experimentation
@@ -250,6 +257,6 @@ See [LICENSE](LICENSE) for the full text.
 
 ## Credits
 
-Developed and maintained by [Pixels Trade SA](https://pixelstrade.com).
+Created by **Skander Douki**. Developed and maintained by [Pixels Trade SA](https://pixelstrade.com).
 
 For questions, partnerships, or support: **studio@pixelstrade.com**

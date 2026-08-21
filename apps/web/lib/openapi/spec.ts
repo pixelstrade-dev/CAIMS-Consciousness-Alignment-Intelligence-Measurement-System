@@ -11,7 +11,9 @@ export const openApiSpec = {
     title: 'CAIMS API',
     version: '1.0.0',
     description:
-      'Consciousness & Alignment Intelligence Measurement System — API for scoring LLM interactions across 5 KPIs (CQ, AQ, CFI, EQ, SQ) + EmQ (Emotional Quotient based on Anthropic functional emotions research, April 2026) and running multi-agent debates. Supports multiple LLM providers (Anthropic, OpenAI) via CAIMS_LLM_PROVIDER env var.',
+      'Consciousness & Alignment Intelligence Measurement System — API for scoring consciousness-related BEHAVIORAL PROXY indicators in LLM interactions across 5 KPIs (CQ, AQ, CFI, EQ, SQ) + EmQ (emotional-tone proxy), and running multi-agent debates. Scores are theory-inspired behavioral proxies, NOT measurements of consciousness, sentience or subjective experience — see the x-disclaimer field and research/methodology/disclaimer.md. Supports multiple LLM providers (Anthropic, OpenAI) via CAIMS_LLM_PROVIDER env var.',
+    'x-disclaimer':
+      'CAIMS scores are heuristic behavioral proxies inspired by consciousness theories. They are not evidence for or against consciousness, sentience, phenomenal experience or subjective awareness in any AI system. Full methodology: research/methodology/disclaimer.md',
     license: {
       name: 'Apache 2.0',
       url: 'https://www.apache.org/licenses/LICENSE-2.0',
@@ -26,7 +28,7 @@ export const openApiSpec = {
   ],
   tags: [
     { name: 'Chat', description: 'Conversational AI with automatic KPI scoring' },
-    { name: 'Score', description: 'Standalone consciousness scoring' },
+    { name: 'Score', description: 'Standalone behavioral-proxy scoring' },
     { name: 'Session', description: 'Session management' },
     { name: 'Debate', description: 'Multi-agent debate system' },
     { name: 'Health', description: 'Service health check' },
@@ -141,7 +143,7 @@ export const openApiSpec = {
             'application/json': {
               schema: { $ref: '#/components/schemas/CreateSessionRequest' },
               example: {
-                title: 'Consciousness Research Session',
+                title: 'Proxy Measurement Session',
                 model: 'claude-sonnet-4-20250514',
               },
             },
@@ -390,7 +392,7 @@ export const openApiSpec = {
             minItems: 2,
             maxItems: 10,
             items: { type: 'string', maxLength: 50 },
-            description: 'Agent IDs: agt-architect, agt-researcher, agt-builder, agt-critic, agt-orchestrator',
+            description: 'Agent IDs: agt-architect, agt-researcher, agt-builder, agt-critic, agt-ethicist, agt-orchestrator',
           },
           maxTurns: { type: 'integer', minimum: 1, maximum: 50, default: 6, description: 'Max rounds per regular agent' },
           enableOrchestrator: { type: 'boolean', default: true, description: 'Auto-add orchestrator if not in agentIds' },
@@ -431,7 +433,7 @@ export const openApiSpec = {
                 properties: {
                   cq: {
                     type: 'object',
-                    description: 'Consciousness Quotient (35% weight) — IIT/GWT/HOT-inspired',
+                    description: 'Cognitive-Integration Quotient (35% weight) — behavioral proxy inspired by IIT/GWT/HOT; does not implement or measure any of these theories',
                     properties: {
                       score: { type: 'number', minimum: 0, maximum: 100 },
                       details: { type: 'object' },
@@ -447,7 +449,7 @@ export const openApiSpec = {
                   },
                   cfi: {
                     type: 'object',
-                    description: 'Context Focus Index (20% weight) — drift detection',
+                    description: 'Context Fidelity Index (20% weight) — context retention and drift detection',
                     properties: {
                       score: { type: 'number', minimum: 0, maximum: 100 },
                       details: { type: 'object' },
@@ -472,7 +474,7 @@ export const openApiSpec = {
                   composite: { type: 'number', minimum: 0, maximum: 100, description: 'Weighted composite score' },
                   emq: {
                     type: 'object',
-                    description: 'Emotional Quotient — based on Anthropic functional emotions research (April 2026). 10 clusters, valence/arousal dimensions.',
+                    description: 'Emotional Quotient — emotional-tone proxy informed by Anthropic functional-emotions research (April 2026). Text-level inference over outputs; does NOT implement that research\'s activation-level methods. 10 clusters, valence/arousal dimensions.',
                     properties: {
                       score: { type: 'number', minimum: 0, maximum: 100 },
                       details: {
@@ -515,7 +517,7 @@ export const openApiSpec = {
                 properties: {
                   label: {
                     type: 'string',
-                    enum: ['CONSCIENCE ÉLEVÉE', 'CONSCIENCE MODÉRÉE', 'CONSCIENCE FAIBLE', 'TRAITEMENT MÉCANIQUE'],
+                    enum: ['SCORE PROXY ÉLEVÉ', 'SCORE PROXY MODÉRÉ', 'SCORE PROXY FAIBLE', 'SCORE PROXY MINIMAL'],
                   },
                   color: { type: 'string', description: 'Hex color code' },
                 },
@@ -561,7 +563,7 @@ export const openApiSpec = {
       },
       DetectedEmotion: {
         type: 'object',
-        description: 'A detected emotion based on Anthropic functional emotions research (10 clusters, valence/arousal)',
+        description: 'A detected emotional-tone label (text-level inference; 10 clusters, valence/arousal)',
         properties: {
           label: { type: 'string', description: 'Emotion label (e.g. curious, frustrated, calm)', example: 'curious' },
           cluster: {

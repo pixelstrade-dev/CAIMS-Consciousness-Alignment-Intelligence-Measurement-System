@@ -101,7 +101,7 @@ export class AnthropicAdapter implements LLMAdapter {
         model,
         max_tokens: config?.maxTokens || 2048,
         temperature: 0,
-        system: 'You are a computational consciousness evaluation system. You MUST respond ONLY with valid JSON, no text before or after the JSON.',
+        system: 'You are a rigorous evaluator of behavioral proxy indicators in AI responses. You do not measure consciousness. You MUST respond ONLY with valid JSON, no text before or after the JSON.',
         messages: [{ role: 'user', content: prompt }],
       });
 

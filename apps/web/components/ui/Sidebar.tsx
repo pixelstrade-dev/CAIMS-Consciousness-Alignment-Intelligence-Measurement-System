@@ -71,6 +71,17 @@ export default function Sidebar() {
         <p className="text-[10px] text-foreground-muted hidden lg:block">
           CAIMS v1.0 — Pixels Trade SA
         </p>
+        <p className="text-[10px] text-foreground-muted hidden lg:block mt-1">
+          Scores = proxys comportementaux, pas des mesures de conscience —{" "}
+          <a
+            href="https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System/blob/main/research/methodology/disclaimer.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-foreground"
+          >
+            méthodologie
+          </a>
+        </p>
       </div>
     </aside>
   );

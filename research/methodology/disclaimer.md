@@ -6,13 +6,15 @@ This document describes the theoretical limitations and methodological caveats o
 
 ## 1. Theoretical Inspiration, Not Faithful Implementation
 
-CAIMS draws on three established theories of consciousness as conceptual frameworks:
+CAIMS draws on three established theories of consciousness as conceptual frameworks. All three inspire sub-proxies **inside the CQ (Cognitive-Integration Quotient) rubric** — this mapping matches the implementation exactly:
 
-- **Integrated Information Theory (IIT)** -- provides the motivation for measuring information integration across context (CQ).
-- **Global Workspace Theory (GWT)** -- inspires the Cognitive Flexibility Index (CFI), which assesses a model's ability to broadcast and recombine information across reasoning strategies.
-- **Higher-Order Thought (HOT) theory** -- informs the Self-awareness Quotient (SQ), which probes metacognitive behaviors such as uncertainty detection and self-correction.
+- **Integrated Information Theory (IIT)** -- motivates the `phi_proxy` sub-score (integration of multiple knowledge domains into a unified answer). It is named after Phi but does not compute it (see section 2).
+- **Global Workspace Theory (GWT)** -- motivates the `gwt_proxy` sub-score (breadth of access to diverse knowledge areas within a response).
+- **Higher-Order Thought (HOT) theory** -- motivates the `hot_proxy` sub-score (meta-cognitive reflection visible in the response text).
 
-These theories were developed to explain biological consciousness. CAIMS does not claim to implement them faithfully. Instead, it extracts testable behavioral predictions from each theory and operationalizes them as scoring rubrics for language model outputs. The mapping from theory to rubric involves interpretive choices that are not uniquely determined by the source theories.
+The remaining KPIs are behavioral quality dimensions without a specific consciousness-theory claim: **AQ** (task alignment: goal adherence and constraint respect), **CFI** (Context Fidelity Index: context retention and drift), **EQ** (Epistemic Quality: calibration and honesty) and **SQ** (Stability Quotient: intra-session consistency). Earlier versions of this document mapped GWT to CFI and HOT to SQ; that never corresponded to the implemented rubric and is corrected here.
+
+These theories were developed to explain biological consciousness, and their status is actively contested: the largest adversarial test to date (COGITATE consortium, *Nature*, 2025) found that neither IIT's nor GNWT's core predictions held. CAIMS does not claim to implement any of them faithfully. Instead, it borrows behavioral intuitions from each theory and operationalizes them as scoring rubrics for language model outputs — closer to the "indicator properties" framing of Butlin, Long et al. (*Trends in Cognitive Sciences*, 2025) than to any direct theoretical measurement. The mapping from theory to rubric involves interpretive choices that are not uniquely determined by the source theories.
 
 ---
 
@@ -33,7 +35,7 @@ CAIMS relies on an LLM-as-judge approach: a language model evaluates the outputs
 - **Self-enhancement bias** -- when the judge and the evaluated model share an architecture or training corpus, the judge may systematically favor outputs that resemble its own tendencies.
 - **Rubric sensitivity** -- small changes in rubric wording can produce meaningfully different score distributions.
 
-CAIMS mitigates some of these biases through the multi-agent debate system, which introduces adversarial evaluation. However, no debiasing strategy eliminates these effects entirely. Scores should be interpreted with these limitations in mind.
+No mitigation for these biases is currently implemented: every score is produced by a single call to a single judge at temperature 0. The multi-agent debate arena scores the *debating agents* as evaluation subjects — it does not adjudicate or cross-check scores, and earlier claims that it "reduces single-judge bias" were inaccurate. Multi-judge ensembles with inter-rater agreement statistics are planned; until then, scores should be interpreted with these limitations in mind.
 
 ---
 
@@ -50,6 +52,12 @@ Researchers and practitioners should avoid interpreting CAIMS scores as consciou
 ## 5. Weights Are Expert-Determined Defaults, Not Empirically Validated
 
 The composite CAIMS score is a weighted sum of the five KPI scores. The default weights were determined by expert judgment based on the relative importance of each dimension for aligned and robust AI behavior. They were not derived from empirical calibration against an external ground truth, because no such ground truth exists for consciousness-adjacent behavioral measurement.
+
+The same caveat applies to three further sets of constants that earlier versions of this document did not mention:
+
+- **19 sub-score weights** hard-coded inside the KPI calculators (e.g. `phi_proxy` counts for 30% of CQ) — expert defaults, not empirically derived, and currently not configurable.
+- **The interpretation thresholds** (75 / 50 / 25) that map the composite onto labels such as "SCORE PROXY ÉLEVÉ" — conventional quartile-style bands with no empirical justification; the labels describe the observed proxy profile, never a level of consciousness.
+- **The single-sample scoring design** — one judge call per score, no seed, no variance estimate. Run-to-run and month-to-month variability is currently unmeasured; treat any single score as a point estimate of unknown precision.
 
 Users are encouraged to adjust weights to reflect their own evaluation priorities. Different weight configurations may be appropriate for different use cases (e.g., safety-focused evaluations may increase the AQ weight; creativity-focused evaluations may increase the CFI weight).
 

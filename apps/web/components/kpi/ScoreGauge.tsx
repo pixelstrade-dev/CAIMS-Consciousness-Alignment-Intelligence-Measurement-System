@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
+import { scoreColor as getScoreColor } from "@/lib/scorers/composite";
 
-interface ConsciousnessGaugeProps {
+interface ScoreGaugeProps {
   label: string;
   value: number;
   size?: number;
@@ -10,18 +11,11 @@ interface ConsciousnessGaugeProps {
 
 const CIRCUMFERENCE = 2 * Math.PI * 40; // ~251.327
 
-function getScoreColor(value: number): string {
-  if (value >= 75) return "#00f5d4";
-  if (value >= 50) return "#4cc9f0";
-  if (value >= 25) return "#f8961e";
-  return "#f72585";
-}
-
-export default function ConsciousnessGauge({
+export default function ScoreGauge({
   label,
   value,
   size = 120,
-}: ConsciousnessGaugeProps) {
+}: ScoreGaugeProps) {
   const clampedValue = Math.max(0, Math.min(100, value));
   const color = useMemo(() => getScoreColor(clampedValue), [clampedValue]);
   const dashoffset = useMemo(

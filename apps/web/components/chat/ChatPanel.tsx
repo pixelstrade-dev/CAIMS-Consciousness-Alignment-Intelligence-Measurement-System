@@ -48,7 +48,7 @@ export default function ChatPanel({
               />
             </svg>
             <p className="text-sm text-foreground-muted">
-              Commencez une conversation pour analyser la conscience IA.
+              Commencez une conversation pour analyser les indicateurs comportementaux de l&apos;IA.
             </p>
           </div>
         ) : (

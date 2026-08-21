@@ -1,6 +1,6 @@
 "use client";
 
-import ConsciousnessGauge from "./ConsciousnessGauge";
+import ScoreGauge from "./ScoreGauge";
 import AlignmentMatrix from "./AlignmentMatrix";
 import ContextFocusAlert from "./ContextFocusAlert";
 import ScoreTimeline from "./ScoreTimeline";
@@ -57,7 +57,7 @@ export default function KPIDashboard({
       <div className="rounded-xl border border-border bg-background-card p-4">
         <div className="flex flex-wrap items-center justify-center gap-6">
           {KPI_GAUGES.map(({ key, label }) => (
-            <ConsciousnessGauge
+            <ScoreGauge
               key={key}
               label={label}
               value={scores[key]}
@@ -65,7 +65,7 @@ export default function KPIDashboard({
             />
           ))}
           <div className="border-l border-border pl-6 ml-2">
-            <ConsciousnessGauge
+            <ScoreGauge
               label="Composite"
               value={scores.composite}
               size={140}
