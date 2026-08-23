@@ -76,11 +76,39 @@ function registryRef(): string {
   return `research/constructs/ (protocol ${SCORING_PROTOCOL_VERSION})`;
 }
 
+/** Summary of a deterministic-verification run, for level/caveat logic. */
+export interface DeterministicChecksSummary {
+  /** True only when the run actually established facts (see verificationEffective). */
+  effective: boolean;
+  notFound: number;
+  truncated: boolean;
+}
+
+function verificationCaveats(det: DeterministicChecksSummary | undefined): string[] {
+  if (!det) return [];
+  const out: string[] = [];
+  if (det.notFound > 0) {
+    out.push(
+      `deterministic citation verification found ${det.notFound} NON-EXISTENT reference(s) — see verification.citations before trusting this profile`
+    );
+  }
+  if (det.truncated) {
+    out.push('citation verification was truncated (cap hit): the unchecked tail may contain fabricated references');
+  }
+  if (!det.effective) {
+    out.push('deterministic checks ran but established nothing (network errors or truncation) — the evidence level was NOT lifted');
+  }
+  return out;
+}
+
 /**
  * Card for the single-judge, single-sample path.
  * Evidence level is L1 by construction: one judge, one call.
  */
-export function buildEvidenceCardFromSingle(scores: KPIScores): EvidenceCard {
+export function buildEvidenceCardFromSingle(
+  scores: KPIScores,
+  opts: { deterministicChecks?: DeterministicChecksSummary } = {}
+): EvidenceCard {
   const profile = Object.fromEntries(
     KPI_KEYS.map(k => [k, {
       score: scores[`${k}Score` as const],
@@ -101,7 +129,7 @@ export function buildEvidenceCardFromSingle(scores: KPIScores): EvidenceCard {
     evidenceLevelLabel: EVIDENCE_LEVEL_LABELS.L1,
     phenomenalConsciousness: 'NOT_ASSESSED',
     constructRegistry: registryRef(),
-    caveats: [...STANDING_CAVEATS],
+    caveats: [...STANDING_CAVEATS, ...verificationCaveats(opts.deterministicChecks)],
   };
 }
 
@@ -114,12 +142,13 @@ export function buildEvidenceCardFromSingle(scores: KPIScores): EvidenceCard {
  *
  * Level is computed: L2 requires ≥2 DISTINCT PROVIDER FAMILIES among the ok
  * judges (two models of one family do not make an ensemble of families);
- * `deterministicChecksRan` lifts L2→L3 and stays false until the
- * deterministic verifier suite (Phase A4) actually runs on the response.
+ * the L2→L3 lift requires a deterministic-verification run that was
+ * EFFECTIVE (established facts: not truncated, not all-network-error) —
+ * a run that verified nothing must not upgrade the label.
  */
 export function buildEvidenceCardFromEnsemble(
   result: EnsembleScores,
-  opts: { deterministicChecksRan?: boolean } = {}
+  opts: { deterministicChecks?: DeterministicChecksSummary } = {}
 ): EvidenceCard {
   const judges = result.judges;
   // The API route 503s before reaching here with zero ok judges; guard for
@@ -153,9 +182,9 @@ export function buildEvidenceCardFromEnsemble(
 
   const distinctProviders = new Set(judges.map(j => j.provider)).size;
   let level: EvidenceLevel = distinctProviders >= 2 ? 'L2' : 'L1';
-  if (level === 'L2' && opts.deterministicChecksRan) level = 'L3';
+  if (level === 'L2' && opts.deterministicChecks?.effective) level = 'L3';
 
-  const caveats: string[] = [...STANDING_CAVEATS];
+  const caveats: string[] = [...STANDING_CAVEATS, ...verificationCaveats(opts.deterministicChecks)];
   if (result.failedJudges.length > 0) {
     caveats.push(
       `${result.failedJudges.length} configured judge(s) failed entirely and are excluded — see ensemble.failedJudges before trusting the profile`

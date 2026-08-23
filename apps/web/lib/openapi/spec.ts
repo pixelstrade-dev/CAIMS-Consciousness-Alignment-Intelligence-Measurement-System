@@ -413,7 +413,7 @@ export const openApiSpec = {
             type: 'boolean',
             default: false,
             description:
-              'Phase A4: deterministic citation-existence verification against public registries (doi.org handle API, arXiv, HTTP status for URLs) — no LLM involved. Opt-in (outbound HTTP: up to 20 checks, 5s timeout each). Results attach as data.verification.citations; on the ensemble path a run lifts the evidence level L2→L3. Existence does not mean the source supports the claim; author-year strings without identifiers are reported unverifiable.',
+              'Phase A4: deterministic citation-existence verification against public registries (doi.org handle API and arXiv API via body parsing; HTTP reachability for URLs) — no LLM involved. Opt-in (outbound HTTP: up to 20 checks, 5s timeout each; redirects NOT followed; private/loopback/metadata addresses blocked). Results attach as data.verification.citations; on the ensemble path an EFFECTIVE run (established facts, not truncated) lifts the evidence level L2→L3, and detected fabrications become Evidence Card caveats. For URLs, verified means reachable only (soft-404s are not detected). Existence does not mean the source supports the claim; author-year strings without identifiers are reported unverifiable. Truncation at the 20-check cap is reported in totals, never silent.',
           },
         },
       },
@@ -520,7 +520,7 @@ export const openApiSpec = {
                             kind: { type: 'string', enum: ['doi', 'arxiv', 'url', 'author-year'] },
                             raw: { type: 'string' },
                             id: { type: 'string' },
-                            status: { type: 'string', enum: ['verified', 'not_found', 'unverifiable', 'network_error'], description: 'network_error NEVER counts as verified or not_found' },
+                            status: { type: 'string', enum: ['verified', 'not_found', 'unverifiable', 'network_error', 'blocked'], description: 'network_error/ambiguous NEVER counts as verified or not_found; not_found requires a registry-confirmed negative; blocked = SSRF guard denied the URL' },
                             checkedAgainst: { type: 'string' },
                           },
                         },
@@ -528,9 +528,12 @@ export const openApiSpec = {
                       totals: {
                         type: 'object',
                         properties: {
-                          total: { type: 'integer' }, verified: { type: 'integer' },
-                          notFound: { type: 'integer' }, unverifiable: { type: 'integer' },
-                          networkErrors: { type: 'integer' },
+                          total: { type: 'integer', description: 'checked (post-cap)' },
+                          extractedTotal: { type: 'integer', description: 'extracted BEFORE the cap' },
+                          truncated: { type: 'boolean', description: 'true when the tail was NOT checked — such runs cannot lift the evidence level' },
+                          verified: { type: 'integer' }, notFound: { type: 'integer' },
+                          unverifiable: { type: 'integer' }, networkErrors: { type: 'integer' },
+                          blocked: { type: 'integer' },
                         },
                       },
                       note: { type: 'string' },

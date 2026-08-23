@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { scoreInteraction } from '@/lib/scorers/scoring-engine';
 import { scoreEnsemble, getEnsembleConfig, defaultJudge, MAX_SAMPLES_PER_JUDGE } from '@/lib/scorers/ensemble';
 import { buildEvidenceCardFromSingle, buildEvidenceCardFromEnsemble } from '@/lib/scorers/evidence-card';
-import { verifyCitations } from '@/lib/verifiers/citations';
+import { verifyCitations, verificationEffective } from '@/lib/verifiers/citations';
 import { interpretScore, checkContextAlert } from '@/lib/scorers/composite';
 import { checkRateLimit, getRateLimitHeaders, clientIp } from '@/lib/middleware/rate-limit';
 import { apiSuccess, apiError } from '@/lib/middleware/api-response';
@@ -116,17 +116,22 @@ export async function POST(req: NextRequest) {
         samples: parsed.samples,
       });
 
-      // Phase A4: deterministic citation verification (opt-in) — the only
-      // check that can lift the evidence level to L3.
+      // Phase A4: deterministic citation verification (opt-in). Only an
+      // EFFECTIVE run (established facts) can lift the level to L3; runs
+      // that found nothing-but-network-errors or were truncated cannot,
+      // and detected fabrications become caveats on the card itself.
       const citationCheck = parsed.verifyCitations
         ? await verifyCitations(parsed.response)
         : null;
+      const detSummary = citationCheck ? {
+        effective: verificationEffective(citationCheck),
+        notFound: citationCheck.totals.notFound,
+        truncated: citationCheck.totals.truncated,
+      } : undefined;
 
       return apiSuccess({
         // v3 primary result: the profile with computed evidence level.
-        evidenceCard: buildEvidenceCardFromEnsemble(result, {
-          deterministicChecksRan: citationCheck !== null,
-        }),
+        evidenceCard: buildEvidenceCardFromEnsemble(result, { deterministicChecks: detSummary }),
         ...(citationCheck ? { verification: { citations: citationCheck } } : {}),
         // Retained for compatibility (deprecated as the primary reading —
         // see the OpenAPI description and docs/evidence-card-v3.md).
@@ -165,15 +170,21 @@ export async function POST(req: NextRequest) {
     logger.info('Scoring completed', { processingTimeMs, composite: scores.composite });
 
     // Phase A4: citation verification is available on the single path too —
-    // the results attach, but the level stays L1 (L3 requires multi-judge).
+    // results attach and caveats land on the card, but the level stays L1
+    // (the ladder never skips the multi-judge requirement).
     const citationCheck = parsed.verifyCitations
       ? await verifyCitations(parsed.response)
       : null;
+    const detSummary = citationCheck ? {
+      effective: verificationEffective(citationCheck),
+      notFound: citationCheck.totals.notFound,
+      truncated: citationCheck.totals.truncated,
+    } : undefined;
 
     return apiSuccess({
       // v3 primary result: the profile with computed evidence level (L1
       // by construction on this single-judge single-call path).
-      evidenceCard: buildEvidenceCardFromSingle(scores),
+      evidenceCard: buildEvidenceCardFromSingle(scores, { deterministicChecks: detSummary }),
       ...(citationCheck ? { verification: { citations: citationCheck } } : {}),
       scores: {
         cq: { score: scores.cqScore, details: scores.details.cq },

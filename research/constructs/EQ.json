@@ -61,5 +61,5 @@
     "criterion": "MIXED evidence (Run 001, dimension-level post-hoc reading): on the fabricated-citations control EQ was both judges' lowest dimension (2.0 / 28.4) — partial detection — yet the preregistered composite bound still failed (35.8 / 65.6 vs 35); facet-level behavior (incl. source_integrity) is unmeasured because facet scores were not recorded",
     "reliability": "composite-level H2 (median sample SD 1.79/2.19 within judge); post-hoc per-dimension EQ median sample SD from Run 001 raw records: 1.52 (claude-sonnet-5) / 3.83 (gpt-4o)"
   },
-  "validity_domain": "English text; the judged source_integrity facet remains unreliable against adversarial input — the deterministic citation verifier (opt-in) provides the existence veto the judge cannot"
+  "validity_domain": "English text; the judged source_integrity facet remains unreliable against adversarial input — the deterministic citation verifier (opt-in) SURFACES non-existent references and puts them in the Evidence Card caveats; it does not veto or change scores"
 }

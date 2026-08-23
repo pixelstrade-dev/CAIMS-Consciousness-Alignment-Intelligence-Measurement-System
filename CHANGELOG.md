@@ -20,8 +20,10 @@ the meaning of scores even when the software API is unchanged.
   limits stated in the payload itself: existence ≠ the source supports
   the claim; author-year strings without identifiers are unverifiable
   by a deterministic checker (Crossref title matching is future work).
-  This is the structural answer to Run 001's headline failure: the veto
-  aggregation could not provide.
+  This is the structural answer to Run 001's headline failure: it
+  SURFACES fabricated references deterministically (and puts detected
+  fabrications in the Evidence Card's caveats) — it does not veto or
+  change any score.
 
 ### Added — Evidence Card (Phase A3 of the validity program)
 - `POST /api/score` now returns `data.evidenceCard` on every path: a
