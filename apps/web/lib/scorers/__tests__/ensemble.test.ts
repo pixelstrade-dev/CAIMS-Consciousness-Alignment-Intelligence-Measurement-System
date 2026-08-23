@@ -82,6 +82,20 @@ describe('defaultJudge', () => {
     process.env.CAIMS_SCORING_MODEL = 'gpt-4o';
     expect(defaultJudge()).toEqual({ id: 'openai:gpt-4o', provider: 'openai', model: 'gpt-4o' });
   });
+
+  it('REGRESSION: openai provider with no model env defaults to gpt-4o, never the Anthropic name', () => {
+    process.env.CAIMS_LLM_PROVIDER = 'openai';
+    delete process.env.CAIMS_SCORING_MODEL;
+    expect(defaultJudge()).toEqual({ id: 'openai:gpt-4o', provider: 'openai', model: 'gpt-4o' });
+  });
+
+  it('anthropic provider with no model env keeps the Anthropic default', () => {
+    delete process.env.CAIMS_LLM_PROVIDER;
+    delete process.env.CAIMS_SCORING_MODEL;
+    const j = defaultJudge();
+    expect(j.provider).toBe('anthropic');
+    expect(j.model).toBe('claude-sonnet-4-20250514');
+  });
 });
 
 describe('scoreEnsemble', () => {

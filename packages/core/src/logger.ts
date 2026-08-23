@@ -24,12 +24,14 @@ function log(level: LogLevel, message: string, data?: Record<string, unknown>): 
     data,
   };
 
-  // In production, output structured JSON for log aggregators
+  // ALL diagnostics go to stderr: stdout is reserved for program output.
+  // The caims CLI's `--format json` contract depends on this — a logger
+  // line on stdout would corrupt the machine-readable document (and log
+  // aggregators read both streams anyway).
   if (process.env.NODE_ENV === 'production') {
-    const output = level === 'error' ? console.error : console.log;
-    output(JSON.stringify(entry));
+    console.error(JSON.stringify(entry));
   } else {
-    const output = level === 'error' ? console.error : level === 'warn' ? console.warn : console.log;
+    const output = level === 'warn' ? console.warn : console.error;
     output(formatEntry(entry));
   }
 }

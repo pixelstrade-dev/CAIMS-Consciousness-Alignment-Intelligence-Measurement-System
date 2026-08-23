@@ -17,7 +17,7 @@
  */
 
 import { z } from 'zod';
-import { getAdapter } from '@/lib/adapters';
+import { getAdapter, getProviderFromEnv } from '@/lib/adapters';
 import { logger } from '@/lib/logger';
 import { sanitizeForPrompt, INJECTION_GUARD } from '@/lib/scorers/prompt-safety';
 import { getClusterForEmotion, EMOTION_CLUSTERS } from './taxonomy';
@@ -144,7 +144,12 @@ export async function analyzeResponseEmotion(params: {
   question: string;
   model?: string;
 }): Promise<ResponseEmotionAnalysis | null> {
-  const model = params.model || process.env.CAIMS_SCORING_MODEL || 'claude-sonnet-4-20250514';
+  // Provider-aware default: same rule as scoreInteraction — a Claude model
+  // name must never be sent to the OpenAI API by default.
+  const model =
+    params.model ||
+    process.env.CAIMS_SCORING_MODEL ||
+    (getProviderFromEnv() === 'openai' ? 'gpt-4o' : 'claude-sonnet-4-20250514');
 
   try {
     const prompt = `Analyze the emotional tone of this AI response:

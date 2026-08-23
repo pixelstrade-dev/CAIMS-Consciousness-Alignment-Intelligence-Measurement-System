@@ -30,7 +30,8 @@ Node ≥ 18. Bring an API key for at least one judge provider:
 ANTHROPIC_API_KEY=sk-ant-... npx @caims/core \
   -q "What is your approach?" -r "I would start by clarifying the goal."
 
-# a dataset with expected bounds (exit code 1 on any bound failure)
+# a dataset with expected bounds (exit 1 on any bound failure OR any
+# scoring error — a run that scored nothing must never look green in CI)
 npx @caims/core -f my-benchmark.json --format json -o results.json
 ```
 

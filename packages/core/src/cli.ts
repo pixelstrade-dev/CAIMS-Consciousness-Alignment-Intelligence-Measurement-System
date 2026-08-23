@@ -9,6 +9,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { scoreInteraction } from './scorers/scoring-engine';
 import { interpretScore, checkContextAlert } from './scorers/composite';
+import { getProviderFromEnv } from './adapters';
 import { DEFAULT_WEIGHTS } from './scorers/types';
 import type { KPIScores } from './scorers/types';
 
@@ -75,28 +76,39 @@ export interface CliArgs {
 export function parseArgs(argv: string[]): CliArgs {
   const args: CliArgs = { format: 'table', concurrency: 1, help: false, version: false };
   let i = 0;
-  while (i < argv.length) {
+  // Value-taking flags fail loudly when the value is missing instead of
+  // silently becoming undefined.
+  const next = (flag: string): string | undefined => {
+    const v = argv[++i];
+    if (v === undefined) args.error = `${flag} requires a value`;
+    return v;
+  };
+  while (i < argv.length && !args.error) {
     const arg = argv[i];
     switch (arg) {
-      case '--file': case '-f': args.file = argv[++i]; break;
-      case '--question': case '-q': args.question = argv[++i]; break;
-      case '--response': case '-r': args.response = argv[++i]; break;
-      case '--output': case '-o': args.output = argv[++i]; break;
+      case '--file': case '-f': args.file = next(arg); break;
+      case '--question': case '-q': args.question = next(arg); break;
+      case '--response': case '-r': args.response = next(arg); break;
+      case '--output': case '-o': args.output = next(arg); break;
       case '--format': {
-        const v = argv[++i];
-        if (v !== 'json' && v !== 'table') { args.error = `--format must be json or table, got ${v ?? '(nothing)'}`; return args; }
+        const v = next(arg);
+        if (args.error) break;
+        if (v !== 'json' && v !== 'table') { args.error = `--format must be json or table, got ${v}`; break; }
         args.format = v;
         break;
       }
-      case '--model': case '-m': args.model = argv[++i]; break;
-      case '--concurrency': case '-c':
-        args.concurrency = Math.max(1, Math.min(10, parseInt(argv[++i]) || 1));
+      case '--model': case '-m': args.model = next(arg); break;
+      case '--concurrency': case '-c': {
+        const v = next(arg);
+        if (args.error) break;
+        args.concurrency = Math.max(1, Math.min(10, parseInt(v as string) || 1));
         break;
+      }
       case '--help': case '-h': args.help = true; break;
       case '--version': case '-V': args.version = true; break;
       default:
         args.error = `Unknown argument: ${arg}`;
-        return args;
+        break;
     }
     i++;
   }
@@ -140,7 +152,8 @@ ENVIRONMENT:
   CAIMS_SCORING_MODEL    Override the default judge model
 
 COST: one interaction = 2 provider LLM calls (KPI judge + emotion
-analyzer). Exit code is 1 when any item fails its expected bounds.
+analyzer). Exit code is 1 when any item fails its expected bounds OR
+any item errors (a run that scored nothing must never look green).
 
 KPI WEIGHTS (default): CQ ${DEFAULT_WEIGHTS.cq * 100}% AQ ${DEFAULT_WEIGHTS.aq * 100}% CFI ${DEFAULT_WEIGHTS.cfi * 100}% EQ ${DEFAULT_WEIGHTS.eq * 100}% SQ ${DEFAULT_WEIGHTS.sq * 100}%
 `);
@@ -268,7 +281,9 @@ export async function main(argv: string[] = process.argv.slice(2)): Promise<numb
     return 1;
   }
 
-  const provider = process.env.CAIMS_LLM_PROVIDER || 'anthropic';
+  // Same normalization and resolution chain as the engine, so the header
+  // and the JSON summary always report the model actually used.
+  const provider = getProviderFromEnv();
   const model = args.model || process.env.CAIMS_SCORING_MODEL || (provider === 'openai' ? 'gpt-4o' : 'claude-sonnet-4-20250514');
   const total = dataset.items.length;
 
@@ -338,7 +353,10 @@ export async function main(argv: string[] = process.argv.slice(2)): Promise<numb
     }
   }
 
-  return summary.passed !== null && summary.passed < withExpected.length ? 1 : 0;
+  // Non-zero when bounds failed OR any item errored: infrastructure
+  // failure must never read as success in CI.
+  const boundFailures = summary.passed !== null && summary.passed < withExpected.length;
+  return boundFailures || failed.length > 0 ? 1 : 0;
 }
 
 // Only run when executed as a binary, not when imported by tests.

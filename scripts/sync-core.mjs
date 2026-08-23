@@ -42,6 +42,7 @@ const FILES = [
   'scorers/__tests__/composite.test.ts',
   'scorers/__tests__/scoring-engine-injection.test.ts',
   'scorers/__tests__/ensemble.test.ts',
+  'scorers/__tests__/default-model.test.ts',
   'scorers/__tests__/prompt-safety.test.ts',
   'emotions/__tests__/taxonomy.test.ts',
   'emotions/__tests__/analyzer.test.ts',

@@ -109,7 +109,9 @@ docker compose -f docker-compose.dev.yml up
 
 ### Score in 2 minutes — no clone at all
 
-Requires `@caims/core` ≥ 2.0.0-alpha.2 on npm and one provider key:
+Requires `@caims/core` ≥ 2.0.0-alpha.2 (if npm still serves alpha.1, the
+bin does not exist yet — publishing is one `publish-npm` workflow run;
+until then use the repo path below) and one provider key:
 
 ```bash
 ANTHROPIC_API_KEY=sk-ant-... npx @caims/core \
