@@ -24,6 +24,11 @@ const ChatRequestSchema = z.object({
 export async function POST(req: NextRequest) {
   const auth = checkApiKey(req.headers);
   if (!auth.ok) {
+    if (auth.reason === 'misconfigured') {
+      // Fail closed: keys were intended but none parsed — a 5xx tells the
+      // operator to fix config; it must never silently open the API.
+      return apiError('AUTH_MISCONFIGURED', 'API keys are misconfigured on the server', 503);
+    }
     return apiError(
       'UNAUTHORIZED',
       auth.reason === 'missing_key'

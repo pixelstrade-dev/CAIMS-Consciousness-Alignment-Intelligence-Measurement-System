@@ -601,6 +601,17 @@ describe('API-key enforcement (CAIMS_API_KEYS set)', () => {
     expect(res.status).toBe(401);
   });
 
+  it('POST /api/score with set-but-empty keys returns 503 AUTH_MISCONFIGURED (fail closed)', async () => {
+    process.env.CAIMS_API_KEYS = ' , ';
+    const { POST } = await import('@/app/api/score/route');
+    const res = await POST(makeRequest('POST', 'http://localhost/api/score', {
+      question: 'q', response: 'r',
+    }) as never);
+    expect(res.status).toBe(503);
+    const body = await res.json();
+    expect(body.error.code).toBe('AUTH_MISCONFIGURED');
+  });
+
   it('POST /api/session with the right bearer key passes auth (proceeds past 401)', async () => {
     const { POST } = await import('@/app/api/session/route');
     const req = makeRequest('POST', 'http://localhost/api/session', { title: 't' });

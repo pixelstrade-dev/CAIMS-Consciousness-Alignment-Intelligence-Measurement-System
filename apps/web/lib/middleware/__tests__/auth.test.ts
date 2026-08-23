@@ -63,10 +63,22 @@ describe('checkApiKey', () => {
     expect(checkApiKey(headersOf({ 'x-api-key': 'secret-b' }))).toEqual({ ok: true, mode: 'keyed' });
   });
 
-  it('empty CAIMS_API_KEYS entries do not create an empty valid key', () => {
+  it('set-but-effectively-empty CAIMS_API_KEYS FAILS CLOSED (orchestrator ruling)', () => {
+    // Set means intent to enforce; zero parsed keys means config error.
+    // The security-correct reading of ambiguous enforcement intent is
+    // denial, never silent exposure.
     process.env.CAIMS_API_KEYS = ' , ,';
-    // list is effectively empty -> open mode, NOT "empty string is a key"
-    expect(checkApiKey(headersOf({}))).toEqual({ ok: true, mode: 'open' });
+    expect(checkApiKey(headersOf({}))).toEqual({ ok: false, reason: 'misconfigured' });
+  });
+
+  it('empty-string CAIMS_API_KEYS also fails closed, even with a key presented', () => {
+    process.env.CAIMS_API_KEYS = '';
+    expect(checkApiKey(headersOf({ 'x-api-key': 'anything' }))).toEqual({ ok: false, reason: 'misconfigured' });
+  });
+
+  it('empty string can never authenticate', () => {
+    process.env.CAIMS_API_KEYS = 'real-key';
+    expect(checkApiKey(headersOf({ 'x-api-key': '   ' }))).toEqual({ ok: false, reason: 'missing_key' });
   });
 
   it('bearer parsing is case-insensitive on the scheme', () => {

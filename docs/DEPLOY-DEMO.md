@@ -40,10 +40,15 @@ Generate a key: `openssl rand -hex 32`.
 
 ## Option B — single VPS (docker compose)
 
-`docker compose up -d` with a `.env` containing the same variables
-(`CAIMS_API_KEYS` included, `POSTGRES_PASSWORD` set — compose fails silently
-to a blank password if unset), behind Caddy/nginx for TLS. The production
-`Dockerfile` is multi-stage, non-root, healthchecked.
+`docker compose up -d` with a `.env` next to `docker-compose.yml` setting
+`POSTGRES_PASSWORD`, `ANTHROPIC_API_KEY` and `CAIMS_API_KEYS` (the compose
+file now passes these through to the container explicitly — an earlier
+version did not, which would have deployed an open API). Apply the schema
+once from your machine: `cd apps/web && DATABASE_URL='postgresql://caims:<pw>@<host>:5432/caims' npx prisma db push`.
+Put Caddy/nginx in front for TLS. The production `Dockerfile` is
+multi-stage, non-root, healthchecked. Note: `CAIMS_API_KEYS` set but empty
+FAILS CLOSED (503 on scoring endpoints) — that is deliberate; fix the
+value, never work around it.
 
 ## What the demo shows publicly
 
@@ -51,6 +56,14 @@ Dashboard, past sessions/debates and scores (read-only), the methodology
 disclaimer link, Swagger UI at `/api/docs`. Scoring actions require a key —
 hand demo keys to individuals, rotate by editing `CAIMS_API_KEYS`
 (comma-separated allows several active at once) and redeploying.
+
+Two honest caveats. First, the web UI itself does not yet send API keys, so
+on a keyed deployment its interactive buttons (chat, score, debate) will
+receive 401 — key holders use curl, the Python SDK or Swagger UI's
+Authorize button; the browsing/dashboard surfaces remain fully functional.
+Second, there is no per-user isolation: every key holder shares read and
+continue access to ALL sessions and debates on the instance (Session has no
+owner column) — acceptable for a demo, unsuitable for private data.
 
 ## Explicitly out of scope for the demo (roadmap)
 

@@ -48,12 +48,13 @@ function constantTimeMatch(presented: string, expected: string): boolean {
 
 export type AuthResult =
   | { ok: true; mode: 'open' | 'keyed' }
-  | { ok: false; reason: 'missing_key' | 'invalid_key' };
+  | { ok: false; reason: 'missing_key' | 'invalid_key' | 'misconfigured' };
 
 export function checkApiKey(headers: { get(name: string): string | null }): AuthResult {
-  const keys = configuredKeys();
+  const raw = process.env.CAIMS_API_KEYS;
 
-  if (keys.length === 0) {
+  // UNSET is a legible, deliberate signal (local/private use): open mode.
+  if (raw === undefined) {
     if (!warnedOpenMode) {
       warnedOpenMode = true;
       logger.warn(
@@ -61,6 +62,18 @@ export function checkApiKey(headers: { get(name: string): string | null }): Auth
       );
     }
     return { ok: true, mode: 'open' };
+  }
+
+  const keys = configuredKeys();
+
+  // SET but yielding zero keys ('', ',', whitespace) is intent-to-enforce
+  // plus a configuration error — the security-correct reading of ambiguous
+  // enforcement intent is denial, never silent exposure. FAIL CLOSED.
+  if (keys.length === 0) {
+    logger.error(
+      'CAIMS_API_KEYS is set but contains no usable keys — refusing all keyed requests (fail closed). Fix the variable or unset it explicitly.'
+    );
+    return { ok: false, reason: 'misconfigured' };
   }
 
   const presented = extractPresentedKey(headers);

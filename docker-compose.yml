@@ -11,11 +11,14 @@ services:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://caims:${POSTGRES_PASSWORD}@postgres:5432/caims
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - CAIMS_LLM_PROVIDER=${CAIMS_LLM_PROVIDER:-anthropic}
+      # REQUIRED for any public deployment — without it the API would run
+      # open. Set-but-empty now FAILS CLOSED (503) instead of opening.
+      - CAIMS_API_KEYS=${CAIMS_API_KEYS:-}
     depends_on:
       postgres:
         condition: service_healthy
-      migrate:
-        condition: service_completed_successfully
     deploy:
       resources:
         limits:
@@ -50,19 +53,6 @@ services:
           cpus: '0.5'
           memory: 512M
     restart: unless-stopped
-    networks:
-      - caims-network
-
-  migrate:
-    build:
-      context: ./apps/web
-      dockerfile: Dockerfile
-    command: npx prisma migrate deploy
-    environment:
-      - DATABASE_URL=postgresql://caims:${POSTGRES_PASSWORD}@postgres:5432/caims
-    depends_on:
-      postgres:
-        condition: service_healthy
     networks:
       - caims-network
 
