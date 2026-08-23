@@ -118,3 +118,5 @@ export {
   meanAbsDiff,
 } from './statistics/descriptive';
 export type { SummaryStats } from './statistics/descriptive';
+export { krippendorffAlphaInterval, icc2_1, interRaterAgreement } from './statistics/agreement';
+export type { IccResult, InterRaterAgreement } from './statistics/agreement';

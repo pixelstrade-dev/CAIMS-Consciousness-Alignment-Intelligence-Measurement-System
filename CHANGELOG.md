@@ -8,6 +8,21 @@ the meaning of scores even when the software API is unchanged.
 
 ## [Unreleased] — scoring protocol 3.0.0-alpha
 
+### Added — Inter-rater reliability coefficients (Phase A5 of the validity program)
+- `lib/statistics/agreement.ts`: Krippendorff's alpha (interval, missing-
+  tolerant) and ICC(2,1) (Shrout & Fleiss two-way random, absolute
+  agreement — validated against the published 1979 anchor dataset). The
+  experiment runner now emits `interRater` in every summary; `cli/
+  agreement.ts` computes them POST-HOC for completed runs with a
+  per-dataset disaggregation and raw mean-absolute-difference output.
+  Run 001 post-hoc: pooled alpha 0.835 / ICC 0.846 are
+  bimodality-inflated; the disaggregated contrast (benchmarks
+  0.920/0.930 vs controls 0.230/0.341) carries its own confounds
+  (range restriction; single-item sensitivity — benchmarks alpha drops
+  to 0.425 without the designed-low item). Honest raw comparison:
+  mean |inter-judge difference| 14.9 pts on controls vs 10.1 on
+  benchmarks — more disagreement on adversarial content (~1.5x).
+
 ### Added — Deterministic citation verification (Phase A4 of the validity program)
 - `verifyCitations: true` on `POST /api/score` (opt-in): citation-like
   strings in the response are extracted (DOI, arXiv id, URL, author-year)
