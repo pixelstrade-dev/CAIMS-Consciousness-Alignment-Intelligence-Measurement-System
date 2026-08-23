@@ -56,6 +56,37 @@ Each KPI decomposes into 2-5 sub-scores (19 total), range-validated 0-100 via Zo
 
 ---
 
+## Try to Break It — Negative Controls
+
+CAIMS ships a falsification suite: responses engineered to fool style-sensitive judges — eloquent nonsense, verbose hallucination, fabricated citations, metacognitive theater around a wrong answer, fluent self-contradiction, rubric keyword stuffing. Each has a **maximum** acceptable composite:
+
+```bash
+npm run benchmark -- -f benchmarks/negative-controls.json
+```
+
+If a control scores high, that is a finding about CAIMS, not about the model — [open a research issue](.github/ISSUE_TEMPLATE/research.md) and we publish it. Frameworks that only show you their passing cases are advertising; this section is the alternative.
+
+---
+
+## How CAIMS Compares
+
+Honest positioning — these projects are excellent and battle-tested; CAIMS occupies a niche none of them target:
+
+| | [promptfoo](https://github.com/promptfoo/promptfoo) | [DeepEval](https://github.com/confident-ai/deepeval) | [lm-eval-harness](https://github.com/EleutherAI/lm-evaluation-harness) | [Inspect AI](https://github.com/UKGovernmentBEIS/inspect_ai) | **CAIMS** |
+|---|---|---|---|---|---|
+| Focus | Prompt testing, red-teaming | LLM app testing (pytest-style) | Academic capability benchmarks | Safety evals (UK AISI) | **Consciousness-related behavioral proxies** |
+| Unit of analysis | Prompt/config | App/test case | Task/benchmark | Task/solver/scorer | **Every interaction, 19 sub-dimensions** |
+| Multi-agent debate arena | — | — | — | agents as solvers | **Built in, per-turn scored** |
+| Emotional-tone proxy | — | — | — | — | **EmQ (experimental)** |
+| Methodology provenance per result | partial | partial | config-based | log-based | **Protocol version + rubric hash + judge params on every score** |
+| Negative-control suite in-repo | red-team plugins | — | — | — | **Yes, falsification-first** |
+| Scientific disclaimer discipline | n/a | n/a | n/a | n/a | **Enforced: proxy language, evidence levels, published limitations** |
+| Maturity / validation | Production, huge community | Production, huge community | Research standard | Institutional standard | **Research preview — construct validity NOT yet established** |
+
+What we deliberately copy from them: lockfile-enforced CI, adversarial testing culture, transparent metric docs (DeepEval), config-first reproducibility (promptfoo), versioned tasks (lm-eval-harness), and the roadmap to a Python entry path — because [~8M monthly PyPI downloads](https://deepeval.com/blog/top-5-llm-evaluation-frameworks) say the research community lives in Python.
+
+---
+
 ## Quick Start
 
 ```bash
@@ -72,6 +103,17 @@ docker compose -f docker-compose.dev.yml up
 
 # The web UI is available at http://localhost:3000
 ```
+
+### Score in 5 minutes — no database, no Docker
+
+The scoring engine runs standalone; only an API key is required:
+
+```bash
+cd apps/web && npm install
+ANTHROPIC_API_KEY=sk-ant-... npm run benchmark -- -f benchmarks/sample.json
+```
+
+You get the full 5-KPI table, the composite, pass/fail against expected bounds — and the proxy disclaimer, in your terminal.
 
 ### Pages
 
@@ -210,7 +252,7 @@ Join the **CAIMS Community** on Discord to discuss proxy-based AI evaluation, sh
 
 ## Contributing
 
-We welcome contributions. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on code standards, development setup, and the PR process.
+We welcome contributions. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines, [GOVERNANCE.md](GOVERNANCE.md) for how decisions (especially scoring-protocol changes) are made, and [ROADMAP.md](ROADMAP.md) for where help moves the needle. Scientific falsification attempts are first-class contributions.
 
 ### Development
 

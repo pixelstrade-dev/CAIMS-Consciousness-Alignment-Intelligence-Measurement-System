@@ -1,0 +1,8 @@
+# Default owners for everything in the repo
+* @pixelstrade-dev
+
+# Scoring methodology changes require lead review (protocol-versioned surface)
+/apps/web/lib/scorers/ @pixelstrade-dev
+/apps/web/lib/emotions/ @pixelstrade-dev
+/research/ @pixelstrade-dev
+/apps/web/benchmarks/ @pixelstrade-dev
