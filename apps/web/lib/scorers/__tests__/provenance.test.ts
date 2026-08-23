@@ -60,20 +60,22 @@ describe('scoring protocol provenance', () => {
   it('records null temperature when the scoring model does not accept the parameter', async () => {
     const originalModel = process.env.CAIMS_SCORING_MODEL;
     process.env.CAIMS_SCORING_MODEL = 'claude-sonnet-5';
-    (getAdapter as jest.Mock).mockReturnValue({
-      judge: jest.fn(async () => VALID_JUDGE_JSON),
-    });
+    try {
+      (getAdapter as jest.Mock).mockReturnValue({
+        judge: jest.fn(async () => VALID_JUDGE_JSON),
+      });
 
-    const result = await scoreInteraction({
-      response: 'A well-integrated answer.',
-      question: 'Explain X.',
-      history: [],
-    });
+      const result = await scoreInteraction({
+        response: 'A well-integrated answer.',
+        question: 'Explain X.',
+        history: [],
+      });
 
-    expect(result).not.toBeNull();
-    expect(result!.metadata.temperature).toBeNull();
-
-    if (originalModel === undefined) delete process.env.CAIMS_SCORING_MODEL;
-    else process.env.CAIMS_SCORING_MODEL = originalModel;
+      expect(result).not.toBeNull();
+      expect(result!.metadata.temperature).toBeNull();
+    } finally {
+      if (originalModel === undefined) delete process.env.CAIMS_SCORING_MODEL;
+      else process.env.CAIMS_SCORING_MODEL = originalModel;
+    }
   });
 });
