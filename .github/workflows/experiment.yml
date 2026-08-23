@@ -60,12 +60,10 @@ jobs:
           MOCK_FLAG=""
           if [ "$MOCK_INPUT" = "true" ]; then MOCK_FLAG="--mock"; fi
           npx tsx cli/experiment.ts -c "${GITHUB_WORKSPACE}/${CONFIG_PATH}" $MOCK_FLAG --skip-missing
-      - name: Open results pull request
+      - name: Publish results branch (PR automatic, or one-click link)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # Requires repo setting: Settings → Actions → General →
-          # "Allow GitHub Actions to create and approve pull requests".
           RUN_DIR=$(dirname "$CONFIG_PATH")
           SUFFIX=$([ "$MOCK_INPUT" = "true" ] && echo "mock" || echo "results")
           BRANCH="experiment/$(basename "$RUN_DIR")-${SUFFIX}-${GITHUB_RUN_ID}"
@@ -75,7 +73,22 @@ jobs:
           git add "$RUN_DIR"
           git commit -m "results($(basename "$RUN_DIR")): ${SUFFIX} from workflow run ${GITHUB_RUN_ID}"
           git push -u origin "$BRANCH"
-          gh pr create \
+          # Automatic PR needs the repo toggle "Allow GitHub Actions to create
+          # and approve pull requests". If it is off, we do NOT fail: the
+          # results branch is already pushed — we surface a one-click link in
+          # the run summary instead.
+          if gh pr create \
             --title "Experiment $(basename "$RUN_DIR") ${SUFFIX} (workflow ${GITHUB_RUN_ID})" \
             --body "Automated experiment output. Protocol: research/experiments/protocol-001.md. Review REPORT.md and raw JSONL before merging. Mock runs are pipeline validation only and must never be cited as measurements." \
-            --base main --head "$BRANCH"
+            --base main --head "$BRANCH"; then
+            echo "### ✅ Results pull request opened automatically" >> "$GITHUB_STEP_SUMMARY"
+          else
+            COMPARE_URL="https://github.com/${GITHUB_REPOSITORY}/compare/main...${BRANCH}?expand=1"
+            echo "### ✅ Experiment finished — results branch pushed" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Automatic PR creation is disabled on this repository. **Click this link to open the results pull request (1 click):**" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "➡️ **[Create the results PR](${COMPARE_URL})**" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "(Optional, to make it automatic next time: Settings → Actions → General → Workflow permissions → tick 'Allow GitHub Actions to create and approve pull requests'.)" >> "$GITHUB_STEP_SUMMARY"
+          fi
