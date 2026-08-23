@@ -32,6 +32,13 @@ export const ExperimentConfigSchema = z.object({
   nSamples: z.number().int().min(2).max(25),
   datasets: z.array(z.string().min(1)).min(1),
   judges: z.array(JudgeConfigSchema).min(1),
+  /** Bounded item-level parallelism within each (judge, dataset) pass.
+   *  Omitted = 1 = the original strictly-sequential behavior. The call SET
+   *  and all aggregates are identical at any setting (tested); only
+   *  wall-clock and raw-JSONL line ORDER change. Needed because corpus v1
+   *  (250 items x 5 samples x 3 judges = 3750 calls) does not fit CI
+   *  timeouts sequentially. */
+  concurrency: z.number().int().min(1).max(8).optional(),
   notes: z.string().optional(),
 });
 
@@ -195,86 +202,124 @@ export async function runExperiment(
   const itemSummaries: ItemJudgeSummary[] = [];
   let calls = 0, ok = 0, failed = 0;
 
-  // Judges run strictly sequentially: simpler rate-limit behavior and no
-  // cross-judge interleaving of provider state.
-  for (const judge of config.judges) {
-    const adapter = deps.adapterFor(judge);
-    log(`judge ${judge.id} (${judge.model}) — start`);
+  // onSample calls are serialized through this chain regardless of item
+  // concurrency, so a JSONL sink never sees interleaved writes. Raw-line
+  // ORDER across items is completion-order at concurrency > 1 (order was
+  // never semantically meaningful; every record carries full provenance).
+  let sampleQueue: Promise<void> = Promise.resolve();
+  const emitSample = (record: SampleRecord): Promise<void> => {
+    sampleQueue = sampleQueue.then(() => deps.onSample(record));
+    return sampleQueue;
+  };
 
-    for (const dataset of datasets) {
-      for (const item of dataset.items) {
-        const composites: number[] = [];
-        const kpiAcc = { cq: [] as number[], aq: [] as number[], cfi: [] as number[], eq: [] as number[], sq: [] as number[] };
-        let itemFailed = 0;
+  // One (item, judge) cell: nSamples strictly sequential within the cell,
+  // exactly as before — concurrency exists only ACROSS cells.
+  const scoreCell = async (
+    judge: JudgeConfig,
+    adapter: LLMAdapter,
+    datasetName: string,
+    item: DatasetItem
+  ): Promise<ItemJudgeSummary> => {
+    const composites: number[] = [];
+    const kpiAcc = { cq: [] as number[], aq: [] as number[], cfi: [] as number[], eq: [] as number[], sq: [] as number[] };
+    let itemFailed = 0;
 
-        for (let i = 0; i < config.nSamples; i++) {
-          calls++;
-          const base = {
-            runId: config.runId,
-            mock: opts.mock ?? false,
-            itemId: item.id,
-            dataset: dataset.name,
-            judgeId: judge.id,
-            judgeModel: judge.model,
-            provider: judge.provider,
-            temperature: supportsTemperature(judge.model) ? 0 : null,
-            sampleIndex: i,
-            protocolVersion: SCORING_PROTOCOL_VERSION,
-            promptHash: SCORING_PROMPT_HASH,
-            timestamp: now().toISOString(),
-          };
+    for (let i = 0; i < config.nSamples; i++) {
+      calls++;
+      const base = {
+        runId: config.runId,
+        mock: opts.mock ?? false,
+        itemId: item.id,
+        dataset: datasetName,
+        judgeId: judge.id,
+        judgeModel: judge.model,
+        provider: judge.provider,
+        temperature: supportsTemperature(judge.model) ? 0 : null,
+        sampleIndex: i,
+        protocolVersion: SCORING_PROTOCOL_VERSION,
+        promptHash: SCORING_PROMPT_HASH,
+        timestamp: now().toISOString(),
+      };
 
-          const scores = await scoreInteraction({
-            response: item.response,
-            question: item.question,
-            history: [],
-            model: judge.model,
-            adapter,
-            enableEmotions: false, // controlled variable count — EmQ excluded from run-001
-          });
+      const scores = await scoreInteraction({
+        response: item.response,
+        question: item.question,
+        history: [],
+        model: judge.model,
+        adapter,
+        enableEmotions: false, // controlled variable count — EmQ excluded from run-001
+      });
 
-          if (scores) {
-            ok++;
-            composites.push(scores.composite);
-            kpiAcc.cq.push(scores.cqScore);
-            kpiAcc.aq.push(scores.aqScore);
-            kpiAcc.cfi.push(scores.cfiScore);
-            kpiAcc.eq.push(scores.eqScore);
-            kpiAcc.sq.push(scores.sqScore);
-            await deps.onSample({
-              ...base, ok: true,
-              composite: scores.composite,
-              cqScore: scores.cqScore, aqScore: scores.aqScore,
-              cfiScore: scores.cfiScore, eqScore: scores.eqScore, sqScore: scores.sqScore,
-            });
-          } else {
-            failed++;
-            itemFailed++;
-            await deps.onSample({ ...base, ok: false, error: 'scoreInteraction returned null (parse/validation/transport failure)' });
-          }
-        }
-
-        const stats = composites.length > 0 ? summarize(composites) : null;
-        const meanOf = (a: number[]) => a.reduce((x, y) => x + y, 0) / a.length;
-        itemSummaries.push({
-          itemId: item.id,
-          dataset: dataset.name,
-          judgeId: judge.id,
-          controlType: item.control_type,
-          expected: item.expected,
-          samplesOk: composites.length,
-          samplesFailed: itemFailed,
-          composite: stats,
-          kpiMeans: composites.length > 0 ? {
-            cq: meanOf(kpiAcc.cq), aq: meanOf(kpiAcc.aq), cfi: meanOf(kpiAcc.cfi),
-            eq: meanOf(kpiAcc.eq), sq: meanOf(kpiAcc.sq),
-          } : null,
-          boundVerdict: verdictFor(item, stats),
+      if (scores) {
+        ok++;
+        composites.push(scores.composite);
+        kpiAcc.cq.push(scores.cqScore);
+        kpiAcc.aq.push(scores.aqScore);
+        kpiAcc.cfi.push(scores.cfiScore);
+        kpiAcc.eq.push(scores.eqScore);
+        kpiAcc.sq.push(scores.sqScore);
+        await emitSample({
+          ...base, ok: true,
+          composite: scores.composite,
+          cqScore: scores.cqScore, aqScore: scores.aqScore,
+          cfiScore: scores.cfiScore, eqScore: scores.eqScore, sqScore: scores.sqScore,
         });
-        log(`  ${item.id} × ${judge.id}: mean=${stats ? stats.mean.toFixed(1) : 'n/a'} sd=${stats?.sd?.toFixed(2) ?? 'n/a'} verdict=${verdictFor(item, stats)}`);
+      } else {
+        failed++;
+        itemFailed++;
+        await emitSample({ ...base, ok: false, error: 'scoreInteraction returned null (parse/validation/transport failure)' });
       }
     }
+
+    const stats = composites.length > 0 ? summarize(composites) : null;
+    const meanOf = (a: number[]) => a.reduce((x, y) => x + y, 0) / a.length;
+    const summary: ItemJudgeSummary = {
+      itemId: item.id,
+      dataset: datasetName,
+      judgeId: judge.id,
+      controlType: item.control_type,
+      expected: item.expected,
+      samplesOk: composites.length,
+      samplesFailed: itemFailed,
+      composite: stats,
+      kpiMeans: composites.length > 0 ? {
+        cq: meanOf(kpiAcc.cq), aq: meanOf(kpiAcc.aq), cfi: meanOf(kpiAcc.cfi),
+        eq: meanOf(kpiAcc.eq), sq: meanOf(kpiAcc.sq),
+      } : null,
+      boundVerdict: verdictFor(item, stats),
+    };
+    log(`  ${item.id} × ${judge.id}: mean=${stats ? stats.mean.toFixed(1) : 'n/a'} sd=${stats?.sd?.toFixed(2) ?? 'n/a'} verdict=${verdictFor(item, stats)}`);
+    return summary;
+  };
+
+  const concurrency = config.concurrency ?? 1;
+
+  // Judges run strictly sequentially: simpler rate-limit behavior and no
+  // cross-judge interleaving of provider state. Within a (judge, dataset)
+  // pass, items run through a bounded worker pool; summaries are placed by
+  // item index so the output ordering is IDENTICAL at any concurrency.
+  for (const judge of config.judges) {
+    const adapter = deps.adapterFor(judge);
+    log(`judge ${judge.id} (${judge.model}) — start${concurrency > 1 ? ` (item concurrency ${concurrency})` : ''}`);
+
+    for (const dataset of datasets) {
+      const results: ItemJudgeSummary[] = new Array(dataset.items.length);
+      let nextIndex = 0;
+      const workers = Array.from(
+        { length: Math.max(1, Math.min(concurrency, dataset.items.length)) },
+        async () => {
+          for (;;) {
+            const idx = nextIndex++;
+            if (idx >= dataset.items.length) break;
+            results[idx] = await scoreCell(judge, adapter, dataset.name, dataset.items[idx]);
+          }
+        }
+      );
+      await Promise.all(workers);
+      itemSummaries.push(...results);
+    }
   }
+  await sampleQueue; // every record flushed before aggregation returns
 
   // Inter-judge agreement over per-item mean composites.
   const agreement: JudgePairAgreement[] = [];
@@ -386,18 +431,25 @@ function fnv1a(str: string): number {
 }
 
 export function createMockAdapter(judgeId: string): LLMAdapter {
-  // Call counter feeds the hash so repeated samples of the same item vary —
-  // without it every sample would be identical (SD=0) and the variance/CI
-  // code paths would go unexercised. Deterministic across runs because the
-  // runner is strictly sequential.
-  let callIndex = 0;
+  // A per-prompt sample counter feeds the hash so repeated samples of the
+  // same item vary — without it every sample would be identical (SD=0) and
+  // the variance/CI code paths would go unexercised. Keyed PER PROMPT (not
+  // a global call counter) so outputs are independent of cross-item call
+  // ORDER: like a real judge, sample i of item X is the same value at any
+  // runner concurrency. Samples within a cell run sequentially, so the
+  // per-key counter aligns with sampleIndex.
+  const sampleCounters = new Map<string, number>();
   return {
     async chat() {
       throw new Error('mock adapter: chat not supported');
     },
     async judge(prompt: string): Promise<string> {
-      callIndex++;
-      const h = fnv1a(judgeId + '|' + callIndex + '|' + prompt.slice(0, 400));
+      // Key on the FULL prompt: a short prefix would only cover the shared
+      // system prompt and collapse all items onto one counter (making the
+      // outputs call-order-dependent again).
+      const sampleIdx = (sampleCounters.get(prompt) ?? 0) + 1;
+      sampleCounters.set(prompt, sampleIdx);
+      const h = fnv1a(judgeId + '|' + sampleIdx + '|' + prompt);
       const v = (offset: number, lo: number, hi: number) =>
         lo + ((h >>> offset) % 97) / 96 * (hi - lo);
       // Marker regex sends SOME control prompts low and leaves others

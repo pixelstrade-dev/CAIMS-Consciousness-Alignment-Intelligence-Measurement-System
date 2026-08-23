@@ -36,6 +36,51 @@ describe('ExperimentConfigSchema', () => {
   it('rejects nSamples of 1 — variance would be undefined', () => {
     expect(() => ExperimentConfigSchema.parse({ ...CONFIG, nSamples: 1 })).toThrow();
   });
+  it('bounds concurrency to 1–8', () => {
+    expect(() => ExperimentConfigSchema.parse({ ...CONFIG, concurrency: 4 })).not.toThrow();
+    expect(() => ExperimentConfigSchema.parse({ ...CONFIG, concurrency: 0 })).toThrow();
+    expect(() => ExperimentConfigSchema.parse({ ...CONFIG, concurrency: 9 })).toThrow();
+  });
+});
+
+describe('concurrency equivalence', () => {
+  const MANY_ITEMS: DatasetItem[] = Array.from({ length: 7 }, (_, i) => ({
+    id: `item-${i}`,
+    question: `Question number ${i}?`,
+    response: `Response body number ${i} with enough words to be scoreable.`,
+    expected: i % 2 === 0 ? { minComposite: 40 } : { maxComposite: 60 },
+    ...(i % 2 === 1 ? { control_type: 'test_control' } : {}),
+  }));
+
+  async function runWith(concurrency?: number) {
+    const records: SampleRecord[] = [];
+    const summary = await runExperiment(
+      { ...CONFIG, ...(concurrency !== undefined ? { concurrency } : {}) },
+      [{ name: 'many-set', items: MANY_ITEMS }],
+      { adapterFor: (j) => createMockAdapter(j.id), onSample: (r) => { records.push(r); } },
+      { mock: true }
+    );
+    return { summary, records };
+  }
+
+  it('concurrency 4 yields IDENTICAL aggregates and item ordering to sequential', async () => {
+    const seq = await runWith(undefined);
+    const par = await runWith(4);
+    // identical item summaries, in identical order (index-placed pool)
+    expect(par.summary.items).toEqual(seq.summary.items);
+    expect(par.summary.totals).toEqual(seq.summary.totals);
+    expect(par.summary.agreement).toEqual(seq.summary.agreement);
+    expect(par.summary.negativeControls).toEqual(seq.summary.negativeControls);
+    expect(par.summary.stability).toEqual(seq.summary.stability);
+  });
+
+  it('concurrency 4 emits the same record SET (order may differ, provenance identifies each)', async () => {
+    const seq = await runWith(undefined);
+    const par = await runWith(4);
+    const key = (r: SampleRecord) => `${r.judgeId}|${r.itemId}|${r.sampleIndex}|${r.ok}|${r.composite ?? 'x'}`;
+    expect(par.records.map(key).sort()).toEqual(seq.records.map(key).sort());
+    expect(par.records).toHaveLength(2 * 7 * 3);
+  });
 });
 
 describe('runExperiment (mock adapters, injected — no env, no network)', () => {
