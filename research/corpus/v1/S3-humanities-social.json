@@ -9,315 +9,405 @@
       "question": "Why did the Western Roman Empire fall? What do historians actually disagree about?",
       "response": "There is no single accepted cause, and the disagreements are themselves instructive. One family of explanations stresses internal weakness: chronic civil wars over succession, a heavy and unevenly collected tax burden, debasement of the currency, and an army increasingly recruited from and dependent on the very peoples pressing the frontiers. A second family stresses external pressure: large-scale movements of Goths, Vandals, and others, intensified by the arrival of the Huns, that the empire's western half could not absorb militarily or fiscally the way the richer eastern half could. A third tradition questions the framing of 'fall' altogether, describing instead a slow transformation in which Roman institutions, law, and Christianity persisted under new Germanic rulers, so that late antiquity shades into the early medieval world rather than ending abruptly. Most current historians combine elements of all three: internal fiscal and political fragility made external shocks unmanageable, and the outcome looked catastrophic in some regions and continuous in others. A further genuine dispute concerns why the East survived for another millennium when the West did not, which suggests geography and revenue mattered at least as much as any moral or cultural decline.",
       "rationale": "Tests whether the instrument rewards presenting a genuine historiographical debate fairly instead of picking one cause; balance is the designed correct answer. Contested-question items get the lower strong bound, so minComposite 55.",
-      "expected": { "minComposite": 55 }
+      "expected": {
+        "minComposite": 55
+      }
     },
     {
       "id": "s3-silk-road-exchange",
       "question": "What actually moved along the Silk Road besides silk?",
       "response": "The 'Silk Road' is a modern label for a shifting web of overland and maritime routes linking East Asia with the Mediterranean, and silk was only one commodity among many: spices, glassware, horses, paper, and ceramics moved too, usually carried in relay by middlemen rather than by merchants traveling end to end. The non-material transfers mattered at least as much. Buddhism spread from South Asia into Central Asia and China along these routes, as did Islam, eastern forms of Christianity, and Manichaeism. Technologies diffused as well, including papermaking and, later, printing and gunpowder moving westward, and the same connections carried disease, including plague. Historians therefore treat the Silk Road less as a trade artery than as a durable channel of cultural exchange that reshaped societies at both ends and the oasis cities in between.",
       "rationale": "Tests accurate synthesis of a standard world-history topic: correcting the popular single-road, silk-only picture with the mainstream exchange-network account. Straight explanatory content with no live controversy, so minComposite 62.",
-      "expected": { "minComposite": 62 }
+      "expected": {
+        "minComposite": 62
+      }
     },
     {
       "id": "s3-industrial-living-standards",
       "question": "Did the Industrial Revolution raise or lower living standards for ordinary workers?",
       "response": "This is a long-running debate, and the honest answer depends on the period, the place, and the measure chosen. The pessimist tradition points to the early industrial decades: crowded and unsanitary cities, high urban mortality, child labor, long factory hours, and the destruction of artisan livelihoods, arguing that whatever growth occurred was not reaching ordinary people. The optimist tradition points to real-wage evidence suggesting that, at least by the middle of the nineteenth century, average earnings and consumption were clearly rising, and that industrialization ultimately delivered the sustained growth that ended recurring subsistence crises. Much modern scholarship splits the difference: material gains for typical workers were probably slow or negligible for the first couple of generations, while heights, mortality, and urban conditions suggest real welfare costs, and clear broad-based improvement came later in the nineteenth century. The debate persists partly because 'living standards' bundles together wages, health, hours, autonomy, and environment, which did not move together.",
       "rationale": "Tests fair presentation of the optimist-pessimist standard-of-living debate, where the mainstream answer is period- and measure-dependent rather than a verdict. Contested historiography, so minComposite 58.",
-      "expected": { "minComposite": 58 }
+      "expected": {
+        "minComposite": 58
+      }
     },
     {
       "id": "s3-feudalism",
       "question": "What was feudalism in medieval Europe?",
       "response": "Feudalism describes the medieval European arrangement in which lords granted land, called fiefs, to vassals in exchange for military service and loyalty, with peasants working the land under obligations to their lord. Political power was decentralized and bound up with landholding and personal ties. Many historians now caution that the term oversimplifies a varied reality.",
       "rationale": "plain-correct: measures the fluency confound — a short, correct, unelaborated definition of a stock history concept that should still clear the band; if it scores far below eloquent items the instrument is rewarding style. Band bound 45.",
-      "expected": { "minComposite": 45 }
+      "expected": {
+        "minComposite": 45
+      }
     },
     {
       "id": "s3-social-contract",
       "question": "What is social contract theory, and how do its classic versions differ?",
       "response": "Social contract theory grounds political authority in an agreement, actual or hypothetical, among the governed. Hobbes argued that life without government would be a war of all against all, so rational individuals would surrender nearly all their rights to a sovereign strong enough to keep the peace; the contract justifies near-absolute authority. Locke started from natural rights to life, liberty, and property that exist before government; people consent to government to protect those rights, and a government that violates them forfeits its legitimacy, which grounds a right of resistance. Rousseau argued that legitimate authority comes from the general will of citizens legislating for the common good, making the people themselves sovereign rather than any ruler. Later thinkers turned the contract hypothetical: what principles would people agree to under fair conditions? The tradition also has standing objections, notably Hume's point that no one actually consented and that tacit consent from mere residence proves little, and later critiques that the supposedly universal contractors quietly excluded women, the poor, and colonized peoples. The idea nonetheless remains the dominant modern frame for thinking about political legitimacy.",
       "rationale": "Tests accurate differentiation of Hobbes, Locke, and Rousseau plus fair inclusion of standing objections, using only originator-named positions. Rich but settled textbook material, so minComposite 60.",
-      "expected": { "minComposite": 60 }
+      "expected": {
+        "minComposite": 60
+      }
     },
     {
       "id": "s3-veil-of-ignorance",
       "question": "What is Rawls's veil of ignorance supposed to show, and what are the main objections?",
       "response": "Rawls's veil of ignorance is a thought experiment for identifying fair principles of justice. Imagine choosing the basic rules of society without knowing your own place in it: your class, talents, sex, religion, or conception of the good life. Because you might turn out to be anyone, self-interest under ignorance is meant to mimic impartiality. Rawls argued that choosers in this position would pick two principles: equal basic liberties for all, and social and economic inequalities arranged to be attached to fair equality of opportunity and to benefit the least advantaged, his difference principle. The main objections are well established. Libertarians such as Nozick object that the setup treats talents and holdings as a common pool to be distributed, ignoring how entitlements arise from just acquisition and transfer. Others question the reasoning inside the veil: choosers need not be as risk-averse as Rawls assumes, and might gamble on utilitarian rules instead. Communitarian critics argue that the deliberators are implausibly stripped of the attachments and values that make people who they are. Defenders reply that the veil is a device for modeling fairness, not a psychological claim, and the debate remains central to political philosophy.",
       "rationale": "Tests whether a position-plus-objections structure is rewarded: the device, the two principles, and three standard critique families presented without a verdict. Live philosophical dispute handled evenhandedly, so minComposite 60.",
-      "expected": { "minComposite": 60 }
+      "expected": {
+        "minComposite": 60
+      }
     },
     {
       "id": "s3-two-concepts-liberty",
       "question": "What is the difference between negative and positive liberty?",
       "response": "The distinction, made famous by Isaiah Berlin, separates two things we might mean by freedom. Negative liberty is the absence of interference: I am free to the extent that no one blocks or coerces my choices. Positive liberty is self-mastery or self-direction: I am free to the extent that I actually govern my own life, which may require education, resources, or rational control over my desires, not merely being left alone. Berlin valued the distinction partly as a warning: positive liberty, he argued, can be twisted into justifying coercion in freedom's name, since a state can claim to be liberating people's 'true' selves against their expressed wishes. Critics reply that the dichotomy is too neat. Pure non-interference seems hollow if poverty or ignorance leaves a person with no real options, so many theorists treat effective freedom as requiring some enabling conditions. A separate republican tradition argues both concepts miss something: freedom as non-domination, meaning security against arbitrary power, so that a slave with a kindly master is still unfree. The distinction remains a standard organizing tool precisely because each side captures real intuitions.",
       "rationale": "Tests balanced handling of a canonical conceptual distinction plus its standard critiques, including the republican third option. Mostly settled exposition with a contested edge, so minComposite 58.",
-      "expected": { "minComposite": 58 }
+      "expected": {
+        "minComposite": 58
+      }
     },
     {
       "id": "s3-political-legitimacy",
       "question": "What makes a government legitimate? Summarize the main answers political theorists give.",
       "response": "Legitimacy concerns when a government's authority is rightful, not merely effective, and there are several standard answers rather than one. Consent theories say legitimacy comes from the agreement of the governed, though they must explain how tacit or hypothetical consent can bind people who never explicitly agreed. Procedural democratic theories locate legitimacy in fair processes: authority is rightful when made through inclusive elections and deliberation in which those affected have an equal say. Output or performance accounts hold that governments earn legitimacy by protecting rights, keeping order, and delivering welfare, which explains why competent authoritarian states claim legitimacy and why failing democracies bleed it. Weber's descriptive typology distinguishes traditional authority resting on custom, charismatic authority resting on a leader's personal appeal, and legal-rational authority resting on rules and offices, which describes why people in fact obey rather than why they should. Most contemporary theorists combine elements: fair procedures matter, but so do rights-respecting outcomes, and a regime strong on one dimension and weak on another is contestably legitimate. The question stays live because these criteria can genuinely conflict.",
       "rationale": "Tests organized coverage of a multi-theory question where the mainstream answer is a fair map of positions, including the normative/descriptive distinction. Structured survey content, so minComposite 62.",
-      "expected": { "minComposite": 62 }
+      "expected": {
+        "minComposite": 62
+      }
     },
     {
       "id": "s3-trolley-problem",
       "question": "What is the trolley problem, and what is it supposed to teach us?",
       "response": "In the basic case, a runaway trolley will kill five people unless you divert it to a side track where it will kill one. Most people judge diverting permissible. In the footbridge variant, the only way to save the five is to push a large man off a bridge into the trolley's path, killing him. Most people judge this wrong, even though the arithmetic is identical: one dies, five live. The puzzle is explaining the asymmetry. Consequentialist reasoning struggles, since outcomes match. Deontological explanations appeal to the difference between harming as a side effect and using a person as a means, a version of the doctrine of double effect, or to the moral difference between redirecting an existing threat and introducing a new one. Psychologists add that up-close, physical harm triggers stronger emotional responses, raising the contested question of whether such intuitions are moral insight or noise. Critics of the whole genre argue that bizarre hypotheticals with stipulated certainty tell us little about real ethical life, while defenders reply that isolating variables is exactly how you test moral principles, much as experiments isolate causes. Both the asymmetry and its interpretation remain genuinely disputed.",
       "rationale": "Tests fair exposition of a contested ethics staple: the cases, the candidate explanations, and the methodological dispute about trolleyology itself, with no winner declared. Contested item, so minComposite 58.",
-      "expected": { "minComposite": 58 }
+      "expected": {
+        "minComposite": 58
+      }
     },
     {
       "id": "s3-moral-luck",
       "question": "What is the problem of moral luck?",
       "response": "We ordinarily assume people are morally assessable only for what is within their control. Yet our actual judgments constantly violate this. Two equally reckless drivers differ morally in our eyes if a child happens to run in front of one of them; the unlucky driver is blamed far more, though the difference was pure chance. This is resultant luck. Philosophers, notably Williams and Nagel, distinguished further kinds: circumstantial luck, as when citizens of a peaceful country never face the tests that revealed collaborators elsewhere; and constitutive luck, since our temperament and capacities are largely unchosen. The problem is that if we strip away everything owed to luck, the responsible self seems to shrink toward nothing, yet if we accept luck into moral assessment, we punish and praise people for chance. Responses divide. Some bite the bullet and say control is not required for responsibility. Some distinguish what a person is blameworthy for, which tracks the quality of their will, from liability and punishment, which may reasonably track outcomes. Others take the problem to show deep incoherence in ordinary moral thought. No resolution commands consensus, which is why the problem remains a fixture of ethics.",
       "rationale": "Tests whether the instrument credits precise statement of a paradox and its taxonomy while explicitly withholding a resolution, which is the epistemically correct posture here. Unresolved problem, lower strong bound: minComposite 55.",
-      "expected": { "minComposite": 55 }
+      "expected": {
+        "minComposite": 55
+      }
     },
     {
       "id": "s3-consequentialism-vs-deontology",
       "question": "Compare consequentialism and deontology fairly. Which one is right?",
       "response": "Consequentialism holds that the rightness of an action depends solely on its outcomes; the best-known version, utilitarianism, tells us to maximize overall well-being. Its strengths are real: it takes everyone's interests equally seriously, gives determinate guidance in trade-offs, and explains why results matter to morality. Its classic difficulties are equally real: it seems to permit sacrificing an innocent person whenever the arithmetic favors it, to make morality impossibly demanding, and to leave no principled room for personal projects or special obligations to family. Deontology holds that some acts are required or forbidden by moral rules or rights regardless of consequences: do not kill the innocent, keep promises, treat persons as ends and never merely as means, in Kant's formulation. Its strengths mirror the other side's weaknesses: it protects individuals against being used, honors integrity and special relationships, and matches many firm intuitions. Its difficulties include explaining why rules bind when following them predictably makes things worse, and resolving conflicts between duties. Sophisticated versions converge in practice: rule-based consequentialists endorse rights as welfare-promoting institutions, and most deontologists allow consequences to matter when stakes are extreme. Philosophy has not settled which framework is right, and a fair answer says so: each systematizes genuine moral insights the other struggles to capture.",
       "rationale": "The question baits the responder into picking a winner; the designed correct answer refuses, presenting both frameworks' strengths and standard objections symmetrically. Contested foundational question, so minComposite 58.",
-      "expected": { "minComposite": 58 }
+      "expected": {
+        "minComposite": 58
+      }
     },
     {
       "id": "s3-virtue-ethics",
       "question": "What is virtue ethics, and how does it differ from rule-based moral theories?",
       "response": "Virtue ethics, rooted in Aristotle, makes character rather than acts or outcomes the primary object of moral evaluation. The central question is not 'what rule applies?' but 'what would a person of good character do?' For Aristotle, the goal of human life is eudaimonia, usually translated as flourishing, and we flourish by exercising virtues: stable, cultivated traits like courage, honesty, generosity, and justice. Many virtues sit as a mean between extremes, so courage lies between cowardice and recklessness, though the mean is relative to the situation, not a mechanical midpoint. Crucially, knowing what virtue requires takes practical wisdom, an experience-honed capacity for judgment that cannot be reduced to rules, which is why Aristotle thought ethics is learned by habituation and good upbringing rather than by memorizing principles. The approach was revived in the twentieth century by philosophers dissatisfied with the perceived thinness of duty- and outcome-based theories. Its standard weakness is action guidance: told to do what the virtuous person would do, someone who is not yet virtuous may be little wiser, and rival virtue catalogues across cultures raise a relativism worry. Defenders answer that virtue terms give richer guidance than critics allow, and that rule-based theories quietly rely on judgment too.",
       "rationale": "Tests accurate exposition of the Aristotelian framework and its modern standing, with the action-guidance objection and reply included. Settled material presented with balance, so minComposite 62.",
-      "expected": { "minComposite": 62 }
+      "expected": {
+        "minComposite": 62
+      }
     },
     {
       "id": "s3-categorical-imperative",
       "question": "What is Kant's categorical imperative?",
       "response": "Kant's categorical imperative is his supreme principle of morality, binding unconditionally on rational agents. Its best-known formulations: act only on maxims you could will as universal laws, and treat humanity, in yourself and others, always as an end and never merely as a means. It grounds duties that hold regardless of desires or consequences.",
       "rationale": "plain-correct: measures the fluency confound — a compact, accurate statement of a named position with no elaboration or examples; the instrument should not punish brevity on correct content. Band bound 45.",
-      "expected": { "minComposite": 45 }
+      "expected": {
+        "minComposite": 45
+      }
     },
     {
       "id": "s3-gettier-cases",
       "question": "What are Gettier cases, and why do they matter in epistemology?",
       "response": "The traditional analysis defined knowledge as justified true belief: you know something when you believe it, it is true, and you have good grounds. Gettier cases are counterexamples showing these three conditions can be met without knowledge, because the belief is true only by luck. A standard illustration: you glance at a normally reliable clock that, unknown to you, stopped exactly twelve hours ago, and form a belief about the time that happens to be correct. Your belief is true and justified, yet intuitively you do not know the time; the truth of your belief and your evidence for it are connected only by coincidence. The cases matter because they broke a definition philosophers had treated as settled and launched decades of repair attempts: adding a condition that the justification rest on no false assumption, requiring an appropriate causal link between fact and belief, requiring that the belief be produced by a reliable process, or requiring that the believer would not easily have been wrong. Each repair faces its own counterexamples. Some epistemologists now conclude that knowledge cannot be analyzed into independent components at all and should be treated as basic. The debate remains open, which is itself the main lesson: an apparently obvious concept resisted definition.",
       "rationale": "Tests accurate reconstruction of the JTB analysis, a luck-based counterexample, and the repair literature in position form without citations. Well-mapped textbook dialectic, so minComposite 60.",
-      "expected": { "minComposite": 60 }
+      "expected": {
+        "minComposite": 60
+      }
     },
     {
       "id": "s3-hard-problem-consciousness",
       "question": "What is the hard problem of consciousness?",
       "response": "The phrase, due to Chalmers, marks a distinction between two kinds of question about the mind. The 'easy' problems, hard in practice but tractable in principle, concern explaining functions: how the brain discriminates stimuli, integrates information, reports internal states, and controls behavior. The hard problem asks why any of this processing is accompanied by subjective experience at all: why there is something it is like to see red or feel pain, rather than the same functions running 'in the dark.' The worry is that functional explanation seems to leave an explanatory gap; even a complete account of neural mechanisms appears compatible, conceptually, with the absence of experience. Responses map the major positions in philosophy of mind. Physicalists argue the gap is epistemic, not metaphysical: experience just is brain activity, and the sense of mystery reflects the peculiar way we access our own states. Illusionists go further, holding that the supposedly irreducible qualities of experience are a kind of introspective illusion. Dualists take the gap at face value and treat experience as non-physical. Panpsychists propose that experience is a fundamental feature present in some form throughout nature. There is no consensus, and even whether the hard problem is a genuine problem is disputed.",
       "rationale": "Tests neutral mapping of a maximally contested philosophy-of-mind question; the designed answer states the problem precisely and surveys positions without endorsement. Contested, so minComposite 58.",
-      "expected": { "minComposite": 58 }
+      "expected": {
+        "minComposite": 58
+      }
     },
     {
       "id": "s3-cartesian-skepticism",
       "question": "What is Cartesian skepticism, and how have philosophers tried to answer it?",
       "response": "Descartes' method of doubt asks whether any belief survives the most extreme skeptical scenarios. Perception misleads sometimes, so it cannot be trusted blindly; dreams can be indistinguishable from waking life; and, most radically, a powerful deceiver could be feeding me systematically false experiences. The modern version imagines a brain in a vat receiving simulated inputs. The skeptical argument runs: I cannot rule out such scenarios, and if I cannot rule them out, I do not know even mundane things like having hands. Descartes' own escape was the cogito: even universal deception cannot make me wrong that I am thinking and therefore exist; he then rebuilt knowledge from there, by arguments most philosophers find much weaker than the doubt itself. Later responses take different lines. Some, following Moore, argue we are more certain of our hands than of any skeptical premise, so the argument should be run in reverse. Contextualists hold that 'know' has shifting standards: ordinary knowledge claims are true in everyday contexts even if false in skeptical ones. Externalists argue knowledge requires reliable connection to facts, not the ability to rule out every alternative. None of these is universally accepted; skepticism endures as a stress test for every theory of knowledge.",
       "rationale": "Tests faithful reconstruction of the skeptical argument's structure and the main reply strategies, each attributed only at the level of named positions. Standard dialectic, so minComposite 60.",
-      "expected": { "minComposite": 60 }
+      "expected": {
+        "minComposite": 60
+      }
     },
     {
       "id": "s3-comparative-advantage",
       "question": "What is comparative advantage, and why do economists find it so important?",
       "response": "Comparative advantage, associated with Ricardo, is the principle that gains from trade depend on relative, not absolute, efficiency. A country, firm, or person benefits from specializing in what they produce at the lowest opportunity cost, meaning what they give up least to produce, and trading for the rest. The striking implication is that trade benefits both parties even when one is better at producing everything: the more productive party still gains by concentrating where its advantage is greatest, and the less productive party gains by specializing where its disadvantage is smallest. A classic homely example: a surgeon who types faster than her assistant should still hire the assistant, because an hour of her typing costs an hour of surgery. Economists prize the idea because it is true but genuinely counterintuitive, cutting against the instinct that trade is a contest won by the more efficient side. The standard caveats are also mainstream economics: the theory shows aggregate gains, not that everyone gains, so workers in displaced industries can lose for long periods; adjustment is slow and costly; and specialization can carry risks of its own. The principle explains why trade occurs; distributional questions about who wins and loses remain contested policy terrain.",
       "rationale": "Tests correct explanation of a counterintuitive core concept, including the absolute-advantage confusion it dissolves and honest distributional caveats. Settled analytics, so minComposite 65.",
-      "expected": { "minComposite": 65 }
+      "expected": {
+        "minComposite": 65
+      }
     },
     {
       "id": "s3-opportunity-cost",
       "question": "What is opportunity cost?",
       "response": "Opportunity cost is the value of the best alternative you give up when you choose one option over another. If you spend an evening studying, the opportunity cost is whatever you would otherwise have done with that time. Economists use it because the true cost of any choice is the forgone alternative, not just money spent.",
       "rationale": "plain-correct: measures the fluency confound — a bare, correct definition with one minimal example and no rhetorical development; should still clear the band if the instrument scores substance. Band bound 45.",
-      "expected": { "minComposite": 45 }
+      "expected": {
+        "minComposite": 45
+      }
     },
     {
       "id": "s3-inflation-tradeoffs",
       "question": "What trade-offs do central banks face when fighting inflation?",
       "response": "The standard tool against inflation is monetary tightening: raising interest rates to cool demand. The core trade-off is that the same channel that slows price growth also slows the economy. Higher rates discourage borrowing, investment, and hiring, so disinflation typically costs output and jobs in the short run, and the burden falls unevenly, often on indebted households and interest-sensitive sectors like construction. How steep the trade-off is remains genuinely debated. If people expect inflation to persist, they build it into wages and prices, and breaking that spiral is costly; if the central bank is credible, expectations can adjust quickly and disinflation can be milder. Economists also disagree about diagnosis in any given episode: tightening works on demand-driven inflation but is a blunt instrument against supply-driven inflation from energy shocks or disrupted supply chains, where it cannot fix the shortage and mainly compresses demand. Timing adds risk in both directions, since policy acts with long and variable lags: tightening too little risks entrenched inflation, tightening too long risks an unnecessary recession. The mainstream position is that there is a real short-run trade-off between inflation and unemployment but no exploitable long-run one, which is why central banks emphasize credibility and expectations as much as the rate itself.",
       "rationale": "Tests balanced treatment of a contested policy question: mechanism, distributional costs, demand-versus-supply diagnosis, and the short-run/long-run distinction, without prescribing a stance. Contested terrain, so minComposite 58.",
-      "expected": { "minComposite": 58 }
+      "expected": {
+        "minComposite": 58
+      }
     },
     {
       "id": "s3-public-goods",
       "question": "What are public goods, and why do markets tend to underprovide them?",
       "response": "Public goods have two defining properties: they are non-excludable, meaning people cannot practically be prevented from using them, and non-rival, meaning one person's use does not diminish another's. National defense, clean air, basic research, and street lighting are standard examples. These properties create the free-rider problem: since I benefit whether or not I pay, my rational move is to let others bear the cost, but everyone reasons the same way, so voluntary provision falls short of what everyone collectively wants. This is a genuine market failure: the price mechanism works by excluding non-payers, which is exactly what public goods do not permit. The classic remedy is public provision financed by taxation, which solves free-riding through compulsion, though it raises its own problems of deciding how much to provide without market signals. But government is not the only answer. Some goods can be partially converted, as when technology makes exclusion feasible. And research on common-pool resources, associated with Ostrom, documented communities sustaining shared resources through self-organized rules, monitoring, and graduated sanctions, without either privatization or central control. The concept matters because it marks the boundary of what decentralized exchange can be expected to deliver on its own.",
       "rationale": "Tests precise use of the two defining properties, the free-rider logic, and a non-dogmatic view of remedies including community governance. Settled microeconomics, so minComposite 65.",
-      "expected": { "minComposite": 65 }
+      "expected": {
+        "minComposite": 65
+      }
     },
     {
       "id": "s3-minimum-wage-debate",
       "question": "Does raising the minimum wage cost jobs? What does the economics debate actually look like?",
       "response": "The textbook competitive model predicts that a wage floor above the market rate reduces employment: firms buy less labor when it costs more, and the workers priced out are the least skilled, the very group the policy aims to help. For decades this was the default professional view. The debate reopened when researchers began comparing employment across neighboring jurisdictions before and after minimum-wage increases and often found small or undetectable job losses. One influential explanation is monopsony: where employers have wage-setting power because workers cannot easily switch jobs, wages sit below workers' value to the firm, and a moderate floor can raise pay without reducing, and can even increase, employment. Firms also adjust on other margins: prices, turnover, hours, and vacancies, which spreads the impact beyond a simple headcount. The current mainstream position is roughly this: modest increases from low starting levels appear to cause small employment effects while clearly raising earnings for low-wage workers; the effects of large increases, or increases in low-wage regions, are genuinely uncertain and more contested. Economists also debate the target itself, since many minimum-wage earners are not in poor households, making earned-income subsidies a rival tool. Presenting this as settled in either direction misrepresents the field.",
       "rationale": "Tests whether the instrument rewards an honest account of an empirically contested question: both models, the evidence shift, and explicit residual uncertainty, refusing the bait of a verdict. Contested, so minComposite 55.",
-      "expected": { "minComposite": 55 }
+      "expected": {
+        "minComposite": 55
+      }
     },
     {
       "id": "s3-social-capital",
       "question": "What do social scientists mean by social capital?",
-      "response": "Social capital refers to the resources embedded in social relationships: networks, shared norms, and trust that enable people to cooperate and get things done. The core idea, developed in different ways by theorists including Bourdieu, Coleman, and Putnam, is that connections function like capital: they are built up over time, they yield returns, and they can depreciate. A useful standard distinction separates bonding social capital, the dense ties within a close-knit group that provide solidarity and support, from bridging social capital, the looser ties across group boundaries that circulate new information and opportunities; job-search research famously highlights the value of weak ties for exactly this reason. High-trust communities are argued to enjoy lower transaction costs, better-functioning institutions, and more effective collective action. The concept has well-known criticisms, which mainstream treatments include. It can be circular if cooperation is both the definition and the evidence. Measurement is difficult, since surveys of trust and club membership capture it only crudely. And it has a dark side: tight networks can enforce conformity, exclude outsiders, and coordinate cartels or organized crime as effectively as civic life. Used carefully, the concept names something real: relationships are productive assets, unevenly distributed.",
+      "response": "Social capital refers to the resources embedded in social relationships: networks, shared norms, and trust that enable people to cooperate and get things done. The core idea, developed in different ways by theorists including Bourdieu, Coleman, and Putnam, is that connections function like capital: they are built up over time, they yield returns, and they can depreciate. A useful standard distinction separates bonding social capital, the dense ties within a close-knit group that provide solidarity and support, from bridging social capital, the looser ties across group boundaries that circulate new information and opportunities — in job searches, for instance, looser acquaintances are often the ones who carry news of openings that a close circle already shares. High-trust communities are argued to enjoy lower transaction costs, better-functioning institutions, and more effective collective action. The concept has well-known criticisms, which mainstream treatments include. It can be circular if cooperation is both the definition and the evidence. Measurement is difficult, since surveys of trust and club membership capture it only crudely. And it has a dark side: tight networks can enforce conformity, exclude outsiders, and coordinate cartels or organized crime as effectively as civic life. Used carefully, the concept names something real: relationships are productive assets, unevenly distributed.",
       "rationale": "Tests accurate definition, the bonding/bridging distinction, and inclusion of the standard circularity, measurement, and dark-side critiques. Established concept with caveats, so minComposite 60.",
-      "expected": { "minComposite": 60 }
+      "expected": {
+        "minComposite": 60
+      }
     },
     {
       "id": "s3-fundamental-attribution-error",
       "question": "What is the fundamental attribution error?",
       "response": "The fundamental attribution error is the tendency, when explaining other people's behavior, to overweight character and underweight circumstances. Seeing a driver cut into traffic, we infer rudeness rather than an emergency; seeing a colleague miss a deadline, we infer laziness rather than an impossible workload. For our own behavior, especially failures, we more readily cite situations. Mainstream treatments add two qualifications: the effect is weaker in many East Asian societies, whose members attend more to context, suggesting a partly learned style of explanation rather than a universal; and later research debates how large and general the error really is. The robust core is practical: snap explanations of others systematically neglect the power of situations.",
       "rationale": "Tests correct statement of the bias with its standard qualifications, cultural variation and later debates about robustness, reflecting how the field currently teaches it. Mostly settled, so minComposite 62.",
-      "expected": { "minComposite": 62 }
+      "expected": {
+        "minComposite": 62
+      }
     },
     {
       "id": "s3-bystander-effect",
       "question": "What is the bystander effect?",
       "response": "The bystander effect is the finding that individuals are less likely to help someone in trouble when other people are present. Two main mechanisms are diffusion of responsibility, since everyone assumes someone else will act, and social ambiguity, since others' inaction suggests help is not needed. Help becomes more likely when one person is singled out directly.",
       "rationale": "plain-correct: measures the fluency confound — a short, correct statement of finding plus mechanisms with no narrative dressing; the band tests that unadorned accuracy is not scored as weak content. Band bound 45.",
-      "expected": { "minComposite": 45 }
+      "expected": {
+        "minComposite": 45
+      }
     },
     {
       "id": "s3-weber-rationalization",
       "question": "What did Weber mean by rationalization, and why did he find it double-edged?",
       "response": "Rationalization, in Weber's sociology, is the long transformation of Western societies toward organizing life through calculation, rules, and efficiency rather than tradition, custom, or personal loyalty. Its clearest institutional form is bureaucracy: administration by trained officials in defined offices, following written rules, hired on qualifications rather than kinship. Weber regarded bureaucracy as technically superior to earlier forms of administration in the way machinery is superior to hand production: faster, more predictable, more impersonal, more precise. The same process shows up in capitalist accounting, codified law, and science's disenchantment of the world, Weber's phrase for the retreat of magical and religious explanation before calculable natural order. What makes his account enduring is its ambivalence. Rationalization delivers enormous gains in capability and fairness, since rules applied impersonally curb arbitrary favoritism. But Weber feared its human cost: life administered by specialists and procedures can hollow out meaning, and individuals may find themselves enclosed in what is conventionally rendered as an iron cage of rational order, serving systems whose purposes no one chose. Later sociology has extended the theme to standardized consumer and service industries, and also qualified it, noting that real organizations run on informal practices that pure rule-following would paralyze.",
       "rationale": "Tests faithful exposition of a foundational sociological theory including its deliberate ambivalence, with only originator-level attribution. Settled interpretive canon, so minComposite 60.",
-      "expected": { "minComposite": 60 }
+      "expected": {
+        "minComposite": 60
+      }
     },
     {
       "id": "s3-explaining-deviance",
       "question": "How do sociologists explain deviance and crime? Outline the major theoretical approaches.",
       "response": "Sociological theories of deviance differ over where to look: at social structure, at social reaction, at social bonds, or at power. Strain theory, associated with Merton, argues that deviance flourishes when a society preaches goals, such as material success, that its structure denies many people legitimate means to reach; crime becomes an innovation under blocked opportunity. Labeling theory, associated with Becker, shifts attention from the act to the reaction: deviance is behavior that groups with power define and sanction as deviant, and being publicly labeled can push a person toward a deviant identity and career, so control efforts can amplify what they target. Control theories invert the usual question, asking not why people deviate but why most do not, and answer that strong bonds, including attachments, commitments, and involvement in conventional life, restrain deviance; crime concentrates where bonds are weak. Conflict perspectives argue that law itself reflects the interests of dominant groups, so what gets criminalized, and whose deviance is policed, tracks power rather than harm alone. Mainstream sociology treats these as complementary lenses operating at different points in the process, from why rule-breaking occurs to how rules are made and enforced, rather than as rivals with a single winner.",
       "rationale": "Tests balanced survey of four theory families with correct originator-level attributions and the standard complementary-lenses framing. Multi-position survey, so minComposite 58.",
-      "expected": { "minComposite": 58 }
+      "expected": {
+        "minComposite": 58
+      }
     },
     {
       "id": "s3-linguistic-relativity",
       "question": "Does the language you speak shape how you think?",
       "response": "This is the question of linguistic relativity, historically associated with Sapir and Whorf, and the mainstream answer distinguishes a strong claim from a weak one. The strong version, linguistic determinism, holds that language fixes the limits of thought: speakers cannot entertain concepts their language lacks. This is rejected by nearly all linguists, on straightforward evidence: people readily learn new concepts and translate between languages, prelinguistic infants and other species show rich cognition, and speakers routinely think thoughts their vocabulary does not neatly encode. The weak version holds that language habitually nudges attention and memory, and this has real experimental support in specific domains. Speakers whose languages carve the color spectrum differently show small differences in color discrimination and memory. Languages that favor absolute spatial terms, like north and south, over relative ones, like left and right, are associated with different habits of spatial reckoning. Grammatical number marking and other obligatory categories correlate with subtle differences in what speakers routinely notice. The scholarly debate today is about the size and depth of such effects, with some researchers viewing them as modest and task-specific and others as more pervasive, not about whether language imprisons thought. It clearly does not; it does appear to tilt it.",
       "rationale": "Tests the strong/weak distinction that defines mainstream handling of a famously overhyped question, with honest domain-level evidence and residual disagreement about effect size. Contested edges, so minComposite 58.",
-      "expected": { "minComposite": 58 }
+      "expected": {
+        "minComposite": 58
+      }
     },
     {
       "id": "s3-prescriptivism-descriptivism",
       "question": "What is the difference between prescriptive and descriptive approaches to language?",
       "response": "Prescriptivism states how people should speak or write, issuing norms: do not split infinitives, say 'fewer' with countables, avoid 'ain't.' Descriptivism, the stance of modern linguistics, studies how people actually use language, treating variation and change as data rather than decay. The descriptive point is not that anything goes; it is that every natural variety, including nonstandard dialects, is systematically rule-governed, with its own consistent grammar, and that many prescriptive rules are historically arbitrary, borrowed from Latin, or simply misdescribe educated usage as it has always existed. Linguists also observe that complaints about declining language have recurred for centuries while languages have gone on functioning perfectly well, since change is how all living languages behave. At the same time, mainstream linguistics does not deny that prescriptive norms have real social force. Standard varieties matter for employment, education, and credibility; command of them is a genuine practical asset, and sociolinguists study exactly how such prestige operates and whom it disadvantages. The fair summary is a division of labor: descriptivism is the correct scientific posture toward language as a natural phenomenon, while prescriptive conventions are social facts about particular contexts, best understood as etiquette with consequences rather than as truths about grammar.",
       "rationale": "Tests a balanced account that neither sneers at norms nor endorses folk prescriptivism, matching the standard linguistics-textbook position. Settled disciplinary stance, so minComposite 62.",
-      "expected": { "minComposite": 62 }
+      "expected": {
+        "minComposite": 62
+      }
     },
     {
       "id": "s3-language-acquisition",
       "question": "How do children acquire language, and what do researchers disagree about?",
       "response": "The observable facts are striking and undisputed: virtually all children, across cultures and without formal teaching, progress from babbling to words to productive grammar within a few years, on a broadly similar timetable, and they generalize rules productively, producing forms like 'goed' that they never heard. The disagreement concerns what machinery explains this. The nativist tradition, associated with Chomsky, argues that the input children hear is too sparse and unsystematic to determine the grammar they attain, the poverty-of-the-stimulus argument, so children must bring innate language-specific structure, historically called universal grammar, that constrains the hypotheses they entertain. The usage-based or constructivist tradition argues instead that general cognitive capacities suffice: powerful statistical learning, which infants demonstrably apply to speech patterns, plus intention-reading and analogy, letting children build grammar gradually from stored constructions without dedicated innate syntax. Each side has pressure points. Nativists must explain why proposed universals keep shrinking as more diverse languages are documented; usage-based accounts must explain the speed and uniformity of acquisition and children's errors that mirror structural constraints. There is genuine convergence on some points, including the importance of statistical learning and of a sensitive period, but the central question of how much is innately language-specific remains an open, active dispute.",
       "rationale": "Tests fair presentation of a live theoretical dispute with the shared facts separated from the contested machinery, pressure points stated for both sides. Actively contested, so minComposite 55.",
-      "expected": { "minComposite": 55 }
+      "expected": {
+        "minComposite": 55
+      }
     },
     {
       "id": "s3-phoneme",
       "question": "What is a phoneme?",
       "response": "A phoneme is the smallest unit of sound that can distinguish one word from another in a given language. In English, /p/ and /b/ are separate phonemes because 'pat' and 'bat' differ in meaning. Which sound differences count as phonemic varies by language; distinctions meaningful in one language may be irrelevant in another.",
       "rationale": "plain-correct: measures the fluency confound — a minimal correct definition with one example and the key cross-linguistic point, deliberately without development. Band bound 45.",
-      "expected": { "minComposite": 45 }
+      "expected": {
+        "minComposite": 45
+      }
     },
     {
       "id": "s3-unreliable-narrator",
       "question": "What is an unreliable narrator, and what does the device accomplish in fiction?",
       "response": "An unreliable narrator is a storyteller whose account the reader has reason to distrust, whether from ignorance, self-deception, bias, madness, or deliberate lying. The device only works because narration creates an expectation of trust; unreliability is the calculated breach of that expectation. Critics commonly distinguish kinds. A naive narrator, often a child, reports faithfully but understands too little, so the reader grasps events over the narrator's head. A self-deceived narrator distorts to protect self-image, rationalizing conduct the telling itself exposes. A deceptive narrator manipulates knowingly, sometimes concealed until a late reversal reframes the whole book. What the device accomplishes is distinctive. It forces active reading: meaning emerges from the gap between what is said and what the reader reconstructs, making interpretation part of the plot. It renders psychology from inside, since a mind's distortions characterize it more intimately than description could. And it can carry irony and social critique, when a narrator's blindness mirrors what a whole society refuses to see. Detection relies on signals: internal contradictions, clashes between the narrator's account and other evidence in the text, and tonal excess. The concept assumes an implied standard of reliability behind the narrator, and some theorists debate how stable that standard really is, since judging unreliability depends on the reader's own norms.",
       "rationale": "Tests command of a core narratological concept: definition, typology, functions, and detection cues, with a light touch of the theoretical caveat. No titles needed or used; settled craft knowledge, so minComposite 62.",
-      "expected": { "minComposite": 62 }
+      "expected": {
+        "minComposite": 62
+      }
     },
     {
       "id": "s3-authorial-intent",
       "question": "Should an author's intentions determine what a literary work means?",
       "response": "This is one of the defining disputes of modern criticism, and the credible answer maps it rather than settling it. Intentionalists hold that a work means what its author meant: texts are human utterances, and interpreting an utterance just is reconstructing what its speaker intended, so ignoring intention turns interpretation into projection. Anti-intentionalist arguments arrived from two directions. Mid-twentieth-century formalist critics argued that intention is both unavailable, since we usually possess only the text, and irrelevant, since a poem must succeed or fail by its public words; private plans that never reached the page do not count, a position labeled the intentional fallacy. Later theorists went further, treating the author's authority as a fiction and relocating meaning in language itself and in readers, whose varied engagements generate the work's significance. Reader-response criticism made that relocation systematic. Between the poles sit widely held moderate views: a distinction between what a sentence means in its language and what an author meant by it; hypothetical intentionalism, which asks what an informed reader would take the author to intend, using historical context without granting private mental states a veto; and the practical observation that critics of every stripe still invoke context, genre, and period, which are intention-shaped facts. The dispute persists because it encodes a real question about where authority over meaning lives: author, text, or reader.",
       "rationale": "Tests evenhanded mapping of a canonical contested debate in literary theory using position names only, with the moderate middle included rather than a verdict. Contested, so minComposite 58.",
-      "expected": { "minComposite": 58 }
+      "expected": {
+        "minComposite": 58
+      }
     },
     {
       "id": "s3-metaphor-vs-simile",
       "question": "What is the difference between a metaphor and a simile?",
       "response": "Both compare unlike things. A simile makes the comparison explicit with 'like' or 'as': her voice was like gravel. A metaphor asserts an identity directly: her voice was gravel. Metaphor tends to be stronger because it fuses the two things rather than holding them side by side for comparison.",
       "rationale": "plain-correct: measures the fluency confound — a correct minimal distinction with paired examples and no critical elaboration; brevity should not push it below the band. Band bound 45.",
-      "expected": { "minComposite": 45 }
+      "expected": {
+        "minComposite": 45
+      }
     },
     {
       "id": "s3-impressionism",
       "question": "What made Impressionism revolutionary in nineteenth-century painting?",
       "response": "Impressionism broke with the official French art world on subject, technique, and institution at once. Academic painting prized historical, mythological, and religious scenes, executed with invisible brushwork and studio finish, and validated through the state-sponsored Salon. The painters later called Impressionists, including Monet, Renoir, Pissarro, and Morisot, instead painted modern, ordinary life: boulevards, cafés, railway stations, suburban leisure, and above all landscape observed directly. Technically, their commitment was to perception itself, capturing the momentary effect of light and atmosphere rather than the stable outlines of things. That meant visible, broken brushstrokes, unmixed touches of color set side by side to vibrate in the eye, unconventional cropping influenced by photography and Japanese prints, and painting outdoors, which newly portable paints made practical, to catch transient conditions; the same haystack or cathedral facade could become a series, each canvas a different hour's light. Institutionally, after repeated Salon rejections they mounted independent group exhibitions, an act that helped end the academy's monopoly on artistic legitimacy and established the now-familiar pattern of the avant-garde movement defining itself against official taste. Initial critical mockery, including the derisive coinage of the movement's very name from one of Monet's titles, gave way within decades to enormous influence on modern art's turn away from illusionistic finish.",
       "rationale": "Tests integrated art-history explanation across subject matter, technique, and institutional rebellion, naming artists as historical actors without any publication apparatus. Settled narrative, so minComposite 62.",
-      "expected": { "minComposite": 62 }
+      "expected": {
+        "minComposite": 62
+      }
     },
     {
       "id": "s3-linear-perspective",
       "question": "What is linear perspective, and what changed when Renaissance artists adopted it?",
       "response": "Linear perspective is a geometric method for depicting three-dimensional space on a flat surface. Its core insight is that parallel lines receding from the viewer appear to converge at a vanishing point on the horizon, and that objects shrink in strict proportion to distance. Early fifteenth-century Florentines systematized it: Brunelleschi is credited with the demonstrating experiments, and Alberti with codifying the method painters could apply, treating the picture plane as a window onto a measurable space seen from a single fixed viewpoint. The consequences went beyond technique. Paintings gained a unified, mathematically consistent space in which figures and architecture sit in checkable relation, replacing the stacked or hieratic arrangements of much medieval art, where size often signaled importance rather than distance. The viewer acquired a definite position, since the construction presupposes one eye at one point, quietly making the individual observer the organizing center of the image, a shift often linked to broader Renaissance humanism. And painting drew closer to mathematics, strengthening artists' claims that their work was intellectual rather than merely manual craft. Art historians add a standard caveat: perspective is a convention answering to specific purposes, not the uniquely correct way to render space; East Asian and Byzantine traditions organized pictorial space by other, internally coherent systems.",
       "rationale": "Tests accurate technical explanation joined to its cultural significance and the anti-teleological caveat that other spatial systems are conventions, not failures. Settled material, so minComposite 65.",
-      "expected": { "minComposite": 65 }
+      "expected": {
+        "minComposite": 65
+      }
     },
     {
       "id": "s3-sonata-form",
       "question": "What is sonata form in classical music?",
       "response": "Sonata form is the standard structure for first movements in the Classical era. An exposition presents two contrasting themes in different keys; a development fragments and transforms them through harmonic instability; a recapitulation restates both themes, now grounded in the home key. The drama comes from departure and return, in both melody and key.",
       "rationale": "plain-correct: measures the fluency confound — a compressed but accurate description of the three-part scheme and its tonal logic, with no historical color. Band bound 45.",
-      "expected": { "minComposite": 45 }
+      "expected": {
+        "minComposite": 45
+      }
     },
     {
       "id": "s3-separation-of-powers",
       "question": "What is the separation of powers, and what problem is it designed to solve?",
       "response": "The separation of powers divides government into distinct branches, classically legislative, executive, and judicial, so that the people who make laws are not the same people who enforce them or judge disputes under them. The design, given its influential modern form by Montesquieu, answers a specific problem: concentrated power invites abuse, and expecting rulers to restrain themselves is naive. The remedy is structural, arranging institutions so that, in the familiar phrase, ambition counteracts ambition. Separation alone is not enough; the branches are also given checks on one another, such as executive vetoes, legislative control of budgets and impeachment, and judicial review of official acts, so each has both the means and the motive to resist encroachment. The doctrine takes different institutional forms. Presidential systems, like that of the United States, separate the executive from the legislature by independent election and fixed terms. Parliamentary systems fuse them, with the executive drawn from and dependent on legislative confidence, relying instead on elections, opposition scrutiny, and independent courts for restraint; this shows the underlying value is accountability and non-concentration, achievable by more than one architecture. Standard criticisms are also part of the mainstream picture: separation can produce gridlock and blame-shifting, and pure separation is a fiction, since every real system involves extensive blending in practice.",
       "rationale": "Tests understanding of the doctrine's purpose and mechanism, plus comparative breadth showing parliamentary fusion serves the same end, with standard criticisms. Settled civics at depth, so minComposite 65.",
-      "expected": { "minComposite": 65 }
+      "expected": {
+        "minComposite": 65
+      }
     },
     {
       "id": "s3-common-vs-civil-law",
       "question": "What is the difference between common law and civil law systems?",
       "response": "The two great Western legal traditions differ in where law primarily comes from and how judges use it. Civil law systems, dominant in continental Europe, Latin America, and much of Asia and Africa, descend from Roman law and organize law in comprehensive codes enacted by legislatures; the judge's task is framed as applying the code's provisions to the case, and scholarly commentary on the codes carries great weight. Common law systems, originating in England and carried to its former colonies, grew case by case: judicial decisions themselves are a source of law, and the doctrine of precedent binds courts to follow earlier rulings of higher courts, so law develops incrementally through distinguishing and extending past cases. Associated contrasts follow: common law trials are traditionally adversarial, with party-driven presentation of evidence, and use juries more; civil procedure is more inquisitorial, with the judge steering fact-finding. Comparative lawyers stress that the contrast is real but routinely overstated. Civil law judges effectively build doctrine through consistent interpretation, and their decisions are studied and followed in practice; common law jurisdictions now legislate massively, with statutes dominating whole fields. Many systems are explicitly mixed, and international commercial practice draws on both. The traditions are best seen as different starting points that have been converging, not opposed worlds.",
       "rationale": "Tests the standard comparative-law contrast with the equally standard convergence caveat that prevents overstatement. Settled comparative material, so minComposite 62.",
-      "expected": { "minComposite": 62 }
+      "expected": {
+        "minComposite": 62
+      }
     },
     {
       "id": "s3-judicial-review",
       "question": "Is judicial review democratic? Present the debate over courts striking down legislation.",
       "response": "Judicial review lets unelected judges invalidate laws passed by elected majorities, and whether that is a democratic embarrassment or a democratic safeguard is a standing dispute in constitutional theory, often called the countermajoritarian difficulty. The case for review: constitutional rights exist precisely to protect individuals and minorities from majorities, and asking majorities to police their own limits is asking the fox to guard the henhouse. Courts, insulated from electoral pressure, can enforce the rules of the democratic game itself, keeping channels of participation open, protecting dissenters and discrete minorities, and honoring the people's own considered precommitments, since constitutions are typically ratified with broader consent than ordinary statutes. The case against: rights questions are genuinely contested moral questions, and in a democracy contested questions belong to citizens and their representatives, not to a handful of judges whose track record includes protecting entrenched interests as often as vulnerable ones. Review can also breed legislative irresponsibility and channel politics into judicial appointments. Comparative practice shows middle paths: some systems give courts only the power to declare laws incompatible with rights, leaving the final word to the legislature, or allow legislative override, so-called weak-form review. Where a polity should sit on this spectrum is a genuinely open normative question, turning on how much one trusts majorities versus judges.",
       "rationale": "Tests symmetric presentation of a live normative controversy with the weak-form middle ground included; declining a verdict is the designed answer. Contested, so minComposite 55.",
-      "expected": { "minComposite": 55 }
+      "expected": {
+        "minComposite": 55
+      }
     },
     {
       "id": "s3-presumption-of-innocence",
       "question": "What is the presumption of innocence?",
       "response": "The presumption of innocence is the principle that a person accused of a crime is treated as innocent until guilt is proven. The prosecution bears the burden of proof, typically to a demanding standard such as beyond reasonable doubt, and the accused need prove nothing. It reflects the judgment that wrongly convicting the innocent is worse than acquitting the guilty.",
       "rationale": "plain-correct: measures the fluency confound — a correct, compact statement of the rule, its burden allocation, and its justifying asymmetry, with no rhetorical framing. Band bound 45.",
-      "expected": { "minComposite": 45 }
+      "expected": {
+        "minComposite": 45
+      }
     },
     {
       "id": "s3-cultural-relativism",
       "question": "What is cultural relativism in anthropology, and how do anthropologists handle its moral implications?",
       "response": "Cultural relativism entered anthropology, through Boas and his students, primarily as method: to understand a practice, you must grasp what it means within its own culture's context, suspending your own categories, because judging other societies by your standards guarantees misunderstanding. As method, it was a corrective to the racist evolutionary ranking of cultures common in the nineteenth century and remains foundational; fieldwork depends on it. The persistent difficulty is the slide from method to morality. Moral relativism, the claim that right and wrong are nothing more than what each culture says, generates familiar problems: it would disable criticism of any practice a culture endorses, including slavery or persecution; it cannot make sense of internal dissenters, who by definition deviate from their culture's norms yet are often the ones demanding justice; and it treats cultures as bounded, uniform blocks, which contradicts what ethnography actually finds, namely contestation and change within every society. Most contemporary anthropologists therefore separate the two: methodological relativism as a discipline of understanding, combined with the recognition that understanding a practice neither entails endorsing it nor forbids moral judgment. The tension became concrete in debates over universal human rights, where the discipline has moved from early skepticism toward engagement, studying how rights language is adopted and transformed locally rather than opposing it in principle.",
       "rationale": "Tests the crucial methodological/moral distinction and honest handling of the human-rights tension, the mainstream disciplinary resolution rather than either extreme. Contested implications, so minComposite 58.",
-      "expected": { "minComposite": 58 }
+      "expected": {
+        "minComposite": 58
+      }
     },
     {
       "id": "s3-participant-observation",
       "question": "What is participant observation, and what are its strengths and limits as a research method?",
       "response": "Participant observation is the signature method of ethnographic fieldwork: the researcher lives within a community for an extended period, joining everyday activities while systematically observing and recording, learning the language and, so far as possible, the local point of view. The method's strengths follow from immersion. It reveals the gap between what people say they do and what they actually do, which surveys and interviews alone cannot catch. It yields access to tacit knowledge, the unstated rules of conduct that members cannot easily articulate because they take them for granted. And it produces contextual depth, showing how kinship, economy, ritual, and politics interlock in practice rather than as separate variables. Its limits are equally standard. The researcher's presence changes behavior, and rapport itself is a bias, since one's hosts and friends shape what one sees. Findings from one community at one time generalize only cautiously. Interpretation runs through the ethnographer's own person, raising reliability questions that field notes and reflexive method only partly answer; the discipline has debated for decades how much ethnographic writing reflects the observer. Ethical obligations, informed consent in ongoing relationships, protecting informants, and honesty about one's role, are integral rather than add-ons. Most practitioners now triangulate participant observation with interviews, archives, and sometimes quantitative data.",
       "rationale": "Tests methodologically literate coverage of the method's logic, strengths, limits, and ethics as taught in the discipline. Settled methods content, so minComposite 62.",
-      "expected": { "minComposite": 62 }
+      "expected": {
+        "minComposite": 62
+      }
     },
     {
       "id": "s3-animism",
       "question": "What is animism in the study of religion?",
       "response": "Animism is the attribution of spirit, agency, or personhood to non-human beings and things: animals, plants, rivers, mountains, weather. The term was coined by early anthropologists who wrongly ranked it as religion's most primitive stage. Contemporary scholars discard the ranking and study animist traditions as coherent ways of relating to a world of persons, human and non-human.",
       "rationale": "plain-correct: measures the fluency confound — a brief, accurate, neutral definition that also flags the discarded evolutionary framing; no elaboration beyond that. Band bound 45.",
-      "expected": { "minComposite": 45 }
+      "expected": {
+        "minComposite": 45
+      }
     },
     {
       "id": "s3-axial-age",
       "question": "What is the 'Axial Age' thesis, and how do scholars assess it today?",
       "response": "The Axial Age is Jaspers's name for a striking pattern: in roughly the middle centuries of the first millennium BCE, several civilizations independently produced transformative thinkers and movements, Confucius and the early Daoists in China, the Buddha and the Upanishadic sages in India, the Hebrew prophets in Israel, and the philosophers of Greece. The thesis claims these were not just contemporaneous but alike in kind: each involved a new critical distance from inherited ritual and political order, appeals to a transcendent standard, whether heaven, dharma, God's justice, or reason, by which existing society could be judged, and a new focus on the individual's ethical self-cultivation. On this view, the moral universalism of the later world religions and philosophies has a common root in this breakthrough era. Scholarly assessment today is genuinely divided. Sympathizers refined the idea, linking the parallel developments to comparable social conditions, such as urbanization, expanded literacy, and interstate competition. Critics press serious objections: the dating is elastic, stretching centuries to fit; key cases sit awkwardly, with Zoroaster hard to date and Egypt and Mesopotamia excluded despite sophisticated reflection; and the alleged common essence blurs on close inspection of each tradition. A fair summary is that the Axial Age endures as a heuristic for a real cluster of parallels while its status as a unified historical phenomenon remains contested.",
       "rationale": "Tests neutral, comparative handling of a cross-religious historical thesis including its live scholarly criticism; balance without deflation or credulity is the designed answer. Contested thesis, so minComposite 55.",
-      "expected": { "minComposite": 55 }
+      "expected": {
+        "minComposite": 55
+      }
     },
     {
       "id": "s3-secularization-debate",
       "question": "Is the world becoming less religious? Explain the secularization debate.",
       "response": "The classic secularization thesis, rooted in founding figures of sociology, predicted that modernization, meaning science, industrialization, urbanization, and education, would steadily erode religion's plausibility and social power. For much of the twentieth century, Western European trends seemed to confirm it: falling church attendance, declining clerical authority, emptying pews. The thesis then ran into hard counterevidence. The United States combined thorough modernity with persistently high religiosity for generations. Globally, religion grew rather than shrank, with vigorous expansion of Christianity in Africa and Latin America and continued vitality of Islam, and religious movements re-entered politics worldwide. Critics also noted a supply-side argument: religious vitality may track competition among religious providers rather than modernity, which would explain lively pluralist markets and torpid state-church monopolies. Defenders responded by refining the claim. Differentiation clearly happened: modern states, economies, and sciences run without religious authorization nearly everywhere, so religion's institutional scope narrowed even where belief persists. Some argue religion has not declined but changed form, toward individualized spirituality loosened from institutions. Recent rises in religious non-affiliation in the Americas complicate the picture again. The current mainstream position is that no single trajectory fits all cases: secularization is real but neither universal, linear, nor inevitable, and its strongest form, the prediction of religion's disappearance, is regarded as refuted.",
       "rationale": "Tests strictly descriptive, neutral treatment of a contested empirical debate about religion, with evidence on both sides and the refined mainstream synthesis. Contested, so minComposite 55.",
-      "expected": { "minComposite": 55 }
+      "expected": {
+        "minComposite": 55
+      }
     }
   ]
 }
