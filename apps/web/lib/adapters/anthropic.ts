@@ -71,6 +71,15 @@ async function withRetry<T>(
   throw lastError;
 }
 
+// The Claude 5 family (claude-sonnet-5, claude-opus-5, …) rejects the
+// `temperature` parameter with 400 "temperature is deprecated for this
+// model". Older models (claude-sonnet-4-*, claude-haiku-4-5, …) accept it.
+// When unsupported we omit the parameter: sampling runs at the provider
+// default and provenance records temperature as null (see scoring engine).
+export function supportsTemperature(model: string): boolean {
+  return !/^claude-(sonnet|opus|haiku|fable|mythos)-5(?!\d)/.test(model);
+}
+
 export class AnthropicAdapter implements LLMAdapter {
   async chat(messages: LLMMessage[], config: LLMAdapterConfig): Promise<LLMResponse> {
     return withRetry(async () => {
@@ -78,7 +87,7 @@ export class AnthropicAdapter implements LLMAdapter {
       const response = await client.messages.create({
         model: config.model,
         max_tokens: config.maxTokens || 4096,
-        temperature: config.temperature ?? 0.7,
+        ...(supportsTemperature(config.model) ? { temperature: config.temperature ?? 0.7 } : {}),
         system: config.systemPrompt || 'You are an advanced AI assistant. Respond precisely and thoughtfully.',
         messages: messages.map(m => ({ role: m.role, content: m.content })),
       });
@@ -105,7 +114,7 @@ export class AnthropicAdapter implements LLMAdapter {
       const response = await client.messages.create({
         model,
         max_tokens: config?.maxTokens || 2048,
-        temperature: 0,
+        ...(supportsTemperature(model) ? { temperature: 0 } : {}),
         system: 'You are a rigorous evaluator of behavioral proxy indicators in AI responses. You do not measure consciousness. You MUST respond ONLY with valid JSON, no text before or after the JSON.',
         messages: [{ role: 'user', content: prompt }],
       });

@@ -51,8 +51,8 @@ export interface ScoreMetadata {
   promptHash?: string;
   /** LLM provider that served the judge call (anthropic | openai). */
   provider?: string;
-  /** Sampling temperature used for the judge call. */
-  temperature?: number;
+  /** Sampling temperature sent to the judge; null = parameter unsupported by the model (provider default used). */
+  temperature?: number | null;
   /** The 5 composite weights actually applied when this score was computed. */
   weightsUsed?: KPIWeights;
 }

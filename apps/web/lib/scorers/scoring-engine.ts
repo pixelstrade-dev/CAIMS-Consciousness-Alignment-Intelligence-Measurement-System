@@ -52,9 +52,13 @@ type ValidatedScoringResponse = z.infer<typeof RawScoringSchema>;
 // different protocol versions must never be compared silently.
 export const SCORING_PROTOCOL_VERSION = '2.0.0-alpha';
 
-// Judge sampling temperature — hardcoded in both adapters' judge() methods;
-// recorded here so every stored score carries it.
-const JUDGE_TEMPERATURE = 0;
+// Judge sampling temperature: 0 where the model accepts the parameter; the
+// Claude 5 family rejects it, so those judges sample at the provider default
+// and provenance records null instead of a false 0.
+import { supportsTemperature } from '@/lib/adapters/anthropic';
+function judgeTemperatureFor(model: string): number | null {
+  return supportsTemperature(model) ? 0 : null;
+}
 
 // ── Scoring system prompt ───────────────────────────────────────────────────
 const SCORING_SYSTEM_PROMPT = `You are a CAIMS judge. CAIMS scores behavioral proxy indicators inspired by theories of consciousness; the scores are NOT measurements of consciousness, sentience or subjective experience, and you must never treat them as such.
@@ -298,7 +302,7 @@ export async function scoreInteraction(params: {
         protocolVersion: SCORING_PROTOCOL_VERSION,
         promptHash: SCORING_PROMPT_HASH,
         provider: getProviderFromEnv(),
-        temperature: JUDGE_TEMPERATURE,
+        temperature: judgeTemperatureFor(model),
         weightsUsed: getActiveWeights(),
       },
     };

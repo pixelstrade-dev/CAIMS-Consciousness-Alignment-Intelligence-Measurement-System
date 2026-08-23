@@ -4,6 +4,15 @@ Status: PREREGISTERED (this file is committed before the real run executes).
 Amendment A1 (2026-08-23, pre-execution, after adversarial review of the
 runner): H1 population defined precisely; H2 decision rule made computable;
 materials description corrected. No data had been collected.
+Amendment A3 (2026-08-23, pre-data): the repository owner switched the
+Anthropic judge to `claude-sonnet-5` (PR #42). The Claude 5 family rejects
+the `temperature` parameter, so for that judge sampling runs at the provider
+default and cannot be pinned to 0; provenance records `temperature: null`
+for such calls. H2 for that judge therefore measures stability under the
+provider's default sampling — a valid and arguably more informative
+stability estimate — while the GPT judge remains at temperature 0. No valid
+data existed before this amendment (all prior real-run attempts failed on
+credentials or this parameter rejection).
 Amendment A2 (2026-08-23, pre-execution): the run MAY execute with a subset
 of the three configured judges when credentials for some are unavailable
 (minimum one; two or more preferred). Skipped judges are recorded in the
