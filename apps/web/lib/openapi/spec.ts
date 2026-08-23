@@ -409,6 +409,12 @@ export const openApiSpec = {
             description:
               'v2.1: samples per judge (mean ± Bessel-corrected sample SD, the Run 001 statistics). Every sample is one judge LLM call — cost multiplies accordingly.',
           },
+          verifyCitations: {
+            type: 'boolean',
+            default: false,
+            description:
+              'Phase A4: deterministic citation-existence verification against public registries ONLY (doi.org handle API and arXiv API via body parsing; not_found requires a registry-confirmed negative) — no LLM involved. Opt-in (outbound HTTP to the two fixed registry hosts only: up to 20 checks, 5s timeout each; redirects NOT followed). Plain URLs and author-year strings are NEVER fetched (fetching response-controlled URLs is an SSRF surface, and reachability never meant existence) — they are listed unverifiable for human review. On the ensemble path an EFFECTIVE run (at least one registry-confirmed outcome, not truncated) lifts the evidence level L2→L3, and detected fabrications become Evidence Card caveats. Existence does not mean the source supports the claim. Truncation at the 20-check cap is reported in totals, never silent.',
+          },
         },
       },
       CreateDebateRequest: {
@@ -498,6 +504,42 @@ export const openApiSpec = {
             type: 'object',
             properties: {
               evidenceCard: { $ref: '#/components/schemas/EvidenceCard' },
+              verification: {
+                type: 'object',
+                description: 'Present only when verifyCitations was requested',
+                properties: {
+                  citations: {
+                    type: 'object',
+                    properties: {
+                      ran: { type: 'boolean', enum: [true] },
+                      citations: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            kind: { type: 'string', enum: ['doi', 'arxiv', 'url', 'author-year'] },
+                            raw: { type: 'string' },
+                            id: { type: 'string' },
+                            status: { type: 'string', enum: ['verified', 'not_found', 'unverifiable', 'network_error'], description: 'network_error/ambiguous NEVER counts as verified or not_found; not_found requires a registry-confirmed negative; plain URLs and author-year strings are always unverifiable (never fetched)' },
+                            checkedAgainst: { type: 'string' },
+                          },
+                        },
+                      },
+                      totals: {
+                        type: 'object',
+                        properties: {
+                          total: { type: 'integer', description: 'checked (post-cap)' },
+                          extractedTotal: { type: 'integer', description: 'extracted BEFORE the cap' },
+                          truncated: { type: 'boolean', description: 'true when the tail was NOT checked — such runs cannot lift the evidence level' },
+                          verified: { type: 'integer' }, notFound: { type: 'integer' },
+                          unverifiable: { type: 'integer' }, networkErrors: { type: 'integer' },
+                        },
+                      },
+                      note: { type: 'string' },
+                    },
+                  },
+                },
+              },
               scores: {
                 type: 'object',
                 description: '5 KPIs + weighted composite (0-100). DEPRECATED as the primary reading since protocol 3.0.0-alpha — read data.evidenceCard (profile + computed evidence level) instead; this shape is retained for compatibility.',

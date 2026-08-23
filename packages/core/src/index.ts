@@ -97,6 +97,17 @@ export { AnthropicAdapter, getAnthropicAdapter, supportsTemperature } from './ad
 export { OpenAIAdapter, getOpenAIAdapter } from './adapters/openai';
 export type { LLMAdapter, LLMAdapterConfig, LLMResponse } from './adapters/base';
 
+// ── Deterministic verifiers (Phase A4) ────────────────────────────────────
+export { extractCitations, verifyCitations } from './verifiers/citations';
+export type {
+  CitationKind,
+  ExtractedCitation,
+  CitationStatus,
+  VerifiedCitation,
+  CitationVerificationResult,
+  FetchLike,
+} from './verifiers/citations';
+
 // ── Statistics ────────────────────────────────────────────────────────────
 export {
   mean,

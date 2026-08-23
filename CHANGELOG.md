@@ -8,6 +8,28 @@ the meaning of scores even when the software API is unchanged.
 
 ## [Unreleased] — scoring protocol 3.0.0-alpha
 
+### Added — Deterministic citation verification (Phase A4 of the validity program)
+- `verifyCitations: true` on `POST /api/score` (opt-in): citation-like
+  strings in the response are extracted (DOI, arXiv id, URL, author-year)
+  and DOI/arXiv EXISTENCE checked against the two fixed-host public
+  registries via body parsing (doi.org handle API, arXiv API) — no LLM
+  involved, and plain URLs / author-year strings are NEVER fetched
+  (SSRF surface eliminated by design; they are listed unverifiable for
+  human review). Per-citation status `verified` / `not_found` /
+  `unverifiable` / `network_error` — an ambiguous or network outcome
+  NEVER counts as verified or not_found, and not_found requires a
+  registry-confirmed negative. Totals include truncation reporting. On
+  the ensemble path only an EFFECTIVE run (at least one
+  registry-confirmed outcome, not truncated) lifts the evidence level
+  L2→L3. Honest
+  limits stated in the payload itself: existence ≠ the source supports
+  the claim; author-year strings without identifiers are unverifiable
+  by a deterministic checker (Crossref title matching is future work).
+  This is the structural answer to Run 001's headline failure: it
+  SURFACES fabricated references deterministically (and puts detected
+  fabrications in the Evidence Card's caveats) — it does not veto or
+  change any score.
+
 ### Added — Evidence Card (Phase A3 of the validity program)
 - `POST /api/score` now returns `data.evidenceCard` on every path: a
   per-dimension profile (with sd/n and an explicit spread `basis`), a

@@ -23,6 +23,15 @@ jest.mock('@/lib/middleware/rate-limit', () => ({
   clientIp: () => '127.0.0.1',
 }));
 
+const mockVerifyCitations = jest.fn();
+jest.mock('@/lib/verifiers/citations', () => {
+  const actual = jest.requireActual('@/lib/verifiers/citations');
+  return {
+    verifyCitations: (...args: unknown[]) => mockVerifyCitations(...args),
+    verificationEffective: actual.verificationEffective,
+  };
+});
+
 function rubricJson(v: number): string {
   return JSON.stringify({
     cq: { integration_depth: v, knowledge_breadth: v, metacognitive_display: v, synthesis: v, temporal_coherence: v },
@@ -137,6 +146,68 @@ describe('POST /api/score — ensemble & n-sample (v2.1)', () => {
     expect(body.data.evidenceCard.evidenceLevel).toBe('L1');
     expect(body.data.evidenceCard.profile.cq.basis).toBe('samples-within-judge');
     expect(body.data.evidenceCard.profile.cq.n).toBe(2);
+  });
+
+  it('verifyCitations on the ensemble path: runs the verifier, attaches results, lifts L2→L3', async () => {
+    process.env.CAIMS_ENSEMBLE_JUDGES = 'anthropic:judge-a,openai:judge-b';
+    mockJudge
+      .mockResolvedValueOnce(rubricJson(60))
+      .mockResolvedValueOnce(rubricJson(80));
+    mockVerifyCitations.mockResolvedValueOnce({
+      ran: true,
+      citations: [{ kind: 'doi', raw: '10.1/x', id: '10.1/x', status: 'not_found' }],
+      totals: { total: 1, extractedTotal: 1, truncated: false, verified: 0, notFound: 1, unverifiable: 0, networkErrors: 0 },
+      note: 'stub',
+    });
+    const res = await handler(makeRequest({ ...BASE_BODY, ensemble: true, verifyCitations: true }));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(mockVerifyCitations).toHaveBeenCalledWith(BASE_BODY.response);
+    expect(body.data.evidenceCard.evidenceLevel).toBe('L3');
+    expect(body.data.verification.citations.totals.notFound).toBe(1);
+    // detected fabrication is a caveat ON THE CARD, not just a sibling payload
+    expect(body.data.evidenceCard.caveats.some((c: string) => c.includes('NON-EXISTENT'))).toBe(true);
+  });
+
+  it('an all-network-error verification run does NOT lift the level (stays L2, with caveat)', async () => {
+    process.env.CAIMS_ENSEMBLE_JUDGES = 'anthropic:judge-a,openai:judge-b';
+    mockJudge
+      .mockResolvedValueOnce(rubricJson(60))
+      .mockResolvedValueOnce(rubricJson(80));
+    mockVerifyCitations.mockResolvedValueOnce({
+      ran: true, citations: [],
+      totals: { total: 3, extractedTotal: 3, truncated: false, verified: 0, notFound: 0, unverifiable: 0, networkErrors: 3 },
+      note: 'stub',
+    });
+    const res = await handler(makeRequest({ ...BASE_BODY, ensemble: true, verifyCitations: true }));
+    const body = await res.json();
+    expect(body.data.evidenceCard.evidenceLevel).toBe('L2');
+    expect(body.data.evidenceCard.caveats.some((c: string) => c.includes('established nothing'))).toBe(true);
+  });
+
+  it('verifyCitations on the single path: results attach but the level stays L1', async () => {
+    mockJudge.mockResolvedValueOnce(rubricJson(65));
+    mockJudge.mockResolvedValueOnce('{}'); // emotion pass (non-fatal)
+    mockVerifyCitations.mockResolvedValueOnce({
+      ran: true, citations: [],
+      totals: { total: 0, extractedTotal: 0, truncated: false, verified: 0, notFound: 0, unverifiable: 0, networkErrors: 0 },
+      note: 'stub',
+    });
+    const res = await handler(makeRequest({ ...BASE_BODY, verifyCitations: true }));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(body.data.evidenceCard.evidenceLevel).toBe('L1');
+    expect(body.data.verification.citations.ran).toBe(true);
+  });
+
+  it('without verifyCitations the verifier is never called and no verification field appears', async () => {
+    mockJudge.mockResolvedValueOnce(rubricJson(65));
+    mockJudge.mockResolvedValueOnce('{}');
+    mockVerifyCitations.mockClear();
+    const res = await handler(makeRequest(BASE_BODY));
+    const body = await res.json();
+    expect(mockVerifyCitations).not.toHaveBeenCalled();
+    expect(body.data.verification).toBeUndefined();
   });
 
   it('all judges failing → 503 SCORING_UNAVAILABLE', async () => {
