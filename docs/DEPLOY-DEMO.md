@@ -29,6 +29,7 @@ Generate a key: `openssl rand -hex 32`.
    | `OPENAI_API_KEY` | optional (multi-provider) |
    | `CAIMS_API_KEYS` | the generated key(s) |
    | `CAIMS_LLM_PROVIDER` | `anthropic` |
+   | `CAIMS_ENSEMBLE_JUDGES` | optional, e.g. `anthropic:claude-sonnet-5,openai:gpt-4o` — enables `ensemble: true` on `/api/score` (see `docs/ensemble-v2.1.md`; each configured provider needs its key) |
 4. **Schema**: from your machine, once:
    `cd apps/web && DATABASE_URL='<neon-url>' npx prisma db push`
 5. Deploy. Smoke-check:

@@ -22,6 +22,19 @@ the meaning of scores even when the software API is unchanged.
   orchestrator and the debate route share one implementation.
 
 ### Added
+- Multi-judge ensemble & n-sample scoring in the production API (v2.1):
+  `ensemble` and `samples` (1–5) options on `POST /api/score`. Judges are
+  configured server-side via `CAIMS_ENSEMBLE_JUDGES` (fail-loudly when
+  invalid; 400 when requested but unset). Responses add per-judge results
+  (mean ± Bessel-corrected sample SD), failed judges (reported, never
+  hidden), and inter-judge agreement (composite spread, mean absolute
+  pairwise difference). `scores.*` keep their shape (ensemble means), so
+  existing clients and the Python SDK work unchanged. EmQ is not run in
+  ensemble mode. See `docs/ensemble-v2.1.md`. Motivated by Run 001's
+  12.7-point inter-judge mean absolute difference.
+- Experiment runner raw records now carry the judge sampling
+  `temperature` (0, or null where the model rejects the parameter), as
+  promised in the preprint's provenance section for Run 002.
 - EmQ (Emotional Quotient, experimental): emotional-tone proxy with 10
   clusters and valence/arousal dimensions, informed by Anthropic's
   functional-emotions research but text-level only.

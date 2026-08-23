@@ -24,6 +24,19 @@ export {
   checkContextAlert,
   getActiveWeights,
 } from './scorers/composite';
+export {
+  scoreEnsemble,
+  getEnsembleConfig,
+  defaultJudge,
+  MAX_ENSEMBLE_JUDGES,
+  MAX_SAMPLES_PER_JUDGE,
+} from './scorers/ensemble';
+export type {
+  EnsembleJudge,
+  EnsembleConfig,
+  EnsembleJudgeResult,
+  EnsembleScores,
+} from './scorers/ensemble';
 export { sanitizeForPrompt, INJECTION_GUARD } from './scorers/prompt-safety';
 export { DEFAULT_WEIGHTS } from './scorers/types';
 export type {

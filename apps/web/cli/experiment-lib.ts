@@ -9,6 +9,7 @@
 
 import { z } from 'zod';
 import { scoreInteraction, SCORING_PROTOCOL_VERSION, SCORING_PROMPT_HASH } from '@/lib/scorers/scoring-engine';
+import { supportsTemperature } from '@/lib/adapters/anthropic';
 import type { LLMAdapter } from '@/lib/adapters';
 import { summarize, pearson, meanAbsDiff } from '@/lib/statistics/descriptive';
 import type { SummaryStats } from '@/lib/statistics/descriptive';
@@ -56,6 +57,10 @@ export interface SampleRecord {
   judgeModel: string;
   /** Provider from the judge config (metadata.provider inside scores cannot know injected adapters). */
   provider: string;
+  /** Judge sampling temperature: 0 where the model accepts the parameter,
+      null where it rejects it (Claude 5 family — provider-default sampling).
+      Added for Run 002 as promised in the preprint's provenance section. */
+  temperature: number | null;
   sampleIndex: number;
   ok: boolean;
   composite?: number;
@@ -206,6 +211,7 @@ export async function runExperiment(
             judgeId: judge.id,
             judgeModel: judge.model,
             provider: judge.provider,
+            temperature: supportsTemperature(judge.model) ? 0 : null,
             sampleIndex: i,
             protocolVersion: SCORING_PROTOCOL_VERSION,
             promptHash: SCORING_PROMPT_HASH,

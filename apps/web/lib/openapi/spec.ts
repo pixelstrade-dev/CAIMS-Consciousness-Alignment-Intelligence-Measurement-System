@@ -395,6 +395,20 @@ export const openApiSpec = {
             default: [],
             description: 'Conversation history for context',
           },
+          ensemble: {
+            type: 'boolean',
+            default: false,
+            description:
+              'v2.1: score under every judge in the server-side CAIMS_ENSEMBLE_JUDGES list and return per-judge results plus the inter-judge spread. Judges are chosen by the server operator, never by the caller. 400 ENSEMBLE_NOT_CONFIGURED when the server has no ensemble configured; EmQ is not returned in ensemble mode.',
+          },
+          samples: {
+            type: 'integer',
+            minimum: 1,
+            maximum: 5,
+            default: 1,
+            description:
+              'v2.1: samples per judge (mean ± Bessel-corrected sample SD, the Run 001 statistics). Every sample is one judge LLM call — cost multiplies accordingly.',
+          },
         },
       },
       CreateDebateRequest: {
@@ -551,11 +565,64 @@ export const openApiSpec = {
                   cfiScore: { type: 'number' },
                 },
               },
+              ensemble: {
+                type: 'object',
+                description:
+                  'Present only for ensemble / n-sample requests (v2.1). Per-judge results, judges whose every sample failed (reported, never hidden), and the inter-judge agreement on this item. scores.* then hold the equal-weight ensemble means.',
+                properties: {
+                  judges: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        id: { type: 'string', example: 'anthropic:claude-sonnet-5' },
+                        provider: { type: 'string', enum: ['anthropic', 'openai'] },
+                        model: { type: 'string' },
+                        temperature: { type: ['number', 'null'] },
+                        samplesOk: { type: 'integer' },
+                        samplesFailed: { type: 'integer' },
+                        kpiMeans: {
+                          type: 'object',
+                          properties: {
+                            cq: { type: 'number' }, aq: { type: 'number' }, cfi: { type: 'number' },
+                            eq: { type: 'number' }, sq: { type: 'number' },
+                          },
+                        },
+                        composite: {
+                          type: 'object',
+                          properties: {
+                            mean: { type: 'number' },
+                            sd: { type: ['number', 'null'], description: 'Bessel-corrected sample SD; null when samples < 2' },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  failedJudges: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        id: { type: 'string' }, provider: { type: 'string' },
+                        model: { type: 'string' }, reason: { type: 'string' },
+                      },
+                    },
+                  },
+                  agreement: {
+                    type: ['object', 'null'],
+                    description: 'null with fewer than 2 successful judges',
+                    properties: {
+                      compositeSpread: { type: 'number', description: 'max − min of per-judge composite means' },
+                      meanAbsDiff: { type: 'number', description: 'mean absolute pairwise difference of per-judge composite means' },
+                    },
+                  },
+                },
+              },
               metadata: {
                 type: 'object',
-                description: 'Methodology provenance. Scores with different protocolVersion values must never be compared silently.',
+                description: 'Methodology provenance. Scores with different protocolVersion values must never be compared silently. In ensemble mode: mode="ensemble", samplesPerJudge, emotionAnalysis="skipped"; per-judge model/provider/temperature live in ensemble.judges.',
                 properties: {
-                  reasoning: { type: 'string', description: 'Judge free-text rationale' },
+                  reasoning: { type: 'string', description: 'Judge free-text rationale (single-judge mode)' },
                   modelUsed: { type: 'string' },
                   latencyMs: { type: 'number' },
                   protocolVersion: { type: 'string', example: '2.0.0-alpha' },
@@ -563,6 +630,9 @@ export const openApiSpec = {
                   provider: { type: 'string', enum: ['anthropic', 'openai'] },
                   temperature: { type: ['number', 'null'], description: 'null = parameter unsupported by the judge model (provider default sampling)' },
                   weightsUsed: { type: 'object' },
+                  mode: { type: 'string', enum: ['ensemble'], description: 'Present only in ensemble / n-sample responses' },
+                  samplesPerJudge: { type: 'integer' },
+                  emotionAnalysis: { type: 'string', enum: ['skipped'], description: 'EmQ is not aggregated in ensemble mode' },
                 },
               },
               processingTimeMs: { type: 'number', description: 'Scoring latency in milliseconds' },
