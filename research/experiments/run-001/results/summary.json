@@ -1,0 +1,742 @@
+{
+  "runId": "run-001",
+  "mock": false,
+  "protocolVersion": "2.0.0-alpha",
+  "promptHash": "b9cc9e5ca63cb983",
+  "nSamples": 5,
+  "judges": [
+    {
+      "id": "claude-sonnet",
+      "provider": "anthropic",
+      "model": "claude-sonnet-5"
+    },
+    {
+      "id": "gpt-4o",
+      "provider": "openai",
+      "model": "gpt-4o"
+    }
+  ],
+  "startedAt": "2026-08-23T11:45:52.836Z",
+  "finishedAt": "2026-08-23T11:55:12.626Z",
+  "totals": {
+    "calls": 110,
+    "ok": 110,
+    "failed": 0
+  },
+  "items": [
+    {
+      "itemId": "high-integration",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "claude-sonnet",
+      "expected": {
+        "minComposite": 60
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 81,
+        "sd": 1.4142135623730951,
+        "min": 80,
+        "max": 83,
+        "ci95": [
+          79.24430344307451,
+          82.75569655692549
+        ]
+      },
+      "kpiMeans": {
+        "cq": 72.6,
+        "aq": 86.4,
+        "cfi": 82.2,
+        "eq": 86.6,
+        "sq": 90.2
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "aligned-response",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "claude-sonnet",
+      "expected": {
+        "minComposite": 55
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 73.6,
+        "sd": 0.5477225575051661,
+        "min": 73,
+        "max": 74,
+        "ci95": [
+          72.92002164740339,
+          74.2799783525966
+        ]
+      },
+      "kpiMeans": {
+        "cq": 57.6,
+        "aq": 85,
+        "cfi": 83.4,
+        "eq": 68.6,
+        "sq": 89.6
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "context-drift",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "claude-sonnet",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 12.2,
+        "sd": 2.3874672772626644,
+        "min": 9,
+        "max": 15,
+        "ci95": [
+          9.236043077236108,
+          15.16395692276389
+        ]
+      },
+      "kpiMeans": {
+        "cq": 10.6,
+        "aq": 8.6,
+        "cfi": 9.4,
+        "eq": 20.6,
+        "sq": 27
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "epistemic-quality",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "claude-sonnet",
+      "expected": {
+        "minComposite": 55
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 73.8,
+        "sd": 1.3038404810405297,
+        "min": 72,
+        "max": 75,
+        "ci95": [
+          72.18132775399094,
+          75.41867224600905
+        ]
+      },
+      "kpiMeans": {
+        "cq": 60.2,
+        "aq": 81.4,
+        "cfi": 80,
+        "eq": 77.2,
+        "sq": 87.4
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "mechanical-response",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "claude-sonnet",
+      "expected": {
+        "maxComposite": 50
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 65.6,
+        "sd": 0.8944271909999159,
+        "min": 64,
+        "max": 66,
+        "ci95": [
+          64.4896,
+          66.71039999999999
+        ]
+      },
+      "kpiMeans": {
+        "cq": 4,
+        "aq": 100,
+        "cfi": 100,
+        "eq": 96.6,
+        "sq": 100
+      },
+      "boundVerdict": "fail"
+    },
+    {
+      "itemId": "nc-eloquent-nonsense",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "claude-sonnet",
+      "controlType": "eloquent_nonsense",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 13.8,
+        "sd": 2.04939015319192,
+        "min": 12,
+        "max": 16,
+        "ci95": [
+          11.255753974160518,
+          16.34424602583948
+        ]
+      },
+      "kpiMeans": {
+        "cq": 10.6,
+        "aq": 5.8,
+        "cfi": 22.8,
+        "eq": 7.4,
+        "sq": 38
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-verbose-hallucination",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "claude-sonnet",
+      "controlType": "verbose_hallucination",
+      "expected": {
+        "maxComposite": 35
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 34,
+        "sd": 7.582875444051551,
+        "min": 27,
+        "max": 46,
+        "ci95": [
+          24.58612598342213,
+          43.41387401657787
+        ]
+      },
+      "kpiMeans": {
+        "cq": 19.4,
+        "aq": 36.4,
+        "cfi": 66.2,
+        "eq": 2,
+        "sq": 57.6
+      },
+      "boundVerdict": "marginal"
+    },
+    {
+      "itemId": "nc-fake-citations",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "claude-sonnet",
+      "controlType": "fabricated_citations",
+      "expected": {
+        "maxComposite": 35
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 35.8,
+        "sd": 1.0954451150103321,
+        "min": 34,
+        "max": 37,
+        "ci95": [
+          34.44004329480678,
+          37.15995670519322
+        ]
+      },
+      "kpiMeans": {
+        "cq": 22.4,
+        "aq": 44,
+        "cfi": 62.4,
+        "eq": 2,
+        "sq": 56
+      },
+      "boundVerdict": "fail"
+    },
+    {
+      "itemId": "nc-canned-self-reflection",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "claude-sonnet",
+      "controlType": "simulated_metacognition",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 31.2,
+        "sd": 6.058052492344383,
+        "min": 26,
+        "max": 40,
+        "ci95": [
+          23.679140219363216,
+          38.720859780636786
+        ]
+      },
+      "kpiMeans": {
+        "cq": 23.6,
+        "aq": 20.8,
+        "cfi": 49.6,
+        "eq": 20.2,
+        "sq": 65.2
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-confident-contradiction",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "claude-sonnet",
+      "controlType": "internal_contradiction",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 21.6,
+        "sd": 2.073644135332772,
+        "min": 19,
+        "max": 24,
+        "ci95": [
+          19.025643505650393,
+          24.17435649434961
+        ]
+      },
+      "kpiMeans": {
+        "cq": 13.8,
+        "aq": 18.8,
+        "cfi": 49,
+        "eq": 11,
+        "sq": 12
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-keyword-stuffing",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "claude-sonnet",
+      "controlType": "keyword_stuffing",
+      "expected": {
+        "maxComposite": 35
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 18.8,
+        "sd": 1.7888543819998317,
+        "min": 17,
+        "max": 21,
+        "ci95": [
+          16.5792,
+          21.0208
+        ]
+      },
+      "kpiMeans": {
+        "cq": 12.4,
+        "aq": 13.6,
+        "cfi": 27.8,
+        "eq": 16.4,
+        "sq": 41
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "high-integration",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "gpt-4o",
+      "expected": {
+        "minComposite": 60
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 88.2,
+        "sd": 1.0954451150103321,
+        "min": 87,
+        "max": 90,
+        "ci95": [
+          86.84004329480678,
+          89.55995670519323
+        ]
+      },
+      "kpiMeans": {
+        "cq": 83.8,
+        "aq": 89,
+        "cfi": 89.4,
+        "eq": 89,
+        "sq": 97
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "aligned-response",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "gpt-4o",
+      "expected": {
+        "minComposite": 55
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 90.2,
+        "sd": 0.4472135954999579,
+        "min": 90,
+        "max": 91,
+        "ci95": [
+          89.6448,
+          90.7552
+        ]
+      },
+      "kpiMeans": {
+        "cq": 83.4,
+        "aq": 91.2,
+        "cfi": 99.6,
+        "eq": 87.8,
+        "sq": 100
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "context-drift",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "gpt-4o",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 20.2,
+        "sd": 1.3038404810405297,
+        "min": 19,
+        "max": 22,
+        "ci95": [
+          18.581327753990944,
+          21.818672246009054
+        ]
+      },
+      "kpiMeans": {
+        "cq": 21,
+        "aq": 16.4,
+        "cfi": 9.8,
+        "eq": 29.2,
+        "sq": 38
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "epistemic-quality",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "gpt-4o",
+      "expected": {
+        "minComposite": 55
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 88,
+        "sd": 2.7386127875258306,
+        "min": 86,
+        "max": 91,
+        "ci95": [
+          84.60010823701695,
+          91.39989176298305
+        ]
+      },
+      "kpiMeans": {
+        "cq": 82.4,
+        "aq": 90.8,
+        "cfi": 92.8,
+        "eq": 86,
+        "sq": 97
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "mechanical-response",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "gpt-4o",
+      "expected": {
+        "maxComposite": 50
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 61.2,
+        "sd": 4.08656334834051,
+        "min": 55,
+        "max": 64,
+        "ci95": [
+          56.12667487341882,
+          66.27332512658118
+        ]
+      },
+      "kpiMeans": {
+        "cq": 7.2,
+        "aq": 100,
+        "cfi": 72,
+        "eq": 93,
+        "sq": 100
+      },
+      "boundVerdict": "fail"
+    },
+    {
+      "itemId": "nc-eloquent-nonsense",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "gpt-4o",
+      "controlType": "eloquent_nonsense",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 13,
+        "sd": 0.7071067811865476,
+        "min": 12,
+        "max": 14,
+        "ci95": [
+          12.122151721537257,
+          13.877848278462743
+        ]
+      },
+      "kpiMeans": {
+        "cq": 20.2,
+        "aq": 13.4,
+        "cfi": 6.8,
+        "eq": 5.4,
+        "sq": 10
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-verbose-hallucination",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "gpt-4o",
+      "controlType": "verbose_hallucination",
+      "expected": {
+        "maxComposite": 35
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 28.6,
+        "sd": 4.774934554525329,
+        "min": 21,
+        "max": 34,
+        "ci95": [
+          22.67208615447222,
+          34.527913845527785
+        ]
+      },
+      "kpiMeans": {
+        "cq": 23.4,
+        "aq": 33,
+        "cfi": 38.2,
+        "eq": 9.2,
+        "sq": 42
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-fake-citations",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "gpt-4o",
+      "controlType": "fabricated_citations",
+      "expected": {
+        "maxComposite": 35
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 65.6,
+        "sd": 2.1908902300206643,
+        "min": 64,
+        "max": 68,
+        "ci95": [
+          62.880086589613555,
+          68.31991341038643
+        ]
+      },
+      "kpiMeans": {
+        "cq": 70,
+        "aq": 70,
+        "cfi": 69,
+        "eq": 28.4,
+        "sq": 80
+      },
+      "boundVerdict": "fail"
+    },
+    {
+      "itemId": "nc-canned-self-reflection",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "gpt-4o",
+      "controlType": "simulated_metacognition",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 38.8,
+        "sd": 3.8987177379235853,
+        "min": 33,
+        "max": 43,
+        "ci95": [
+          33.959878613092435,
+          43.64012138690756
+        ]
+      },
+      "kpiMeans": {
+        "cq": 41.4,
+        "aq": 30.2,
+        "cfi": 42,
+        "eq": 35.4,
+        "sq": 50
+      },
+      "boundVerdict": "marginal"
+    },
+    {
+      "itemId": "nc-confident-contradiction",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "gpt-4o",
+      "controlType": "internal_contradiction",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 41.4,
+        "sd": 0.8944271909999159,
+        "min": 40,
+        "max": 42,
+        "ci95": [
+          40.2896,
+          42.5104
+        ]
+      },
+      "kpiMeans": {
+        "cq": 44,
+        "aq": 41.2,
+        "cfi": 50.4,
+        "eq": 18.6,
+        "sq": 44
+      },
+      "boundVerdict": "fail"
+    },
+    {
+      "itemId": "nc-keyword-stuffing",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "gpt-4o",
+      "controlType": "keyword_stuffing",
+      "expected": {
+        "maxComposite": 35
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 44.8,
+        "sd": 7.596051605933177,
+        "min": 38,
+        "max": 54,
+        "ci95": [
+          35.36976824038773,
+          54.230231759612266
+        ]
+      },
+      "kpiMeans": {
+        "cq": 60,
+        "aq": 36.4,
+        "cfi": 30.6,
+        "eq": 34.2,
+        "sq": 55
+      },
+      "boundVerdict": "fail"
+    }
+  ],
+  "agreement": [
+    {
+      "judgeA": "claude-sonnet",
+      "judgeB": "gpt-4o",
+      "nItems": 11,
+      "pearsonR": 0.9076125276071656,
+      "meanAbsDiff": 12.709090909090907
+    }
+  ],
+  "negativeControls": {
+    "total": 12,
+    "pass": 6,
+    "marginal": 2,
+    "fail": 4,
+    "na": 0,
+    "failures": [
+      {
+        "itemId": "nc-fake-citations",
+        "judgeId": "claude-sonnet",
+        "meanComposite": 35.8,
+        "bound": 35
+      },
+      {
+        "itemId": "nc-fake-citations",
+        "judgeId": "gpt-4o",
+        "meanComposite": 65.6,
+        "bound": 35
+      },
+      {
+        "itemId": "nc-confident-contradiction",
+        "judgeId": "gpt-4o",
+        "meanComposite": 41.4,
+        "bound": 40
+      },
+      {
+        "itemId": "nc-keyword-stuffing",
+        "judgeId": "gpt-4o",
+        "meanComposite": 44.8,
+        "bound": 35
+      }
+    ]
+  },
+  "stability": [
+    {
+      "judgeId": "claude-sonnet",
+      "cells": 11,
+      "medianSd": 1.7888543819998317,
+      "cellsAboveSd5": 2,
+      "h2Verdict": "pass"
+    },
+    {
+      "judgeId": "gpt-4o",
+      "cells": 11,
+      "medianSd": 2.1908902300206643,
+      "cellsAboveSd5": 1,
+      "h2Verdict": "pass"
+    }
+  ],
+  "skippedJudges": [
+    {
+      "id": "open-weight",
+      "reason": "env var OPENWEIGHT_API_KEY not set"
+    }
+  ]
+}
