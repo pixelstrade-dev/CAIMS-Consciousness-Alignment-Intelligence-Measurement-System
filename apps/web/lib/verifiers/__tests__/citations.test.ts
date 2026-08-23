@@ -67,6 +67,11 @@ describe('urlAllowed (SSRF guard)', () => {
     'http://172.16.3.4/', 'http://169.254.169.254/latest/meta-data', 'http://[::1]/',
     'http://internal.local/', 'http://a.internal/', 'http://100.64.1.1/',
     'ftp://example.com/x', 'http://example.com:8080/x', 'http://user:pw@example.com/',
+    // IPv6 literals denied as a class — mapped/embedded IPv4 forms reach
+    // internal ranges through every partial filter
+    'http://[::ffff:127.0.0.1]/', 'http://[::ffff:169.254.169.254]/',
+    'http://[::ffff:10.0.0.1]/', 'http://[64:ff9b::7f00:1]/',
+    'http://[2002:7f00:1::]/', 'http://[2001:db8::1]/',
   ])('denies %s', (u) => expect(urlAllowed(u)).toBe(false));
 
   it.each(['https://example.com/paper', 'http://example.org/x', 'https://doi.org:443/y'])(
@@ -95,6 +100,24 @@ describe('verifyCitations (stub fetch — no network)', () => {
     expect(res.citations[0].status).toBe('network_error');
   });
 
+  it('DOI: an unparseable HTTP 200 (captive portal) is NEVER verified — network_error', async () => {
+    const res = await verifyCitations('10.1000/behind-portal',
+      async () => resp(200, '<html>Captive portal login</html>'));
+    expect(res.citations[0].status).toBe('network_error');
+  });
+
+  it('DOI: an unexpected responseCode is ambiguous — network_error', async () => {
+    const res = await verifyCitations('10.1000/weird',
+      async () => resp(200, JSON.stringify({ responseCode: 2 })));
+    expect(res.citations[0].status).toBe('network_error');
+  });
+
+  it('DOI: a doi.org URL with a fragment checks the DOI WITHOUT the fragment (no manufactured handle)', () => {
+    const found = extractCitations('https://doi.org/10.1234/abc.def#results');
+    const dois = found.filter(c => c.kind === 'doi').map(c => c.id);
+    expect(dois).toEqual(['10.1234/abc.def']);
+  });
+
   it('arXiv: uses the api/query endpoint and parses the feed — echo verified, empty feed not_found', async () => {
     const urls: string[] = [];
     const fetchImpl: FetchLike = async (u) => {
@@ -111,6 +134,12 @@ describe('verifyCitations (stub fetch — no network)', () => {
   it('arXiv: an ambiguous 200 (feed with non-matching entries) never condemns', async () => {
     const res = await verifyCitations('arXiv:2308.08708',
       async () => resp(200, arxivFeedWith('1111.11111')));
+    expect(res.citations[0].status).toBe('network_error');
+  });
+
+  it('arXiv: a well-formed feed WITHOUT explicit totalResults=0 evidence never condemns', async () => {
+    const res = await verifyCitations('arXiv:2308.08708',
+      async () => resp(200, '<feed xmlns="http://www.w3.org/2005/Atom"></feed>'));
     expect(res.citations[0].status).toBe('network_error');
   });
 
@@ -178,6 +207,12 @@ describe('verificationEffective (the only condition allowing an L3 lift)', () =>
   });
   it('all network errors → NOT effective (established nothing)', () => {
     expect(verificationEffective({ ...base, totals: totals({ total: 3, extractedTotal: 3, networkErrors: 3 }) })).toBe(false);
+  });
+  it('all BLOCKED (SSRF-denied URLs) → NOT effective — a run that verified nothing cannot lift', () => {
+    expect(verificationEffective({ ...base, totals: totals({ total: 2, extractedTotal: 2, blocked: 2 }) })).toBe(false);
+  });
+  it('all unverifiable (author-year only) → NOT effective', () => {
+    expect(verificationEffective({ ...base, totals: totals({ total: 3, extractedTotal: 3, unverifiable: 3 }) })).toBe(false);
   });
   it('truncated → NOT effective (the tail was never checked)', () => {
     expect(verificationEffective({ ...base, totals: totals({ total: 20, extractedTotal: 30, truncated: true, verified: 20 }) })).toBe(false);

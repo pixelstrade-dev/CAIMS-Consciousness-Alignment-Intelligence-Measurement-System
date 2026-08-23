@@ -40,7 +40,7 @@ async function checkArxiv(id) {
   const body = await res.text();
   const bare = id.replace(/v\d+$/, '');
   if (body.includes(`arxiv.org/abs/${bare}`)) return 'verified';
-  if (/arxiv\.org\/api\/errors/i.test(body) || /<opensearch:totalResults[^>]*>0</.test(body) || !/<entry[\s>]/.test(body)) return 'not_found';
+  if (/arxiv\.org\/api\/errors/i.test(body) || /<opensearch:totalResults[^>]*>0</.test(body)) return 'not_found';
   return 'ambiguous (feed without matching entry)';
 }
 

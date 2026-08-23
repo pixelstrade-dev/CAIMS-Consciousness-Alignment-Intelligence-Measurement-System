@@ -41,9 +41,10 @@ export interface ExtractedCitation {
   id: string;
 }
 
-// DOI: 10.xxxx/suffix. Suffix charset intentionally broad (incl. + and #
-// per Crossref practice); sentence terminators are trimmed afterwards.
-const DOI_RE = /\b10\.\d{4,9}\/[-._;()/:+#a-zA-Z0-9]+/g;
+// DOI: 10.xxxx/suffix. '#' deliberately EXCLUDED: URL fragments are not part
+// of a DOI, and including it manufactured nonexistent handles from
+// "doi.org/10.x/y#section" links (false not_found on real papers).
+const DOI_RE = /\b10\.\d{4,9}\/[-._;()/:+a-zA-Z0-9]+/g;
 // arXiv: modern (2301.12345, optional version) and legacy (cs/0301123) ids,
 // prefixed by "arXiv:" to avoid matching bare number-dot-number strings.
 const ARXIV_RE = /\barXiv:\s*((?:\d{4}\.\d{4,5}(?:v\d+)?)|(?:[a-z-]+(?:\.[A-Z]{2})?\/\d{7}))/gi;
@@ -97,7 +98,7 @@ export function extractCitations(text: string): ExtractedCitation[] {
     // Registry URLs route to their registry kind. Query/fragment are
     // stripped BEFORE matching so "?x" cannot make a citation vanish.
     const pathOnly = id.replace(/[?#].*$/, '');
-    const doiInUrl = pathOnly.match(/doi\.org\/(10\.\d{4,9}\/[-._;()/:+#a-zA-Z0-9]+)/);
+    const doiInUrl = pathOnly.match(/doi\.org\/(10\.\d{4,9}\/[-._;()/:+a-zA-Z0-9]+)/);
     const arxivInUrl = pathOnly.match(/arxiv\.org\/(?:abs|pdf)\/([^\s]+?)(?:\.pdf)?$/i);
     if (doiInUrl) push('doi', m[0], normalize(doiInUrl[1]));
     else if (arxivInUrl) push('arxiv', m[0], arxivInUrl[1]);
@@ -123,7 +124,12 @@ export function extractCitations(text: string): ExtractedCitation[] {
 function isDeniedHost(hostname: string): boolean {
   const h = hostname.toLowerCase().replace(/^\[|\]$/g, '');
   if (h === 'localhost' || h.endsWith('.localhost') || h.endsWith('.local') || h.endsWith('.internal')) return true;
-  if (h === '::1' || h === '0.0.0.0' || h === '::') return true;
+  // ANY IPv6 literal is denied outright: mapped/embedded IPv4 forms
+  // (::ffff:7f00:1, NAT64 64:ff9b::, 6to4 2002::) reach internal ranges
+  // through every partial filter, and legitimate citations never use raw
+  // IPv6 literals. Deny the class, not an enumeration of embeddings.
+  if (h.includes(':')) return true;
+  if (h === '0.0.0.0') return true;
   const v4 = h.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
   if (v4) {
     const [a, b] = [Number(v4[1]), Number(v4[2])];
@@ -133,7 +139,6 @@ function isDeniedHost(hostname: string): boolean {
     if (a === 192 && b === 168) return true;                           // RFC1918
     if (a === 100 && b >= 64 && b <= 127) return true;                 // CGNAT
   }
-  if (/^(fe80:|fc|fd)/.test(h)) return true;                           // IPv6 link-local / ULA
   return false;
 }
 
@@ -209,18 +214,18 @@ async function checkDoi(c: ExtractedCitation, fetchImpl: FetchLike, signal: Abor
   const url = `https://doi.org/api/handles/${c.id.split('/').map(encodeURIComponent).join('/')}`;
   try {
     const res = await fetchImpl(url, { method: 'GET', signal, headers: UA, redirect: 'manual' });
-    // Primary evidence: the handle API body (responseCode 1 = found,
-    // 100 = handle not found, 200 = handle exists without values).
+    // The ONLY evidence is the handle API body (responseCode 1 = found,
+    // 100 = handle not found, 200 = handle exists without values). An
+    // unparseable or unexpected response — even an HTTP 200 (captive
+    // portal, proxy interstitial, maintenance page) — establishes NOTHING
+    // in either direction: network_error, never verified, never not_found.
     try {
       const body = JSON.parse(await res.text());
       if (body && typeof body.responseCode === 'number') {
         if (body.responseCode === 1 || body.responseCode === 200) return { ...c, status: 'verified', checkedAgainst: url };
         if (body.responseCode === 100) return { ...c, status: 'not_found', checkedAgainst: url };
       }
-    } catch { /* fall through to status heuristics */ }
-    // Without a parseable registry body, only a confident positive is safe:
-    // a bare 404 could be a path-handling quirk, so it maps to network_error.
-    if (res.ok) return { ...c, status: 'verified', checkedAgainst: url };
+    } catch { /* not the registry answering */ }
     return { ...c, status: 'network_error', checkedAgainst: url };
   } catch {
     return { ...c, status: 'network_error', checkedAgainst: url };
@@ -239,12 +244,13 @@ async function checkArxiv(c: ExtractedCitation, fetchImpl: FetchLike, signal: Ab
     const bareId = c.id.replace(/v\d+$/, '');
     // Positive: an entry whose id is the paper's abs URL.
     if (body.includes(`arxiv.org/abs/${bareId}`)) return { ...c, status: 'verified', checkedAgainst: url };
-    // Registry-confirmed negative: a well-formed feed that answers with an
-    // explicit error entry or no matching entry for the requested id.
-    if (/arxiv\.org\/api\/errors/i.test(body) || /<opensearch:totalResults[^>]*>0</.test(body) || !/<entry[\s>]/.test(body)) {
+    // Registry-confirmed negative ONLY: an explicit error entry or an
+    // explicit totalResults=0. A well-formed feed that merely lacks the
+    // entry (degraded service, partial response) is ambiguous and must
+    // never condemn a real paper.
+    if (/arxiv\.org\/api\/errors/i.test(body) || /<opensearch:totalResults[^>]*>0</.test(body)) {
       return { ...c, status: 'not_found', checkedAgainst: url };
     }
-    // A feed with entries that do not echo the id: ambiguous — never condemn.
     return { ...c, status: 'network_error', checkedAgainst: url };
   } catch {
     return { ...c, status: 'network_error', checkedAgainst: url };
@@ -324,12 +330,16 @@ export async function verifyCitations(
 
 /**
  * Whether a verification run actually ESTABLISHED deterministic facts —
- * the only condition under which it may lift the evidence level. A run
- * where every check failed on the network, or whose tail was truncated,
- * established nothing (or not everything) and must not upgrade the label.
+ * the only condition under which it may lift the evidence level.
+ *
+ * Effective ⇔ not truncated AND (nothing to check, OR at least one
+ * registry-confirmed outcome). network_error, blocked and unverifiable
+ * all establish nothing: a run made only of them (SSRF-blocked URLs,
+ * author-year-only citations, registry outage) must not upgrade the
+ * label — that would be the dishonest-lift failure in a new costume.
  */
 export function verificationEffective(r: CitationVerificationResult): boolean {
   if (r.totals.truncated) return false;
   if (r.totals.total === 0) return true; // nothing to check — trivially complete
-  return r.totals.networkErrors < r.totals.total;
+  return r.totals.verified + r.totals.notFound > 0;
 }

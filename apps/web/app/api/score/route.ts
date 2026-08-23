@@ -39,9 +39,21 @@ const ScoreRequestSchema = z.object({
   // Phase A4: deterministic citation-existence verification (doi.org /
   // arXiv / URL registries — no LLM involved). Opt-in: it makes outbound
   // HTTP calls (up to 20, 5s timeout each, concurrency 4). Lifts the
-  // evidence level L2→L3 on the ensemble path when it RAN.
+  // evidence level L2→L3 on the ensemble path only when EFFECTIVE
+  // (established registry-confirmed facts; not truncated).
   verifyCitations: z.boolean().optional().default(false),
 });
+
+
+// One place to summarize a verification run for the Evidence Card — the
+// two response paths must never drift on lift/caveat semantics.
+function toDetSummary(check: Awaited<ReturnType<typeof verifyCitations>> | null) {
+  return check ? {
+    effective: verificationEffective(check),
+    notFound: check.totals.notFound,
+    truncated: check.totals.truncated,
+  } : undefined;
+}
 
 export async function POST(req: NextRequest) {
   const auth = checkApiKey(req.headers);
@@ -123,11 +135,7 @@ export async function POST(req: NextRequest) {
       const citationCheck = parsed.verifyCitations
         ? await verifyCitations(parsed.response)
         : null;
-      const detSummary = citationCheck ? {
-        effective: verificationEffective(citationCheck),
-        notFound: citationCheck.totals.notFound,
-        truncated: citationCheck.totals.truncated,
-      } : undefined;
+      const detSummary = toDetSummary(citationCheck);
 
       return apiSuccess({
         // v3 primary result: the profile with computed evidence level.
@@ -175,11 +183,7 @@ export async function POST(req: NextRequest) {
     const citationCheck = parsed.verifyCitations
       ? await verifyCitations(parsed.response)
       : null;
-    const detSummary = citationCheck ? {
-      effective: verificationEffective(citationCheck),
-      notFound: citationCheck.totals.notFound,
-      truncated: citationCheck.totals.truncated,
-    } : undefined;
+    const detSummary = toDetSummary(citationCheck);
 
     return apiSuccess({
       // v3 primary result: the profile with computed evidence level (L1
