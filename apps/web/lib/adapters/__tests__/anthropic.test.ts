@@ -49,6 +49,7 @@ describe('AnthropicAdapter', () => {
 
     await adapter.chat([{ role: 'user', content: 'test' }], { model: 'claude-sonnet-5' });
 
+    expect(mockCreate).toHaveBeenCalledTimes(1);
     expect(mockCreate.mock.calls[0][0]).not.toHaveProperty('temperature');
   });
 
@@ -57,6 +58,7 @@ describe('AnthropicAdapter', () => {
 
     await adapter.judge('score this', { model: 'claude-sonnet-5' });
 
+    expect(mockCreate).toHaveBeenCalledTimes(1);
     expect(mockCreate.mock.calls[0][0]).not.toHaveProperty('temperature');
   });
 
@@ -65,6 +67,7 @@ describe('AnthropicAdapter', () => {
 
     await adapter.chat([{ role: 'user', content: 'test' }], { model: 'claude-sonnet-4-20250514', temperature: 0.3 });
 
+    expect(mockCreate).toHaveBeenCalledTimes(1);
     expect(mockCreate.mock.calls[0][0].temperature).toBe(0.3);
   });
 
@@ -73,6 +76,7 @@ describe('AnthropicAdapter', () => {
 
     await adapter.judge('score this', { model: 'claude-sonnet-4-20250514' });
 
+    expect(mockCreate).toHaveBeenCalledTimes(1);
     expect(mockCreate.mock.calls[0][0].temperature).toBe(0);
   });
 });
