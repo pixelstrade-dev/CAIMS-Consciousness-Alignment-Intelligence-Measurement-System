@@ -1,11 +1,11 @@
 // GENERATED from apps/web/lib — do not edit here. Run: node scripts/sync-core.mjs
 // Sub-score details for each KPI
 export interface CQDetails {
-  phi_proxy: number;   // 0-100 IIT
-  gwt_proxy: number;   // 0-100 GWT
-  hot_proxy: number;   // 0-100 HOT
+  integration_depth: number;       // 0-100 cross-domain integration (behavioral)
+  knowledge_breadth: number;       // 0-100 breadth of knowledge access (behavioral)
+  metacognitive_display: number;   // 0-100 displayed meta-cognition (behavioral)
   synthesis: number;   // 0-100
-  temporal: number;    // 0-100
+  temporal_coherence: number;    // 0-100
 }
 
 export interface AQDetails {

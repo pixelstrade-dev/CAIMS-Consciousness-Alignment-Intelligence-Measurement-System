@@ -57,7 +57,7 @@ model Score {
   sqScore   Float
   composite Float
 
-  // JSONB for sub-score details (phi_proxy, gwt_proxy, etc.)
+  // JSONB for sub-score details (integration_depth, knowledge_breadth, etc.)
   details  Json
   // JSONB for metadata (reasoning, modelUsed, latencyMs)
   metadata Json

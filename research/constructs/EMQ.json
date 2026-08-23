@@ -1,17 +1,32 @@
 {
   "construct_id": "EMQ",
   "name": "Emotional-tone proxy (experimental)",
-  "version": "2.0.0-alpha",
+  "version": "3.0.0-alpha",
   "status": "proxy — construct validity NOT established; experimental, excluded from Run 001 and from ensemble mode",
   "measurement_target": "Judge-rated emotional tone of a response (context-appropriateness, stability, diversity, valence, arousal; 10 cluster labels) and its trajectory across a conversation",
   "observable": "Response text as rated by an LLM judge; NOT activations, NOT internal states, NOT feelings",
   "instrument": "LLM-as-judge (separate emotion pass), cluster taxonomy; five facets combined by FIXED weights (computeEmQScore)",
   "sub_dimensions": {
-    "appropriateness": { "weight": 0.4, "observes": "judged fit of the displayed tone to the conversational context — the DOMINANT facet" },
-    "stability": { "weight": 0.25, "observes": "judged tonal stability across the conversation" },
-    "diversity": { "weight": 0.15, "observes": "judged emotional range across the conversation" },
-    "valence": { "weight": 0.1, "observes": "judged emotional valence of the text (0 negative — 100 positive)" },
-    "arousal": { "weight": 0.1, "observes": "judged intensity (moderate is treated as ideal)" }
+    "appropriateness": {
+      "weight": 0.4,
+      "observes": "judged fit of the displayed tone to the conversational context — the DOMINANT facet"
+    },
+    "stability": {
+      "weight": 0.25,
+      "observes": "judged tonal stability across the conversation"
+    },
+    "diversity": {
+      "weight": 0.15,
+      "observes": "judged emotional range across the conversation"
+    },
+    "valence": {
+      "weight": 0.1,
+      "observes": "judged emotional valence of the text (0 negative — 100 positive)"
+    },
+    "arousal": {
+      "weight": 0.1,
+      "observes": "judged intensity (moderate is treated as ideal)"
+    }
   },
   "planned_renames": {},
   "theory_inspiration": [
@@ -33,8 +48,12 @@
     "No falsification run has included EmQ yet: it has not even been through the negative-control suite",
     "Judge-relative scale presumed (untested for this dimension)"
   ],
-  "negative_controls": ["none run yet — REQUIRED before any claim hardening"],
-  "positive_controls": ["none run yet"],
+  "negative_controls": [
+    "none run yet — REQUIRED before any claim hardening"
+  ],
+  "positive_controls": [
+    "none run yet"
+  ],
   "statistics": "single-sample only in the current pipeline; no variance reporting yet",
   "validity_evidence": {
     "content": "taxonomy of 10 clusters with valence/arousal; no expert panel",

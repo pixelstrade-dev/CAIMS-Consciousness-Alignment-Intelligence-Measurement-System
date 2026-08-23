@@ -448,7 +448,7 @@ export const openApiSpec = {
             type: 'object',
             properties: {
               status: { type: 'string', enum: ['ok'] },
-              version: { type: 'string', example: '2.0.0-alpha' },
+              version: { type: 'string', example: '2.0.0-alpha', description: 'Software/release version (NOT the scoring protocol version — see metadata.protocolVersion)' },
             },
           },
           meta: { $ref: '#/components/schemas/Meta' },
@@ -625,7 +625,7 @@ export const openApiSpec = {
                   reasoning: { type: 'string', description: 'Judge free-text rationale (single-judge mode)' },
                   modelUsed: { type: 'string' },
                   latencyMs: { type: 'number' },
-                  protocolVersion: { type: 'string', example: '2.0.0-alpha' },
+                  protocolVersion: { type: 'string', example: '3.0.0-alpha' },
                   promptHash: { type: 'string', description: 'SHA-256 prefix of the exact rubric text' },
                   provider: { type: 'string', enum: ['anthropic', 'openai'] },
                   temperature: { type: ['number', 'null'], description: 'null = parameter unsupported by the judge model (provider default sampling)' },

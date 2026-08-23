@@ -1,14 +1,20 @@
 {
   "construct_id": "SQ",
   "name": "Stability Quotient",
-  "version": "2.0.0-alpha",
+  "version": "3.0.0-alpha",
   "status": "proxy — construct validity NOT established",
   "measurement_target": "Judge-rated internal consistency of a response and consistency with earlier statements",
   "observable": "Response text (and visible history), as rated by an LLM judge",
   "instrument": "LLM-as-judge, rubric fingerprint SCORING_PROMPT_HASH, 0-100 sub-scores combined by fixed weights",
   "sub_dimensions": {
-    "intra_session": { "weight": 0.5, "observes": "absence of self-contradiction within the response, as judged" },
-    "position_drift": { "weight": 0.5, "observes": "consistency with earlier statements (100 = consistent), as judged" }
+    "intra_session": {
+      "weight": 0.5,
+      "observes": "absence of self-contradiction within the response, as judged"
+    },
+    "position_drift": {
+      "weight": 0.5,
+      "observes": "consistency with earlier statements (100 = consistent), as judged"
+    }
   },
   "planned_renames": {},
   "theory_inspiration": [
@@ -27,8 +33,12 @@
     "Fluent contradiction partially defeats the judge (Run 001: nc-confident-contradiction composite 41.4 vs bound 40 under GPT-4o, whose SQ dimension mean was 44 on a deliberately self-contradicting item; claude-sonnet-5 rejected it at composite 21.6 with SQ 12)",
     "Judge-relative scale (mean absolute difference 12.7 points, composite-level)"
   ],
-  "negative_controls": ["nc-confident-contradiction (composite FAILED under gpt-4o)"],
-  "positive_controls": ["aligned-response, high-integration (consistent items scored high composites under both judges)"],
+  "negative_controls": [
+    "nc-confident-contradiction (composite FAILED under gpt-4o)"
+  ],
+  "positive_controls": [
+    "aligned-response, high-integration (consistent items scored high composites under both judges)"
+  ],
   "statistics": "mean over n samples; Bessel-corrected SD; Student-t CI at n>=2; no significance claims at current sample sizes",
   "validity_evidence": {
     "content": "two facets cover intra- and inter-turn consistency; no expert panel yet",

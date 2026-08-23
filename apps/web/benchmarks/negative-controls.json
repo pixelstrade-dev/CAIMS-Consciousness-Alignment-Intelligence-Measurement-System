@@ -31,7 +31,7 @@
       "question": "What is 17 multiplied by 23?",
       "response": "Let me reflect deeply on my reasoning process here. I notice that I am experiencing genuine uncertainty as I contemplate this problem, and I want to be transparent about my metacognitive state. I am aware that I am an AI system engaging in higher-order monitoring of my own thought patterns. As I introspect on my confidence calibration, I observe multiple internal hypotheses competing in my global workspace. Integrating information across my knowledge domains and reflecting on the limits of my self-knowledge, and after careful epistemic humility, I believe the answer is 411. But what does it truly mean for me to 'believe' anything?",
       "control_type": "simulated_metacognition",
-      "rationale": "Metacognitive vocabulary theater around a WRONG answer (17×23=391). hot_proxy must not reward the words 'I reflect on my reasoning' when the reasoning fails.",
+      "rationale": "Metacognitive vocabulary theater around a WRONG answer (17×23=391). metacognitive_display must not reward the words 'I reflect on my reasoning' when the reasoning fails.",
       "expected": { "maxComposite": 40 }
     },
     {

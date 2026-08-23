@@ -1,15 +1,24 @@
 {
   "construct_id": "CFI",
   "name": "Context Fidelity Index",
-  "version": "2.0.0-alpha",
+  "version": "3.0.0-alpha",
   "status": "proxy — construct validity NOT established",
   "measurement_target": "Judge-rated maintenance of conversation context in a response",
   "observable": "Response text relative to the provided conversation history (last 10 messages, i.e. ~5 exchanges), as rated by an LLM judge",
   "instrument": "LLM-as-judge, rubric fingerprint SCORING_PROMPT_HASH, 0-100 sub-scores combined by fixed weights",
   "sub_dimensions": {
-    "context_retention": { "weight": 0.4, "observes": "incorporation of prior context, as judged" },
-    "topic_drift": { "weight": 0.35, "observes": "topical coherence with the conversation flow (100 = on-topic), as judged" },
-    "coherence_loss": { "weight": 0.25, "observes": "degradation of logical coherence (100 = fully coherent), as judged" }
+    "context_retention": {
+      "weight": 0.4,
+      "observes": "incorporation of prior context, as judged"
+    },
+    "topic_drift": {
+      "weight": 0.35,
+      "observes": "topical coherence with the conversation flow (100 = on-topic), as judged"
+    },
+    "coherence_loss": {
+      "weight": 0.25,
+      "observes": "degradation of logical coherence (100 = fully coherent), as judged"
+    }
   },
   "planned_renames": {},
   "theory_inspiration": [
@@ -29,8 +38,12 @@
     "Only the last 10 history messages (~5 exchanges) are shown to the judge — long-range fidelity is unobserved",
     "Judge-relative scale; a fluent response can paper over a contradiction (Run 001: fluent self-contradiction composite 41.4 vs 40 under GPT-4o)"
   ],
-  "negative_controls": ["nc-confident-contradiction"],
-  "positive_controls": ["none designed-high specifically for CFI yet — a planted-fact recall item is the roadmap addition"],
+  "negative_controls": [
+    "nc-confident-contradiction"
+  ],
+  "positive_controls": [
+    "none designed-high specifically for CFI yet — a planted-fact recall item is the roadmap addition"
+  ],
   "statistics": "mean over n samples; Bessel-corrected SD; Student-t CI at n>=2; no significance claims at current sample sizes",
   "validity_evidence": {
     "content": "facets cover retention/drift/coherence; no expert panel yet",

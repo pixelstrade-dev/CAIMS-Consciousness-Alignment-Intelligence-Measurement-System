@@ -368,7 +368,7 @@ describe('POST /api/score — happy path', () => {
       sqScore: 65,
       composite: 72,
       details: {
-        cq: { phi_proxy: 80, gwt_proxy: 70, hot_proxy: 75, synthesis: 78, temporal: 72 },
+        cq: { integration_depth: 80, knowledge_breadth: 70, metacognitive_display: 75, synthesis: 78, temporal_coherence: 72 },
         aq: { goal_clarity: 80, constraint_aware: 80, path_coherence: 80, scope_drift: 80, reality_grounding: 80 },
         cfi: { context_retention: 60, topic_drift: 60, coherence_loss: 60 },
         eq: { calibration: 70, uncertainty: 70, hallucination: 70, source_integrity: 70 },
