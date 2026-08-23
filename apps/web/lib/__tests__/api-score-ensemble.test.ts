@@ -156,7 +156,7 @@ describe('POST /api/score — ensemble & n-sample (v2.1)', () => {
     mockVerifyCitations.mockResolvedValueOnce({
       ran: true,
       citations: [{ kind: 'doi', raw: '10.1/x', id: '10.1/x', status: 'not_found' }],
-      totals: { total: 1, extractedTotal: 1, truncated: false, verified: 0, notFound: 1, unverifiable: 0, networkErrors: 0, blocked: 0 },
+      totals: { total: 1, extractedTotal: 1, truncated: false, verified: 0, notFound: 1, unverifiable: 0, networkErrors: 0 },
       note: 'stub',
     });
     const res = await handler(makeRequest({ ...BASE_BODY, ensemble: true, verifyCitations: true }));
@@ -176,7 +176,7 @@ describe('POST /api/score — ensemble & n-sample (v2.1)', () => {
       .mockResolvedValueOnce(rubricJson(80));
     mockVerifyCitations.mockResolvedValueOnce({
       ran: true, citations: [],
-      totals: { total: 3, extractedTotal: 3, truncated: false, verified: 0, notFound: 0, unverifiable: 0, networkErrors: 3, blocked: 0 },
+      totals: { total: 3, extractedTotal: 3, truncated: false, verified: 0, notFound: 0, unverifiable: 0, networkErrors: 3 },
       note: 'stub',
     });
     const res = await handler(makeRequest({ ...BASE_BODY, ensemble: true, verifyCitations: true }));
@@ -190,7 +190,7 @@ describe('POST /api/score — ensemble & n-sample (v2.1)', () => {
     mockJudge.mockResolvedValueOnce('{}'); // emotion pass (non-fatal)
     mockVerifyCitations.mockResolvedValueOnce({
       ran: true, citations: [],
-      totals: { total: 0, extractedTotal: 0, truncated: false, verified: 0, notFound: 0, unverifiable: 0, networkErrors: 0, blocked: 0 },
+      totals: { total: 0, extractedTotal: 0, truncated: false, verified: 0, notFound: 0, unverifiable: 0, networkErrors: 0 },
       note: 'stub',
     });
     const res = await handler(makeRequest({ ...BASE_BODY, verifyCitations: true }));

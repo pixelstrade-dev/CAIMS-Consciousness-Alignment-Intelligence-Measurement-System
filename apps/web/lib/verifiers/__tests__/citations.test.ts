@@ -1,4 +1,4 @@
-import { extractCitations, verifyCitations, verificationEffective, urlAllowed, FetchLike } from '../citations';
+import { extractCitations, verifyCitations, verificationEffective, FetchLike } from '../citations';
 
 jest.mock('@/lib/logger', () => ({
   logger: { debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn() },
@@ -26,9 +26,21 @@ describe('extractCitations', () => {
     expect(byKind('author-year')).toHaveLength(1);
   });
 
-  it('routes doi.org and arxiv.org URLs to their registry kind', () => {
+  it('routes doi.org and arxiv.org URLs to their registry kind BY PARSED HOSTNAME', () => {
     const found = extractCitations('https://doi.org/10.1000/xyz and https://arxiv.org/abs/2306.05685');
     expect(found.map(c => c.kind).sort()).toEqual(['arxiv', 'doi']);
+  });
+
+  it('substring hosts cannot masquerade as registries: evil.com/doi.org/... URLs stay generic', () => {
+    const found = extractCitations('https://evil.com/doi.org/10.1000/fake and https://evil.com/arxiv.org/abs/1234.56789');
+    // The URLs themselves are generic (never registry-routed off a substring
+    // host). The DOI-shaped string inside is still text-extracted — and gets
+    // checked against the REAL doi.org registry, which is the desired veto.
+    const urls = found.filter(c => c.kind === 'url');
+    expect(urls).toHaveLength(2);
+    expect(found.some(c => c.kind === 'arxiv')).toBe(false);
+    const dois = found.filter(c => c.kind === 'doi');
+    expect(dois.map(c => c.id)).toEqual(['10.1000/fake']);
   });
 
   it('EVASION FIX: arXiv URL with a query string is still checked, never vanishes', () => {
@@ -59,23 +71,6 @@ describe('extractCitations', () => {
     expect(extractCitations('See 10.1000/abc. And again: 10.1000/abc.')).toHaveLength(1);
     expect(extractCitations('version 2301.12345 of the firmware')).toHaveLength(0);
   });
-});
-
-describe('urlAllowed (SSRF guard)', () => {
-  it.each([
-    'http://localhost/x', 'http://127.0.0.1/', 'http://10.0.0.5/a', 'http://192.168.1.1/',
-    'http://172.16.3.4/', 'http://169.254.169.254/latest/meta-data', 'http://[::1]/',
-    'http://internal.local/', 'http://a.internal/', 'http://100.64.1.1/',
-    'ftp://example.com/x', 'http://example.com:8080/x', 'http://user:pw@example.com/',
-    // IPv6 literals denied as a class — mapped/embedded IPv4 forms reach
-    // internal ranges through every partial filter
-    'http://[::ffff:127.0.0.1]/', 'http://[::ffff:169.254.169.254]/',
-    'http://[::ffff:10.0.0.1]/', 'http://[64:ff9b::7f00:1]/',
-    'http://[2002:7f00:1::]/', 'http://[2001:db8::1]/',
-  ])('denies %s', (u) => expect(urlAllowed(u)).toBe(false));
-
-  it.each(['https://example.com/paper', 'http://example.org/x', 'https://doi.org:443/y'])(
-    'allows %s', (u) => expect(urlAllowed(u)).toBe(true));
 });
 
 describe('verifyCitations (stub fetch — no network)', () => {
@@ -155,24 +150,21 @@ describe('verifyCitations (stub fetch — no network)', () => {
     expect(res.totals).toMatchObject({ verified: 0, notFound: 0, networkErrors: 3 });
   });
 
-  it('URLs: reachability only — 200/3xx verified (redirect NOT followed), 404/410 not_found, private hosts blocked without any fetch', async () => {
+  it('plain URLs are NEVER fetched — unverifiable by design (SSRF surface removed)', async () => {
     const fetched: string[] = [];
-    const fetchImpl: FetchLike = async (u, init) => {
-      fetched.push(u);
-      expect(init?.redirect).toBe('manual');
-      if (u.includes('moved')) return resp(301, '');
-      if (u.includes('gone')) return resp(410, '');
-      return resp(200, '');
-    };
     const res = await verifyCitations(
-      'https://a.example/moved https://b.example/gone http://169.254.169.254/latest/meta-data',
-      fetchImpl
+      'See https://example.com/paper and http://169.254.169.254/latest/meta-data',
+      async (u) => { fetched.push(u); return resp(200, HANDLE_FOUND); }
     );
-    const byId = Object.fromEntries(res.citations.map(c => [c.id, c.status]));
-    expect(byId['https://a.example/moved']).toBe('verified');
-    expect(byId['https://b.example/gone']).toBe('not_found');
-    expect(byId['http://169.254.169.254/latest/meta-data']).toBe('blocked');
-    expect(fetched.some(u => u.includes('169.254'))).toBe(false);
+    expect(fetched).toHaveLength(0);
+    expect(res.citations.every(c => c.status === 'unverifiable')).toBe(true);
+  });
+
+  it('only fixed-host registry URLs are ever contacted (doi.org / export.arxiv.org)', async () => {
+    const fetched: string[] = [];
+    await verifyCitations('10.1000/x and arXiv:2308.08708 and https://example.com/y',
+      async (u) => { fetched.push(u); return resp(200, HANDLE_FOUND); });
+    expect(fetched.every(u => u.startsWith('https://doi.org/') || u.startsWith('https://export.arxiv.org/'))).toBe(true);
   });
 
   it('author-year → unverifiable, no fetch; zero citations → ran with empty totals', async () => {
@@ -197,9 +189,9 @@ describe('verifyCitations (stub fetch — no network)', () => {
 
 describe('verificationEffective (the only condition allowing an L3 lift)', () => {
   const base = { ran: true as const, citations: [], note: '' };
-  const totals = (over: Partial<{ total: number; extractedTotal: number; truncated: boolean; verified: number; notFound: number; unverifiable: number; networkErrors: number; blocked: number }>) => ({
+  const totals = (over: Partial<{ total: number; extractedTotal: number; truncated: boolean; verified: number; notFound: number; unverifiable: number; networkErrors: number }>) => ({
     total: 0, extractedTotal: 0, truncated: false, verified: 0, notFound: 0,
-    unverifiable: 0, networkErrors: 0, blocked: 0, ...over,
+    unverifiable: 0, networkErrors: 0, ...over,
   });
 
   it('zero citations → effective (trivially complete)', () => {
@@ -207,9 +199,6 @@ describe('verificationEffective (the only condition allowing an L3 lift)', () =>
   });
   it('all network errors → NOT effective (established nothing)', () => {
     expect(verificationEffective({ ...base, totals: totals({ total: 3, extractedTotal: 3, networkErrors: 3 }) })).toBe(false);
-  });
-  it('all BLOCKED (SSRF-denied URLs) → NOT effective — a run that verified nothing cannot lift', () => {
-    expect(verificationEffective({ ...base, totals: totals({ total: 2, extractedTotal: 2, blocked: 2 }) })).toBe(false);
   });
   it('all unverifiable (author-year only) → NOT effective', () => {
     expect(verificationEffective({ ...base, totals: totals({ total: 3, extractedTotal: 3, unverifiable: 3 }) })).toBe(false);

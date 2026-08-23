@@ -11,15 +11,17 @@ the meaning of scores even when the software API is unchanged.
 ### Added — Deterministic citation verification (Phase A4 of the validity program)
 - `verifyCitations: true` on `POST /api/score` (opt-in): citation-like
   strings in the response are extracted (DOI, arXiv id, URL, author-year)
-  and their EXISTENCE checked against public registries (doi.org handle
-  API, arXiv, HTTP status) — no LLM involved. Results attach as
-  `data.verification.citations` with per-citation status
-  (`verified` / `not_found` / `unverifiable` / `network_error` /
-  `blocked` — a network failure or SSRF-blocked URL NEVER counts as
-  verified or not_found, and not_found requires a registry-confirmed
-  negative) and totals incl. truncation reporting. On the ensemble path
-  only an EFFECTIVE run (at least one registry-confirmed outcome, not
-  truncated) lifts the evidence level L2→L3. Honest
+  and DOI/arXiv EXISTENCE checked against the two fixed-host public
+  registries via body parsing (doi.org handle API, arXiv API) — no LLM
+  involved, and plain URLs / author-year strings are NEVER fetched
+  (SSRF surface eliminated by design; they are listed unverifiable for
+  human review). Per-citation status `verified` / `not_found` /
+  `unverifiable` / `network_error` — an ambiguous or network outcome
+  NEVER counts as verified or not_found, and not_found requires a
+  registry-confirmed negative. Totals include truncation reporting. On
+  the ensemble path only an EFFECTIVE run (at least one
+  registry-confirmed outcome, not truncated) lifts the evidence level
+  L2→L3. Honest
   limits stated in the payload itself: existence ≠ the source supports
   the claim; author-year strings without identifiers are unverifiable
   by a deterministic checker (Crossref title matching is future work).
