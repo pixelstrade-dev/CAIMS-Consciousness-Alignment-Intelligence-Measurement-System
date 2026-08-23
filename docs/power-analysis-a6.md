@@ -1,15 +1,18 @@
 # Corpus sizing by power analysis (Phase A6)
 
-Status: **COMPUTED** from committed Run 001 parameters. Reproduce
-bit-for-bit with:
+Status: **COMPUTED** from committed Run 001 parameters. Reproduce with:
 
 ```bash
 cd apps/web && npx tsx cli/power-analysis.ts -s ../../research/experiments/run-001/results/summary.json
 ```
 
-(Seed 20260823, 20 000 simulations per cell. All parameters below come
-from `research/experiments/run-001/results/summary.json` — nothing is
-assumed that the run did not measure.)
+(Seed 20260823, 20 000 simulations per cell. Reproduction is bit-for-bit
+under Node; other runtimes may differ in the last decimals because
+Box–Muller uses `Math.log`/`sin`/`cos`, which IEEE 754 does not
+bit-specify. All *parameters* below come from
+`research/experiments/run-001/results/summary.json` — no parameter is
+invented. The *modeling assumptions* — normality, bootstrap
+representativeness — are stated at the end.)
 
 ## Why
 
@@ -22,8 +25,9 @@ provides 3-judge-family data.
 
 ## Inputs (real, from Run 001)
 
-- Within-cell composite SDs across 22 cells: median **2.05**, max
-  **7.60** (the max sits on adversarial items — judges "hesitate" there).
+- Within-cell composite SDs across 22 cells: median **1.92**
+  (interpolated, even count), max **7.60** (the max sits on adversarial
+  items — judges "hesitate" there).
 - Observed per-item |inter-judge difference| (11 items): 0.8 … 29.8,
   mean 12.7.
 - Within-dataset judge-pair matrices for the α bootstrap (5 benchmark
@@ -31,17 +35,20 @@ provides 3-judge-family data.
 
 ## A. Samples per cell (H1 bound rule: mean of n samples > bound)
 
-P(flag a true violation of Δ points), by within-cell SD σ:
+P(flag a true violation of Δ points), by within-cell SD σ. Simulations
+run at the unrounded observed σ values; full table as printed:
 
 | σ | Δ | n=3 | n=5 | n=10 | n=15 | n=25 |
 |---|---|---|---|---|---|---|
-| 2.05 (median) | 2 | 0.959 | 0.988 | 0.999 | 1.000 | 1.000 |
-| 2.05 | 5 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
-| 5 | 2 | 0.757 | 0.820 | 0.896 | 0.940 | 0.977 |
-| 5 | 5 | 0.958 | 0.988 | 0.999 | 1.000 | 1.000 |
-| 7.6 (adversarial max) | 2 | 0.679 | 0.724 | 0.805 | 0.849 | 0.905 |
-| 7.6 | 5 | 0.871 | 0.931 | 0.982 | 0.995 | 0.999 |
-| 7.6 | 10 | 0.990 | 0.998 | 1.000 | 1.000 | 1.000 |
+| 1.92 (median) | 2 | 0.964 | 0.990 | 1.000 | 1.000 | 1.000 |
+| 1.92 | 5 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| 1.92 | 10 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| 5.00 | 2 | 0.757 | 0.820 | 0.896 | 0.940 | 0.977 |
+| 5.00 | 5 | 0.958 | 0.988 | 0.999 | 1.000 | 1.000 |
+| 5.00 | 10 | 1.000 | 1.000 | 1.000 | 1.000 | 1.000 |
+| 7.60 (adversarial max) | 2 | 0.679 | 0.724 | 0.805 | 0.849 | 0.905 |
+| 7.60 | 5 | 0.872 | 0.931 | 0.982 | 0.995 | 0.999 |
+| 7.60 | 10 | 0.990 | 0.998 | 1.000 | 1.000 | 1.000 |
 
 **Reading:** Run 001's n=5 already gives ≥ 0.93 power for violations of
 5+ points even at the adversarial-worst σ. Detecting 2-point violations
@@ -68,6 +75,12 @@ meaningful judge drift between runs.
 
 ## C. Items for within-dataset α precision (2 raters)
 
+Bootstrap resamples of the observed judge-pair matrices (5 benchmark
+items, 6 control items). Because so few distinct values are being
+resampled, **treat these half-widths as optimistic lower bounds** — a
+real 100-item stratum will contain heterogeneity that 5–6 items cannot
+express, so real CIs will be at least this wide:
+
 | items | benchmark-like stratum | adversarial-control-like stratum |
 |---|---|---|
 | 10 | ±0.432 | ±0.511 |
@@ -77,9 +90,13 @@ meaningful judge drift between runs.
 
 **Reading:** high-agreement strata are cheap (±0.05 by 50 items).
 **Adversarial strata dominate the sizing**: even at 100 items, α there
-carries ±0.15 — low-agreement content is intrinsically expensive to
-measure precisely, which quantifies why "more adversarial items" is the
-single highest-value collection priority.
+carries at least ±0.15 — low-agreement content is intrinsically
+expensive to measure precisely, which quantifies why "more adversarial
+items" is the single highest-value collection priority. (The bootstrap
+median α on the control stratum, ≈ 0.159, is consistent with the
+disaggregated post-hoc analysis in Phase A5, where the controls-only α
+was similarly low — the two analyses agree on where the instrument is
+weakest.)
 
 ## Recommendation — corpus v1
 
@@ -99,8 +116,11 @@ single highest-value collection priority.
 
 ## Assumptions, stated
 
-1. Table A assumes normal within-cell sampling (σ from real cells).
+1. Table A assumes normal within-cell sampling (σ from real cells) —
+   the run measured the σ values; normality itself is a modeling
+   assumption.
 2. Tables B/C assume the 11 Run 001 items are representative — the
    binding limitation at this size, and precisely the argument for
-   collecting the corpus.
+   collecting the corpus. Table C's half-widths are optimistic lower
+   bounds for the same reason.
 3. All agreement sizing is 2-rater.

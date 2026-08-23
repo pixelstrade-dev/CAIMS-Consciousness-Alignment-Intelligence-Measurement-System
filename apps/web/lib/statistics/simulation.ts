@@ -3,7 +3,9 @@
 // The corpus for the next validation runs must be SIZED by power analysis,
 // not by a round number. These primitives keep every simulation
 // reproducible: a fixed seed always yields the same draws, so the numbers
-// in docs/power-analysis-a6.md can be regenerated bit-for-bit by anyone.
+// in docs/power-analysis-a6.md regenerate bit-for-bit under Node (the
+// PRNG is integer-exact; Box–Muller relies on Math.log/sqrt/sin/cos,
+// which other runtimes may round differently in the last bits).
 
 /** Mulberry32 — small, fast, seedable PRNG (deterministic across runs). */
 export function mulberry32(seed: number): () => number {

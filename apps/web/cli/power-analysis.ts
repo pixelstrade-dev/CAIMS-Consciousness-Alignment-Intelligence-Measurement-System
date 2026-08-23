@@ -7,7 +7,9 @@
  * Replaces the roadmap's arbitrary corpus size with numbers DERIVED from the
  * committed Run 001 parameters (within-judge SDs, observed inter-judge
  * differences, within-dataset item pairs). Every simulation is seeded —
- * rerunning this command reproduces the report's numbers bit-for-bit.
+ * rerunning this command under Node reproduces the report's numbers
+ * bit-for-bit (Math.log/sqrt/sin/cos are not bit-specified by IEEE 754, so
+ * exotic runtimes could differ in the last decimals).
  *
  * Stated assumptions (also printed in the output):
  *  - bound-detection power assumes normal within-cell sampling around the
@@ -39,7 +41,10 @@ const cellSds: number[] = (summary.items as Array<{ composite: { sd: number | nu
   .filter(it => it.composite?.sd != null)
   .map(it => (it.composite as { sd: number }).sd);
 const sortedSds = [...cellSds].sort((a, b) => a - b);
-const medianSd = sortedSds[Math.floor(sortedSds.length / 2)];
+const mid = sortedSds.length / 2;
+const medianSd = sortedSds.length % 2 === 0
+  ? (sortedSds[mid - 1] + sortedSds[mid]) / 2
+  : sortedSds[Math.floor(mid)];
 const maxSd = sortedSds[sortedSds.length - 1];
 
 const meansByItem: Map<string, { dataset: string; means: number[] }> = new Map();
@@ -66,17 +71,17 @@ console.log(`observed |inter-judge diff| per item: ${observedDiffs.map(d => d.to
 // ── A. Samples per control cell: power to flag a true bound violation ──────
 console.log('A. SAMPLES PER CONTROL CELL — P(flag a true violation of Δ points | within-cell SD σ)');
 console.log('   (Δ<0 rows would give false-alarm rates; H1 rule: mean of n samples > bound)');
-const sigmas = [Math.round(medianSd * 10) / 10, 5, Math.round(maxSd * 10) / 10];
+const sigmas = [medianSd, 5, maxSd]; // simulate at the UNROUNDED observed values
 const deltas = [2, 5, 10];
 const ns = [3, 5, 10, 15, 25];
-console.log('   σ\\n     ' + ns.map(n => `n=${n}`.padStart(7)).join(''));
+console.log('   σ\\n        ' + ns.map(n => `n=${n}`.padStart(7)).join(''));
 let seedCounter = SEED;
 for (const sigma of sigmas) {
   for (const delta of deltas) {
     const row = ns.map(n =>
       boundDetectionPower({ sigma, delta, n, sims: SIMS, seed: seedCounter++ }).toFixed(3).padStart(7)
     );
-    console.log(`   σ=${String(sigma).padEnd(4)} Δ=${String(delta).padEnd(3)}` + row.join(''));
+    console.log(`   σ=${sigma.toFixed(2).padEnd(5)} Δ=${String(delta).padEnd(3)}` + row.join(''));
   }
 }
 
