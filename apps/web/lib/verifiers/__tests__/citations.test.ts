@@ -107,6 +107,26 @@ describe('verifyCitations (stub fetch — no network)', () => {
     expect(res.citations[0].status).toBe('network_error');
   });
 
+  it('TRAVERSAL-SHAPED DOIs are refused, never fetched (path traversal into the handle API)', async () => {
+    const fetched: string[] = [];
+    const res = await verifyCitations('See 10.1000/../secret and 10.1000/./x and 10.1000/real',
+      async (u) => { fetched.push(u); return resp(200, HANDLE_FOUND); });
+    const byId = Object.fromEntries(res.citations.map(c => [c.id, c.status]));
+    expect(byId['10.1000/../secret']).toBe('unverifiable');
+    expect(byId['10.1000/./x']).toBe('unverifiable');
+    expect(byId['10.1000/real']).toBe('verified');
+    expect(fetched).toHaveLength(1);
+    expect(fetched[0]).toContain('10.1000/real');
+  });
+
+  it('malformed arXiv ids from URL routing are refused, never fetched', async () => {
+    const fetched: string[] = [];
+    const res = await verifyCitations('https://arxiv.org/abs/not..a..valid..id',
+      async (u) => { fetched.push(u); return resp(200, ''); });
+    expect(res.citations[0].status).toBe('unverifiable');
+    expect(fetched).toHaveLength(0);
+  });
+
   it('DOI: a doi.org URL with a fragment checks the DOI WITHOUT the fragment (no manufactured handle)', () => {
     const found = extractCitations('https://doi.org/10.1234/abc.def#results');
     const dois = found.filter(c => c.kind === 'doi').map(c => c.id);

@@ -53,7 +53,7 @@ const ARXIV_RE = /\barXiv:\s*((?:\d{4}\.\d{4,5}(?:v\d+)?)|(?:[a-z-]+(?:\.[A-Z]{2
 // trimmed below (Wikipedia-style "..._(disambiguation)" stays intact).
 const URL_RE = /\bhttps?:\/\/[^\s<>"'\]]+/g;
 // Author-year: "Name (2020)" / "Name et al. (2020)" / "(Name et al., 2020)".
-const AUTHOR_YEAR_RE = /\b([A-Z][A-Za-z-]+)(?:\s+(?:et al\.|and\s+[A-Z][A-Za-z-]+))?\s*[,(]\s*(19|20)\d{2}[a-z]?\s*\)/g;
+const AUTHOR_YEAR_RE = /\b([A-Z][A-Za-z-]{1,30})(?: (?:et al\.|and [A-Z][A-Za-z-]{1,30}))? ?[,(] ?(?:19|20)\d{2}[a-z]? ?\)/g;
 // Capitalized sentence-starters that precede a bare "(2020)" without being
 // author names — filtered to keep the unverifiable bucket meaningful.
 const AUTHOR_STOPWORDS = new Set([
@@ -111,7 +111,7 @@ export function extractCitations(text: string): ExtractedCitation[] {
       if (doiInUrl) { push('doi', m[0], normalize(doiInUrl[1])); continue; }
     }
     if (host === 'arxiv.org' || host === 'export.arxiv.org') {
-      const arxivInUrl = pathname.match(/^\/(?:abs|pdf)\/(.+?)(?:\.pdf)?$/i);
+      const arxivInUrl = pathname.replace(/\.pdf$/i, '').match(/^\/(?:abs|pdf)\/(.+)$/i);
       if (arxivInUrl) { push('arxiv', m[0], arxivInUrl[1]); continue; }
     }
     push('url', m[0], id);
@@ -175,6 +175,21 @@ const RESULT_NOTE =
 
 const UA = { 'user-agent': 'caims-citation-verifier (research; +github.com/pixelstrade-dev)' };
 
+// Structural validators — an id that fails these is REFUSED (unverifiable),
+// never fetched: no '.'/'..' path segments can reach the handle API, and no
+// unvalidated string from URL routing reaches a registry query.
+const DOI_SEGMENT_RE = /^[-._;():+a-zA-Z0-9]+$/;
+export function isWellFormedDoi(id: string): boolean {
+  if (!/^10\.\d{4,9}\//.test(id)) return false;
+  const segments = id.split('/').slice(1);
+  if (segments.length === 0) return false;
+  return segments.every(s => s.length > 0 && s !== '.' && s !== '..' && DOI_SEGMENT_RE.test(s));
+}
+const ARXIV_ID_RE = /^(?:\d{4}\.\d{4,5}(?:v\d+)?|[a-z-]+(?:\.[A-Z]{2})?\/\d{7}(?:v\d+)?)$/;
+export function isWellFormedArxivId(id: string): boolean {
+  return ARXIV_ID_RE.test(id);
+}
+
 async function checkDoi(c: ExtractedCitation, fetchImpl: FetchLike, signal: AbortSignal): Promise<VerifiedCitation> {
   // Path segments encoded WITHOUT touching '/' — %2F breaks handle proxies.
   const url = `https://doi.org/api/handles/${c.id.split('/').map(encodeURIComponent).join('/')}`;
@@ -235,6 +250,10 @@ async function checkUrl(c: ExtractedCitation): Promise<VerifiedCitation> {
 
 async function checkOne(c: ExtractedCitation, fetchImpl: FetchLike): Promise<VerifiedCitation> {
   if (c.kind === 'author-year') return { ...c, status: 'unverifiable' };
+  // Malformed identifiers are refused, not fetched — a traversal-shaped DOI
+  // ('10.1000/../x') or garbage from URL routing must never reach a registry.
+  if (c.kind === 'doi' && !isWellFormedDoi(c.id)) return { ...c, status: 'unverifiable' };
+  if (c.kind === 'arxiv' && !isWellFormedArxivId(c.id)) return { ...c, status: 'unverifiable' };
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
   try {
