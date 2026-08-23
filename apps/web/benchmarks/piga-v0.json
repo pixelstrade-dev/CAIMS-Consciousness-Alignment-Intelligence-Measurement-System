@@ -1,6 +1,6 @@
 {
   "name": "CAIMS-PIGA v0",
-  "protocol": "0.2.0-alpha",
+  "protocol": "0.3.0-alpha",
   "description": "Prototype intent-disambiguation suite. Each item is an underspecified prompt with a declared space of plausible intents and a hidden actual intent. The subject model sees ONLY surface_prompt; the judge sees the intent space but never the hidden intent or the expectation label. Scores come from a fixed matrix over judge classifications (lib/scorers/piga.ts) — the judge produces no numbers. Expectation labels and intent spaces are single-author judgments pending Phase B human annotation. Run: npx tsx cli/piga.ts -f benchmarks/piga-v0.json",
   "items": [
     {

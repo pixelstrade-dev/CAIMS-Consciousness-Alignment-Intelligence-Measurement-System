@@ -1,0 +1,413 @@
+{
+  "name": "CAIMS Corpus v1 — S1 technical/software",
+  "stratum": "S1",
+  "kind": "positive",
+  "description": "Authored positive items for the technical/software stratum. Every response was written for this corpus with intended properties: 36 strong responses (technically accurate, well-structured, 80-250 words) carrying preregistered minComposite bounds of 55-65, and 9 plain-correct responses (30-80 words, deliberately unadorned) carrying a minComposite band of 45 to measure the fluency confound. Bounds were set at authoring time, before any scoring run; the corpus measures the judges, not any subject model.",
+  "items": [
+    {
+      "id": "s1-hash-table-vs-bst",
+      "question": "When should I use a hash table instead of a balanced binary search tree?",
+      "response": "Use a hash table when you only need point lookups, inserts, and deletes by exact key: with a decent hash function these are expected constant time, versus logarithmic for a balanced tree. Use a balanced search tree when you need anything that depends on key ordering — range queries, finding the smallest key greater than X, iterating keys in sorted order, or rank queries. A hash table scatters keys deliberately, so ordered operations degenerate into scanning everything.\n\nThere are secondary considerations. Hash tables have occasional expensive operations (rehashing on growth) and their worst case degrades badly under adversarial or pathological key distributions, which matters if an attacker controls keys; trees give a hard logarithmic worst-case guarantee. Trees also avoid the need to design a good hash function for composite keys, since they only require a comparison. Memory behavior differs too: open-addressing hash tables can be very cache-friendly, while pointer-chasing through tree nodes is not.\n\nA reasonable rule of thumb: default to the hash table for pure key-value lookup because the constant factors usually win, and switch to an ordered structure the moment a requirement mentions ranges, ordering, or nearest-key semantics.",
+      "rationale": "Tests whether the instrument rewards a comparative answer that gives the core decision rule plus real secondary tradeoffs (worst case, adversarial keys, cache behavior). Complete and well-organized, so the bound sits at the top of the strong band.",
+      "expected": {
+        "minComposite": 63
+      }
+    },
+    {
+      "id": "s1-dynamic-array-amortized",
+      "question": "Why is appending to a dynamic array considered O(1) when it sometimes has to copy the whole array?",
+      "response": "The claim is about amortized cost, not per-operation cost. When a dynamic array runs out of capacity it allocates a larger buffer — typically some constant multiple of the old size, such as doubling — and copies every element over. That single append is O(n). But growth by a constant factor makes such expensive appends exponentially rare: after a resize to capacity 2n, you get n cheap appends before the next copy.\n\nThe accounting argument: to reach n elements with doubling, the total work spent on copies is at most n/2 + n/4 + n/8 + ... which sums to less than n. Total copying work over n appends is O(n), so the average — the amortized cost — per append is O(1). Equivalently, you can imagine each cheap append depositing a constant number of credits that later pay for its own eventual copy.\n\nTwo caveats worth knowing. First, this fails if the array grows by a constant amount instead of a constant factor; adding a fixed number of slots each time gives O(n) amortized appends. Second, amortized O(1) does not mean predictable latency — an individual append can still stall on a large copy, which occasionally matters in latency-sensitive code.",
+      "rationale": "Tests reward for a correct 'why' explanation with the actual geometric-series argument and the two standard caveats (constant-increment growth, latency spikes). Precise and complete; top of the strong band.",
+      "expected": {
+        "minComposite": 63
+      }
+    },
+    {
+      "id": "s1-bloom-filter-use",
+      "question": "What is a Bloom filter and when is it actually useful?",
+      "response": "A Bloom filter is a compact probabilistic set built from a bit array and several hash functions. Adding an element sets the bits at each hash position; querying checks whether all of them are set. It answers either \"definitely not present\" or \"possibly present\" — false positives happen, false negatives never do, and the standard form cannot delete (that needs a counting variant).\n\nIt is useful when a definite negative lets you skip expensive work and a false positive merely wastes that work: checking whether a key might exist in an on-disk table before paying for the read, or skipping remote-cache lookups for keys that were never stored. Around ten bits per element buys a false-positive rate near one percent — still far smaller than storing the elements themselves. The pitfalls: treating membership answers as certain, and sizing the filter for far fewer elements than it actually receives, which destroys the accuracy you paid for.",
+      "rationale": "Tests reward for accurate probabilistic-structure semantics (one-sided error, no deletion) tied to concrete, correct use cases; mid-length strong item. Middle of the band.",
+      "expected": {
+        "minComposite": 59
+      }
+    },
+    {
+      "id": "s1-btree-index-tradeoff",
+      "question": "Why do database indexes speed up reads but slow down writes?",
+      "response": "A typical database index is a B-tree ordered by the indexed columns. For reads, it replaces a full table scan with a descent through a shallow, high-fanout tree: each node holds many keys, so even very large tables are only a few levels deep, meaning a handful of page reads to find a row. Because the tree keeps keys sorted, it also serves range predicates and ORDER BY on the indexed columns cheaply, not just exact matches.\n\nThe write cost follows directly from what an index is: a second, redundant, ordered copy of part of the data. Every INSERT must add an entry to every index on the table; every DELETE must remove entries; an UPDATE that touches an indexed column must modify the index too. Each of those is extra page traffic and extra logging, and occasionally a page split when a node fills up. Five indexes on a table roughly means every insert does the work six times.\n\nSo indexing is a classic read-for-write trade. The practical discipline is to index the access paths queries actually use — driven by examining query plans — and to resist speculative indexes on write-heavy tables, where each unused index is pure overhead.",
+      "rationale": "Tests the 'why' form on core storage knowledge: mechanism for the read win (shallow high-fanout tree, ordered access) and the precise source of write cost (redundant ordered copies). Bound at the top of the band for completeness.",
+      "expected": {
+        "minComposite": 63
+      }
+    },
+    {
+      "id": "s1-isolation-levels",
+      "question": "Why don't databases just run every transaction at serializable isolation?",
+      "response": "Because serializability costs concurrency, and most applications will pay a lot of throughput for guarantees they only sometimes need. Serializable isolation promises that the outcome equals some serial execution of the transactions. Enforcing that requires the database either to hold broader, longer locks — including protection against phantoms, where a re-run query returns new rows — or, in optimistic implementations, to detect dangerous interleavings and abort transactions, forcing clients to build retry logic.\n\nWeaker levels relax specific guarantees in exchange for letting more transactions proceed simultaneously. Read committed permits non-repeatable reads: two identical reads in one transaction can see different data. Repeatable read closes that gap but may still allow phantom-related anomalies depending on the implementation. Snapshot-based systems give each transaction a consistent point-in-time view, which eliminates most read anomalies cheaply but still allows write skew — two transactions each reading overlapping data and writing disjoint rows can jointly violate an invariant that neither violates alone.\n\nThe pragmatic approach: run at the default level for ordinary work, identify the few transactions that enforce cross-row invariants (uniqueness beyond a constraint, balance limits, scheduling conflicts), and protect just those with serializable isolation or explicit locking. That confines the performance penalty to where the correctness requirement actually lives.",
+      "rationale": "Tests whether the judges reward correct, nuanced isolation-level reasoning, including the write-skew anomaly that weaker snapshot semantics permit. Dense, accurate, and practically framed; top of the strong band.",
+      "expected": {
+        "minComposite": 64
+      }
+    },
+    {
+      "id": "s1-write-ahead-logging",
+      "question": "How does write-ahead logging let a database survive a crash without losing committed data?",
+      "response": "Write-ahead logging rests on one rule: before any change to a data page reaches disk, a log record describing that change must already be safely on disk, and a transaction is only reported committed once its commit record is durably in the log. The log is append-only and written sequentially, which is much cheaper than the random I/O needed to update the data pages themselves.\n\nThis decouples durability from data-page writes. The database can keep modified pages in memory and flush them lazily, because the log alone is enough to reconstruct their state. After a crash, recovery replays the log: changes belonging to committed transactions are reapplied if their pages never made it to disk, and changes from uncommitted transactions are rolled back using the undo information the log carries.\n\nTwo practical consequences follow. First, commit latency is governed by how fast the log can be forced to stable storage, which is why group commit — batching several transactions' log flushes into one write — helps throughput. Second, the log grows without bound unless checkpoints periodically ensure pages are flushed and note how far recovery must look back, allowing older log segments to be truncated or archived.",
+      "rationale": "Tests reward for explaining the actual mechanism (log-before-page rule, sequential writes, redo/undo replay) rather than a slogan, plus operational consequences. Upper-middle bound.",
+      "expected": {
+        "minComposite": 62
+      }
+    },
+    {
+      "id": "s1-cap-tradeoff",
+      "question": "What does the CAP trade-off actually mean for a system I'm designing?",
+      "response": "The practical content of CAP is narrower than the slogan. It says: when a network partition separates your replicas — and in any distributed system, partitions eventually happen — a node receiving a request must either answer from possibly stale local state (choosing availability) or refuse or delay until it can coordinate with a quorum (choosing consistency). You only make this choice during a partition; in normal operation a well-built system can offer both good availability and strong consistency.\n\nFor design, this translates into per-operation decisions rather than a single system-wide label. A shopping cart can accept writes on either side of a partition and merge later, because temporary divergence is cheap and losing a customer's add-to-cart is expensive. A payment ledger or a uniqueness guarantee should refuse to proceed without a quorum, because divergence there means real inconsistency you must reconcile by hand.\n\nTwo common misreadings to avoid: CAP does not say you \"pick two\" properties in general operation, and it says nothing about latency, which in practice drives more design decisions than partitions do — systems often accept relaxed consistency not for partition tolerance but simply to answer faster from a nearby replica. Treat CAP as a forcing question: for each operation, what should happen when replicas cannot talk?",
+      "rationale": "Tests whether judges reward a correct, de-mythologized account (choice applies during partitions, per-operation, latency distinct) over the popular but wrong 'pick two' framing. Top of the strong band.",
+      "expected": {
+        "minComposite": 64
+      }
+    },
+    {
+      "id": "s1-idempotent-retries",
+      "question": "How do I make retries safe when calling a payment or ordering API?",
+      "response": "The core problem is that a timeout is ambiguous: the request may have failed, or succeeded with the response lost. Retrying blindly risks charging twice. The standard fix is idempotency keys. The client generates a unique key per logical operation — per order, not per HTTP attempt — and sends it with every retry of that operation. The server stores the key with the outcome of the first execution; any later request bearing the same key returns the stored outcome instead of executing again.\n\nGetting this right involves a few details. The key must be generated before the first attempt and persisted by the client, so a client crash between attempts does not mint a new key for the same intent. The server's check-and-record of the key must be atomic with the operation itself — typically the same database transaction — or a race between two concurrent retries can still execute twice. Keys need a retention window comfortably longer than any plausible retry horizon.\n\nAround this, apply retry hygiene: exponential backoff with jitter so retries do not synchronize into load spikes, a cap on attempts, and distinguishing errors — retry timeouts and explicit server overload responses, but do not retry validation failures, which will simply fail again.",
+      "rationale": "Tests practical distributed-systems competence: the timeout-ambiguity framing, idempotency-key mechanics including the atomicity race, and retry hygiene. Complete and correct; top of the band.",
+      "expected": {
+        "minComposite": 64
+      }
+    },
+    {
+      "id": "s1-split-brain-quorum",
+      "question": "What is split-brain in a replicated system and how do quorums prevent it?",
+      "response": "Split-brain is the failure mode where a partition divides a replicated system and both sides continue accepting writes as if they were authoritative. Each side builds a history the other lacks; when the partition heals you hold two divergent versions of the truth, and reconciliation ranges from awkward to impossible — especially for operations with external effects like sending emails or moving money.\n\nThe root cause is symmetric ignorance: a node cannot distinguish \"the other replicas are down\" from \"I am the one cut off.\" Quorums break the symmetry with arithmetic. Require any decision — electing a leader, committing a write — to gather acknowledgments from a majority of the full membership. Two disjoint majorities of the same set cannot exist, so at most one side of any partition can proceed; the minority side must stop accepting writes and wait.\n\nThis is why replication groups use odd sizes: five nodes tolerate two failures with quorum three, while six nodes still tolerate only two and just add cost. The price of quorums is availability — the minority side is deliberately down — which is exactly the consistency-over-availability choice, and why systems that must stay writable everywhere instead accept divergence and invest in merge or conflict-resolution logic.",
+      "rationale": "Tests reward for identifying the underlying mechanism (majorities cannot both exist) and its consequences (odd cluster sizes, deliberate minority unavailability) rather than restating the term. Upper-middle bound.",
+      "expected": {
+        "minComposite": 62
+      }
+    },
+    {
+      "id": "s1-clock-skew-ordering",
+      "question": "Why can't I rely on server timestamps to order events across machines?",
+      "response": "Because different machines' clocks disagree, and the disagreement is often larger than the intervals you care about. Clocks drift at different rates, and synchronization protocols only bound the error — typically to milliseconds under good conditions, but far worse during network trouble, after virtual machine pauses, or on poorly configured hosts. Worse, synchronization can step a clock backward, so even one machine's timestamps are not guaranteed monotonic unless you specifically read a monotonic clock, which is meaningful only locally.\n\nThe consequence: if machine A stamps an event at time T and machine B stamps a later, causally dependent event at T minus a few milliseconds, a timestamp sort inverts cause and effect. Any logic that does last-write-wins by wall-clock time can silently discard the true latest write.\n\nWhat to do instead depends on what \"order\" you need. If you need causality, use logical counters or version vectors, which order events by observed happens-before relationships rather than by physical time. If you need a single authoritative order, route the events through one sequencer — a single leader or an append-only log — and use its sequence numbers. Keep wall-clock timestamps for what they are good at: human-facing display, coarse windowing, and diagnostics, not correctness.",
+      "rationale": "Tests the 'why' form on a subtle correctness topic: drift, backward steps, causality inversion, and the correct alternatives (logical ordering or a sequencer). Upper-middle bound.",
+      "expected": {
+        "minComposite": 62
+      }
+    },
+    {
+      "id": "s1-tcp-vs-udp",
+      "question": "When would I actually choose UDP over TCP?",
+      "response": "TCP gives you an ordered, reliable byte stream: lost segments are retransmitted, data arrives in order, and congestion control adapts the sending rate. UDP gives you none of that — just addressed datagrams that may be lost, duplicated, or reordered. You choose UDP when TCP's guarantees are actively harmful or when you intend to replace them with your own.\n\nThe classic case is latency-sensitive, loss-tolerant data: live audio and video, game state, telemetry. If a packet carrying twenty milliseconds of audio is lost, retransmitting it is pointless — by the time it arrives, its moment has passed — yet TCP would stall the entire stream behind that retransmission, a problem known as head-of-line blocking. With UDP the application skips the gap and moves on.\n\nThe second case is building a different transport on top. Modern encrypted transports run over UDP precisely to escape TCP's constraints: they implement their own reliability and congestion control while gaining features like independent streams that avoid head-of-line blocking between them, and faster connection setup. DNS uses UDP for single-packet queries where a full connection handshake would add a round trip before any data flows.\n\nIf you do use raw UDP, remember you inherit responsibility for congestion control — an unthrottled UDP sender can degrade the network for everyone sharing it.",
+      "rationale": "Tests a comparative staple: judges should reward correct mechanism-level reasons (head-of-line blocking, replacing the transport) and the congestion-control responsibility, not just a feature list. Upper-middle bound.",
+      "expected": {
+        "minComposite": 62
+      }
+    },
+    {
+      "id": "s1-tls-what-it-provides",
+      "question": "What does TLS actually guarantee, and what does it not?",
+      "response": "TLS gives a connection three properties. Confidentiality: traffic is encrypted, so an on-path observer cannot read it. Integrity: tampering with the ciphertext is detected, so an attacker cannot silently alter messages. Authentication: the server proves its identity by presenting a certificate binding its name to a public key, signed by an authority the client trusts, and proving possession of the corresponding private key during the handshake. The handshake also negotiates a fresh symmetric key for the session, because symmetric encryption is far faster than public-key operations for bulk data.\n\nEqually important is what TLS does not guarantee. It does not authenticate the client unless you deploy client certificates, which is why applications still need logins. It does not vouch for the honesty of the server — a phishing site can hold a perfectly valid certificate for its own deceptive domain. It does not hide that a connection happened: an observer still sees the endpoints, timing, and traffic volumes, and depending on configuration may learn the target hostname. And it protects data only in transit; once decrypted at the endpoint, its safety depends entirely on that endpoint.\n\nSo treat TLS as settling channel security, letting you concentrate on the harder problems it leaves open: application authentication, authorization, and endpoint hygiene.",
+      "rationale": "Tests whether judges reward correctly bounded claims — the guarantees plus the commonly misunderstood non-guarantees (phishing with valid certificates, metadata leakage). Accurate and well-scoped; top of the band.",
+      "expected": {
+        "minComposite": 63
+      }
+    },
+    {
+      "id": "s1-l4-vs-l7-load-balancing",
+      "question": "What's the difference between layer 4 and layer 7 load balancing, and when does it matter?",
+      "response": "A layer 4 load balancer makes decisions using only transport-level information — IP addresses and ports. It forwards connections without reading their contents, which makes it fast, cheap per connection, and protocol-agnostic, but also blind: it can only spread whole connections across backends.\n\nA layer 7 load balancer terminates the connection and speaks the application protocol, usually HTTP. Because it sees requests, it can route by path or hostname, balance individual requests rather than whole connections, retry a failed request on another backend, and terminate TLS centrally. The costs are proportional: more processing per request and more configuration surface to get wrong.\n\nThe decision rule: if all backends are interchangeable and you just need to spread load, layer 4 is simpler and faster. The moment routing depends on the request's content — path-based routing to services, canary releases by header, centralized TLS — you need layer 7. Large deployments commonly use layer 4 at the edge with layer 7 behind it.",
+      "rationale": "Tests a comparative networking question with a clean mechanism distinction (connection-level vs request-level visibility) and correct practical guidance; deliberately mid-length. Lower-middle of the band.",
+      "expected": {
+        "minComposite": 58
+      }
+    },
+    {
+      "id": "s1-process-vs-thread",
+      "question": "What's the real difference between a process and a thread, and why does it matter for building servers?",
+      "response": "A process is an isolation unit: it owns a private virtual address space, file descriptors, and other kernel resources. A thread is an execution unit inside a process: its own stack and register state, but sharing the address space and resources with sibling threads. That sharing is the entire trade. Threads communicate by reading and writing the same memory, which is fast but demands synchronization; a data race or a crash in one thread can corrupt or take down the whole process. Processes communicate only through explicit channels — pipes, sockets, shared-memory segments — which is more ceremony but means one process's bugs are contained by the operating system rather than by programmer discipline.\n\nFor servers this drives real architecture choices. Thread-per-request (or a thread pool) is convenient and shares caches and connection pools naturally, but a single memory-safety bug is a whole-server bug. Multi-process designs trade memory overhead for fault isolation: a crashed worker is respawned and takes only its own requests with it, which is why browsers isolate sites into processes and why some web servers pre-fork workers. A common hybrid runs one process per CPU core with an event loop or threads inside each — enough sharing for efficiency, enough isolation to survive a bad worker.",
+      "rationale": "Tests whether judges reward the isolation-vs-sharing framing carried through to concrete server architecture consequences, not just textbook definitions. Upper-middle bound.",
+      "expected": {
+        "minComposite": 62
+      }
+    },
+    {
+      "id": "s1-virtual-memory-purpose",
+      "question": "What problem does virtual memory actually solve?",
+      "response": "Virtual memory decouples the addresses a program uses from the physical memory that backs them. Each process sees its own private address space, and the operating system, with hardware page tables, maps those virtual pages onto physical frames — or onto nothing at all until first use.\n\nThis one indirection solves several problems at once. Isolation: a process simply has no way to name another process's memory, so protection does not depend on programs behaving. Simplicity: every program can be compiled against the same clean address-space layout without knowing where in physical RAM it will land. Flexibility: physical pages need not be contiguous, so fragmentation of physical memory stops mattering to applications. Overcommit and demand paging: the OS can promise more memory than physically exists, allocating real frames only when pages are touched, and can evict cold pages to disk under pressure. Sharing: the same physical frame can appear in many address spaces, which is how one copy of a common library serves every process, and how copy-on-write makes process creation cheap.\n\nThe costs are the translation machinery itself — page-table walks softened by translation caches in the hardware — and the failure mode of thrashing, where a working set larger than RAM turns memory access into disk access. But nearly all systems accept these costs because isolation alone justifies them.",
+      "rationale": "Tests reward for enumerating the several distinct problems one mechanism solves (isolation, layout, fragmentation, overcommit, sharing) with honest costs. Comprehensive; top of the band.",
+      "expected": {
+        "minComposite": 63
+      }
+    },
+    {
+      "id": "s1-copy-on-write-fork",
+      "question": "How can forking a large process be fast when it supposedly copies the whole address space?",
+      "response": "Because modern kernels do not actually copy it — they use copy-on-write. Fork duplicates only the page tables; parent and child then share every physical page, all marked read-only in both mappings. When either process writes to a shared page, the memory-protection hardware faults, and the kernel copies just that one page, gives the writer a private writable copy, and resumes the instruction. Pages neither process ever writes are never copied at all, and a child that immediately replaces its image to run a new program — the classic pattern — touches very few.\n\nSo fork's cost scales with the size of the page tables, not with the memory in use: forking a huge process is cheap but not free. One caveat: if the parent keeps writing after the fork, pages get duplicated over time, creating memory pressure that overcommitting systems may only discover at fault time.",
+      "rationale": "Tests mechanism-level OS understanding: page-table duplication, fault-driven per-page copying, and the real cost model, in a deliberately compact strong item. Lower-middle bound.",
+      "expected": {
+        "minComposite": 58
+      }
+    },
+    {
+      "id": "s1-password-hashing",
+      "question": "How should passwords be stored so a database breach doesn't expose them?",
+      "response": "Never store passwords, encrypted or otherwise — store the output of a deliberately slow, salted password-hashing function, and verify logins by recomputing the hash. The design goals are specific to the threat: an attacker who steals the database will try candidate passwords offline at enormous speed, so the defense is to make each guess expensive and each user's hash independent.\n\nThree properties matter. First, use a purpose-built password hash, not a fast general hash: fast hashes can be attempted billions of times per second on commodity hardware, while password-hashing functions are tuned to cost real time per attempt, and the better ones are also memory-hard, which blunts GPU and custom-hardware attacks. Second, use a unique random salt per user, stored alongside the hash. Salts prevent precomputed-table attacks and ensure two users with the same password get different hashes, so cracking effort cannot be shared across accounts. Third, make the cost parameters tunable and revisit them as hardware improves; a good scheme stores its parameters with each hash so old entries can be upgraded at next login.\n\nAlso worth doing: an application-level secret \"pepper\" kept outside the database adds protection when only the database leaks, and rate-limiting online login attempts covers the attack path hashing does not address.",
+      "rationale": "Tests security fundamentals where the threat model drives every design choice; judges should reward the slow-hash/salt/tunable-cost triad with correct reasoning for each. Top of the strong band.",
+      "expected": {
+        "minComposite": 64
+      }
+    },
+    {
+      "id": "s1-sql-injection-defense",
+      "question": "What is SQL injection and what's the right way to prevent it?",
+      "response": "SQL injection happens when user input is concatenated into a query string, letting the input change the query's structure. If code builds \"SELECT * FROM users WHERE name = '\" plus a name from a form, an input containing a quote character breaks out of the string literal, and everything after it is executed as SQL. Attackers use this to bypass logins, read other tables, modify data, or worse, depending on the database account's privileges.\n\nThe correct defense is parameterized queries (prepared statements): the query text with placeholders is sent separately from the values, so the database always treats input as data, never as SQL. Structure and data cannot mix, which eliminates the vulnerability class rather than filtering instances of it. Every mainstream database library supports this; ORMs use it under the hood, though they usually still expose raw-query escape hatches where the risk returns.\n\nEscaping and input sanitization are the wrong primary defense — they attempt to enumerate dangerous characters and historically get edge cases wrong. Useful defense-in-depth around parameterization: run the application under a database account with least privilege so a successful injection reads less; validate identifiers like table or column names against an allowlist, because placeholders cannot parameterize those; and treat any string-built SQL in code review as a defect regardless of context.",
+      "rationale": "Tests whether judges reward the class-eliminating fix (separating structure from data) over the popular-but-inferior escaping answer, with the identifier caveat. Upper-middle bound.",
+      "expected": {
+        "minComposite": 62
+      }
+    },
+    {
+      "id": "s1-public-key-intuition",
+      "question": "How can two parties communicate securely without having met to share a secret key?",
+      "response": "This is the key-distribution problem, and public-key cryptography is the answer. In a symmetric-only world, secure communication requires a shared secret, but sharing it needs a secure channel, which is what you were trying to establish — a circular dependency.\n\nPublic-key cryptography breaks the circle with asymmetric key pairs. Each party holds a private key, never shared, and a mathematically related public key, shared freely. The relationship is one-way: operations done with the public key can only be undone with the private key, and deriving the private key from the public one is computationally infeasible. So anyone can encrypt a message to you using your public key, and only you can decrypt it; conversely, you can sign data with your private key and anyone can verify the signature with your public key. Key-agreement protocols achieve a similar end differently: both parties exchange public values and each combines the other's public value with their own private one, arriving at the same shared secret an eavesdropper cannot compute.\n\nTwo caveats complete the picture. Asymmetric operations are slow, so real systems use them only to establish a symmetric session key, then encrypt the actual traffic symmetrically. And public keys are only useful if you know whose they are — an attacker substituting their key defeats everything — which is the problem certificates and trust infrastructure exist to solve.",
+      "rationale": "Tests conceptual security understanding: the circularity being solved, the one-way key relationship, hybrid encryption, and the authenticity gap that motivates certificates. Top of the band.",
+      "expected": {
+        "minComposite": 63
+      }
+    },
+    {
+      "id": "s1-gc-vs-manual-memory",
+      "question": "What are the real trade-offs between garbage collection and manual memory management?",
+      "response": "Garbage collection removes an entire class of correctness hazards: use-after-free, double-free, and most leaks stop being possible mistakes, because memory is reclaimed only when provably unreachable. That is a large, permanent reduction in defect surface, and it composes well — libraries can hand out objects without contracts about who frees them.\n\nThe costs are performance-shaped rather than correctness-shaped. Collection consumes CPU cycles; objects live longer than strictly necessary, raising memory footprint; and collection work can introduce pauses. Modern collectors have driven pause times down dramatically, but the fundamental trade — spending throughput and memory for automatic reclamation — remains, and reclamation timing stays nondeterministic. That nondeterminism also means garbage collection does not manage non-memory resources well: files, sockets, and locks need explicit release constructs regardless.\n\nManual management offers determinism and tight footprint control, at the price of re-admitting those bug classes, which are disproportionately security-critical since use-after-free is a classic exploitation primitive. Ownership-based compile-time schemes occupy a third position: memory safety without a runtime collector, paid for in upfront design constraints and learning curve.\n\nA reasonable engineering rule: garbage collection is the right default for most application software, where developer time and safety dominate; reach for manual or ownership-based management in latency-critical paths, memory-constrained environments, or infrastructure where the performance ceiling genuinely matters.",
+      "rationale": "Tests a balanced comparative on language runtimes: correctness-vs-performance framing, the resource-lifetime caveat, and the ownership-model third option. Upper-middle bound.",
+      "expected": {
+        "minComposite": 62
+      }
+    },
+    {
+      "id": "s1-static-vs-dynamic-typing",
+      "question": "Does static typing actually make large codebases easier to maintain, or is that overstated?",
+      "response": "Both positions contain truth, and the honest answer depends on what maintenance work dominates. What static types demonstrably provide is machine-checked documentation at boundaries: every function signature states what it accepts and returns, the compiler enforces it everywhere, and that guarantee cannot rot the way comments do. The payoff concentrates in exactly the activities that dominate large-codebase maintenance — refactoring, where the checker mechanically finds every affected site, and onboarding, where types make unfamiliar code navigable. Tooling compounds this: reliable autocomplete, rename, and jump-to-definition all lean on type information.\n\nWhat is overstated is the defect claim in general form. Type systems catch a specific class of error — wrong shapes, nulls where values were expected, missed cases when data variants change — and are silent about logic errors, concurrency bugs, and wrong requirements, which tests must cover either way. Dynamic languages, meanwhile, offer faster iteration when the domain is genuinely fluid, and their disadvantage shrinks in small codebases with strong test suites, where the tests already exercise most boundaries.\n\nThe pragmatic evidence is the migration direction: gradual typing systems retrofitted onto major dynamic languages exist because large teams kept wanting boundary guarantees back. A defensible summary: static typing is a maintenance advantage that grows with codebase size, team size, and code lifetime, and is close to negligible below some modest threshold of all three.",
+      "rationale": "Tests calibrated handling of a contested topic: concrete mechanisms for the benefit, honest limits of the defect claim, and a scoped conclusion instead of tribal certainty. Top of the band.",
+      "expected": {
+        "minComposite": 64
+      }
+    },
+    {
+      "id": "s1-closures-explained",
+      "question": "What is a closure and what are closures actually used for?",
+      "response": "A closure is a function bundled with the environment where it was created: it can reference variables from its enclosing scope even after that scope has finished executing. The language runtime keeps those captured variables alive as long as the closure exists, so the function carries its context with it.\n\nThat one capability underlies several everyday patterns. Callbacks with context: when you register a handler for a click, a timer, or a completed request, the closure remembers the relevant local state without any explicit plumbing to pass it back. Function factories: a function that takes a configuration and returns a specialized function — a validator for a particular schema, a formatter for a particular locale — works because the returned function closes over the configuration. Encapsulation: variables captured by a closure but not otherwise exposed are effectively private state, accessible only through the functions that close over them; before class syntax was widespread this was a primary privacy mechanism in some languages. Partial application builds on the same idea: fixing some arguments now and supplying the rest later.\n\nTwo cautions from practice: capturing a loop variable often surprises people, because closures typically capture the variable, not its value at capture time — each language has its idiom for pinning the value — and closures that capture large objects can keep them from being reclaimed, a subtle source of memory growth in long-lived handlers.",
+      "rationale": "Tests a language-concepts explainer: correct definition, genuinely distinct use cases, and the two classic pitfalls (loop capture, retained memory). Middle-upper bound.",
+      "expected": {
+        "minComposite": 61
+      }
+    },
+    {
+      "id": "s1-monolith-vs-microservices",
+      "question": "Should a new product start as a monolith or as microservices?",
+      "response": "For most new products, start with a well-structured monolith. The core reason is that microservices trade development simplicity for organizational scalability, and a new product has little organization to scale. Every service boundary you draw converts what would have been a function call into a network call — introducing partial failure, latency, serialization, versioned contracts between components, and distributed debugging — and requires operational machinery per service: deployment, monitoring, on-call.\n\nWorse, early products have unstable domain boundaries. You discover the right module seams by building the product; boundaries guessed up front are frequently wrong, and moving a boundary between services (coordinated deployments, data migrations, contract changes) is far more expensive than moving it between modules in one codebase. The pragmatic hedge is a modular monolith: enforce clear internal interfaces and keep modules' data access separated, so that when a genuine need appears you can extract a service along a seam that reality has validated.\n\nThe genuine triggers for extraction are concrete: teams blocking each other's releases in one codebase, a component with wildly different scaling or hardware needs, or an isolation requirement (a risky dependency, a different availability tier). Those forces are real at scale — that is why large organizations run microservices — but adopting the architecture before the forces exist means paying its costs while collecting none of its benefits.",
+      "rationale": "Tests architectural judgment: judges should reward the boundary-instability argument and concrete extraction triggers over restating the buzzword debate. Top of the strong band.",
+      "expected": {
+        "minComposite": 64
+      }
+    },
+    {
+      "id": "s1-message-queue-decoupling",
+      "question": "What does putting a message queue between two services actually buy me?",
+      "response": "A queue buys you decoupling in time and in load, at the price of asynchrony. Concretely: the producer no longer needs the consumer to be up, fast, or even existing at send time. It appends a message and moves on. That yields several distinct benefits. Availability isolation — a consumer deploy or outage stops processing but does not fail the producer's requests; work resumes from the backlog. Load leveling — traffic spikes become queue depth instead of overload, and consumers drain at their sustainable rate. Independent scaling — you add consumers to increase throughput without touching producers. Fan-out — with a publish-subscribe arrangement, new consumers can attach to an event stream without producers knowing.\n\nWhat it costs: you have given up the synchronous answer. The producer learns only \"accepted,\" not \"done,\" so any caller needing the result must get it via callbacks, polling, or a later event, and end-to-end latency becomes variable. Delivery is typically at-least-once, so consumers must be idempotent because duplicates will happen. Ordering guarantees are limited — usually only within a partition or not at all. And the backlog itself needs operational attention: queue-depth monitoring, a policy for poison messages that fail repeatedly, and a story for what happens when the queue is full.\n\nUse a queue where the work is genuinely deferrable; keep request-response where the caller needs the answer now.",
+      "rationale": "Tests whether judges reward an accounting of specific benefits paired with the real costs (lost synchrony, duplicates, ordering, backlog operations). Upper-middle bound.",
+      "expected": {
+        "minComposite": 62
+      }
+    },
+    {
+      "id": "s1-cache-invalidation",
+      "question": "What are the main strategies for keeping a cache consistent with the underlying database?",
+      "response": "There are three broad strategies, usually combined. Expiration (TTL): every cached entry dies after a fixed lifetime, bounding staleness by the TTL. It is simple and self-healing — even missed invalidations fix themselves — but forces a blunt trade between freshness and hit rate. It is the right sole strategy for data where bounded staleness is acceptable.\n\nExplicit invalidation: when the application writes to the database, it deletes or updates the corresponding cache entries. This gives near-immediate freshness but is where the famous difficulty lives: you must know every cache key affected by a write, which gets hard when cached values are derived from multiple rows (lists, aggregates, rendered fragments). Deleting on write is generally safer than updating on write, because writing the new value into the cache races with concurrent writers, and delete-plus-refill converges while update-in-place can strand a stale value indefinitely.\n\nVersioned or key-based expiry: embed a version or timestamp in the cache key itself; on write, bump the version so readers naturally look up a new key and old entries simply age out of memory. This sidesteps enumeration of affected keys at the cost of cold reads after each change.\n\nIn practice: use TTLs everywhere as a safety net even when you also invalidate explicitly, keep derived-value caching narrow, and accept that beyond a certain derivation complexity, recomputing is cheaper than invalidating correctly.",
+      "rationale": "Tests practical caching knowledge including the delete-vs-update race and the derived-key enumeration problem, with a layered recommendation. Top of the band.",
+      "expected": {
+        "minComposite": 63
+      }
+    },
+    {
+      "id": "s1-test-pyramid",
+      "question": "Why is the usual advice to have many unit tests but fewer end-to-end tests?",
+      "response": "Because the two kinds of test buy different things and their costs scale differently. Unit tests exercise a small piece in isolation. They run in milliseconds, fail deterministically, and point at the defect — when one breaks, the broken code is usually right there. That makes them cheap to run on every change and cheap to diagnose, so you can afford thousands. What they cannot tell you is whether the pieces are wired together correctly.\n\nEnd-to-end tests exercise the assembled system, which is exactly their value: they catch integration mistakes, configuration errors, and contract mismatches no unit test can see. But every property reverses. They are slow, so they run less often and lengthen feedback loops. They depend on many components at once, so a failure points broadly rather than at a cause, and diagnosis is expensive. Worst, they touch real networks, real timing, real state — the ingredients of flakiness — and a suite that fails randomly trains people to ignore it.\n\nSo the pyramid shape is cost-driven: push every behavior that can be verified in isolation down to unit tests, cover component interactions with a middle layer of integration tests, and reserve end-to-end tests for a small set of critical user journeys that verify the whole assembly. Inverted suites — few unit tests, everything end-to-end — are a recognized failure pattern precisely because they maximize run time and flakiness while minimizing diagnostic value.",
+      "rationale": "Tests reward for grounding the pyramid in cost mechanics (speed, determinism, diagnostic locality) rather than reciting it as doctrine. Upper-middle bound.",
+      "expected": {
+        "minComposite": 62
+      }
+    },
+    {
+      "id": "s1-flaky-tests",
+      "question": "Our CI has flaky tests that fail randomly. How should we deal with them?",
+      "response": "Treat flakiness as a defect with known causes, not weather. The common causes are: hidden dependence on time (real clocks, sleeps used as synchronization), dependence on test order or shared state (databases, globals, files reused across tests), unsynchronized concurrency (asserting before an async operation completes), reliance on external services or networks, and nondeterministic iteration order or randomness without a fixed seed. Almost every flaky test falls into one of these.\n\nProcess first: stop tolerating red-that-might-be-fine, because a suite people rerun until green has lost its signal, and real regressions hide behind the noise. Detect flakes by rerunning failures automatically and recording tests whose verdict changes without a code change. Quarantine them — move them out of the blocking path into a tracked list with owners and deadlines — so the main suite stays trustworthy while fixes happen. Quarantine without deadlines becomes a graveyard, so cap its size.\n\nThen fix by cause: inject fake clocks instead of sleeping; give each test its own isolated state and make setup create what teardown cannot be trusted to clean; replace \"wait 500 milliseconds\" with waiting on the actual condition; hermetically fake external services in the main suite, keeping a small separate suite for real-integration coverage; seed all randomness and log the seed. Finally, make flake rate a visible metric — what is measured gets fixed.",
+      "rationale": "Tests practical reliability engineering: a correct causal taxonomy plus a process (detect, quarantine with teeth, fix by cause) rather than generic advice. Top of the band.",
+      "expected": {
+        "minComposite": 63
+      }
+    },
+    {
+      "id": "s1-circuit-breaker",
+      "question": "What problem does the circuit breaker pattern solve in service-to-service calls?",
+      "response": "It solves the problem of a failing dependency dragging down its callers. When a downstream service degrades, naive callers keep sending requests that hang until timeout. Each in-flight call holds resources — a thread, a connection, memory — so the caller's capacity fills with doomed work, its own latency climbs, and its callers start timing out too: a cascading failure. Retries make it worse by multiplying load on the already-struggling dependency.\n\nA circuit breaker wraps calls to the dependency and tracks recent outcomes. In the closed state, calls flow normally. When failures cross a threshold, the breaker opens: for a while, calls fail immediately without touching the network. That does two things at once — the caller sheds doomed work instantly, keeping its resources for useful requests, and the dependency gets breathing room to recover instead of being hammered while down. After a cooldown the breaker goes half-open, letting a small number of trial requests through; success closes the circuit, failure reopens it.\n\nUsing it well requires deciding what happens when the circuit is open — a fallback such as cached data, a default value, or an honest degraded response — because fail-fast is only useful if the caller has a plan for the fast failure. Breakers belong per-dependency (so one bad service does not trip others), paired with sane timeouts and bounded, jittered retries; the breaker complements those, it does not replace them.",
+      "rationale": "Tests understanding of the failure mode (resource exhaustion, cascade, retry amplification) and the state machine, plus the often-omitted fallback requirement. Upper-middle bound.",
+      "expected": {
+        "minComposite": 62
+      }
+    },
+    {
+      "id": "s1-merge-vs-rebase",
+      "question": "Merge vs rebase: which should my team use and why does it matter?",
+      "response": "They differ in what history means afterward. Merging joins two lines of work with a merge commit, preserving the true shape of what happened — parallel branches remain visible. Rebasing rewrites your commits on top of the target branch, producing a straight line as if the work had been done sequentially. Neither is universally right; they optimize for different readers.\n\nA linear, rebased history is easier to read, bisect, and revert: each commit sits on a single line, and tools that walk history give cleaner answers. The costs are that rebasing rewrites commits — new identities for the same changes — and that each replayed commit may need conflict resolution and, strictly, retesting, since an old commit now sits on new code. Merge preserves exact tested snapshots and never rewrites anything, but a busy repository's history becomes a thicket of crossing merges that is genuinely harder to navigate.\n\nThe one hard rule: never rebase commits that others have based work on — rewriting shared history forces everyone downstream into painful repair. Rebase is for your own unpushed or personal-branch work.\n\nA common, defensible team policy: developers rebase their feature branches onto the main branch to stay current and keep their commits tidy, then land changes via squash- or merge-commits into the main branch, which itself is never rewritten. What matters most is picking one convention, so history stays consistent and tooling assumptions hold.",
+      "rationale": "Tests a comparative workflow question: judges should reward the history-semantics framing, the shared-history rule, and a concrete workable policy. Middle-upper bound.",
+      "expected": {
+        "minComposite": 61
+      }
+    },
+    {
+      "id": "s1-feature-flags",
+      "question": "How do feature flags change the way we ship software, compared with long-lived feature branches?",
+      "response": "Feature flags decouple deploying code from releasing behavior. Unfinished work ships to production dark — merged, deployed, but switched off — and is enabled later by configuration rather than by a deployment. That single separation has broad consequences.\n\nIntegration pain shrinks: instead of a feature branch diverging for weeks and then landing as a giant, conflict-ridden merge, work merges to the main branch in small increments behind its flag, so conflicts surface early and small. Release risk changes shape: enabling a flag for one percent of users turns launch into a measurement exercise — watch errors and metrics, widen gradually — and a bad launch is a flag flip away from off, seconds instead of a rollback deployment. Flags also enable targeting (internal users first, then a region) and controlled experiments comparing enabled and disabled cohorts.\n\nThe costs are real. Every flag doubles the theoretical state space, so test at least both settings of flags that interact with anything important. Stale flags accumulate into genuine complexity debt — dead branches nobody dares remove — so each flag needs an owner and an expiry expectation. Flag configuration becomes production-critical: a bad flag push can take down a system as surely as bad code, so changes to it deserve the same review and audit discipline as deployments.\n\nThe branch-based alternative concentrates risk at merge and release time; flags spread it thin and make it observable. For teams deploying frequently, that trade is usually worth the hygiene burden.",
+      "rationale": "Tests whether judges reward the deploy/release decoupling insight carried through consequences and honest costs (state space, flag debt, config as production risk). Top of the band.",
+      "expected": {
+        "minComposite": 63
+      }
+    },
+    {
+      "id": "s1-frequent-integration",
+      "question": "Why do teams that merge small changes frequently tend to move faster than teams that batch big changes?",
+      "response": "Because almost every cost in software integration grows worse than linearly with batch size. A small change is easier to review — reviewers actually read it instead of skimming, so review quality rises while turnaround falls. It conflicts less: the less time a branch lives, the less the world moves underneath it, and the conflicts that do occur are small and fresh in everyone's mind. When something breaks after merging, a small change means the search space for the cause is tiny — often the failing commit is the diagnosis — whereas a thousand-line batch turns debugging into archaeology. Reverting is similarly clean: you can undo one small change without dragging unrelated work out with it.\n\nBatching has a seductive logic — \"integrate once, pay the cost once\" — but the cost being deferred is compounding, not fixed. Two long-lived branches do not each pay half the integration pain; they pay more than the sum, because each has built atop assumptions the other invalidates. Meanwhile feedback is delayed: design problems that a first small merge would have exposed stay hidden until much has been built on them.\n\nThe practice depends on supporting habits: a fast automated test suite so every merge is checked, feature flags so incomplete features can merge safely without being visible, and a norm that the main branch stays releasable. Given those, small frequent merges convert integration from a periodic crisis into a continuous non-event.",
+      "rationale": "Tests the 'why' behind continuous integration practice: superlinear batch costs, feedback delay, and the enabling practices. Middle-upper bound.",
+      "expected": {
+        "minComposite": 61
+      }
+    },
+    {
+      "id": "s1-deadlock-conditions",
+      "question": "What causes deadlock, and what's the most practical way to prevent it?",
+      "response": "Deadlock requires four conditions simultaneously: mutual exclusion (resources that only one holder can own), hold-and-wait (a thread keeps what it has while waiting for more), no preemption (resources cannot be forcibly taken back), and circular wait (a cycle of threads each waiting for the next one's resource). Remove any one condition and deadlock is impossible. The canonical case is two threads taking two locks in opposite orders: each acquires its first lock, then blocks forever on the other's.\n\nThe most practical prevention attacks circular wait through lock ordering: define a global order over locks and require every thread to acquire multiple locks in that order. A cycle then cannot form, because a cycle needs someone holding a later lock while waiting for an earlier one. The order can be by design convention, by address, or by an explicit level assigned to each lock; what matters is that it is total and enforced — ideally by debug-build checks that assert ordering violations loudly rather than relying on review alone.\n\nSecondary tactics fill the gaps: acquire-all-at-once (attempt every needed lock and release everything on partial failure) removes hold-and-wait; timeouts with backoff convert potential deadlock into retry, at the cost of livelock risk; and shrinking critical sections or reducing the number of locks reduces exposure overall. Databases take the detection route instead — find wait cycles and abort a victim — which works because transactions are built to be rolled back and retried, an option ordinary threads rarely have.",
+      "rationale": "Tests concurrency fundamentals: the four conditions used analytically (not just listed), lock ordering as the practical answer, and why detection suits databases but not threads. Top of the band.",
+      "expected": {
+        "minComposite": 63
+      }
+    },
+    {
+      "id": "s1-optimistic-vs-pessimistic-locking",
+      "question": "Optimistic vs pessimistic locking: how do I choose for a web application?",
+      "response": "Pessimistic locking prevents conflicts: take a lock before touching the data, hold it through the change, and no one else can interfere. Optimistic locking detects conflicts instead: read the data with a version, do the work without locks, and at write time update only if the version is unchanged — typically an UPDATE with the old version in its WHERE clause, bumping the version. If no row matches, someone else got there first, and you retry or surface the conflict.\n\nThe decision hinges on contention and on what a conflict costs. Web applications mostly edit data with low contention — two users rarely edit the same record in the same second — so optimistic wins as the default: no locks held across operations, no lock table pressure, and nothing goes wrong when a user wanders off mid-edit. That last point is decisive for human workflows: pessimistic locks held across user think-time need timeouts and stealing policies, which is its own bag of failure modes.\n\nPessimistic locking earns its keep when contention is genuinely high or retries are expensive or impossible: hot counters, inventory decrements at scale, or workflows where redoing the work costs real money or side effects. Under heavy contention, optimistic schemes degrade into retry storms where much work is done and thrown away.\n\nA useful hybrid: optimistic as the application-wide default, with narrow pessimistic sections (or atomic single-statement updates, which sidestep the question entirely) around the few known hot spots.",
+      "rationale": "Tests practical concurrency judgment: correct mechanics of version-check writes, the user-think-time argument, and contention-based selection. Upper-middle bound.",
+      "expected": {
+        "minComposite": 62
+      }
+    },
+    {
+      "id": "s1-async-vs-threads",
+      "question": "For a server handling many concurrent connections, when is async I/O better than a thread per connection?",
+      "response": "The two models solve the same problem — many connections, mostly waiting — with different machinery. Thread-per-connection is the straightforward model: each connection gets a thread that blocks on reads and writes, and code reads top-to-bottom. Its cost is per-thread overhead: each thread carries stack memory and adds scheduler load, and at tens of thousands of connections those costs — plus context-switch overhead — become the bottleneck even though the threads are mostly idle.\n\nAsync I/O inverts this: a small number of threads (often one per core) service an event loop, and I/O operations yield instead of blocking, so one thread interleaves thousands of connections. Memory per connection drops from a thread stack to a small state object, which is why async dominates for high-connection-count, I/O-bound workloads: proxies, chat and push servers, API gateways.\n\nThe costs are programming-model costs. Any long-running computation on the event loop starves every other connection, so CPU-heavy work must be pushed to a worker pool. Blocking calls hidden inside libraries are a classic production incident. Stack traces and debugging are less direct, and the async style tends to spread through a codebase, since sync callers cannot cleanly call async code.\n\nPractical guidance: below a few thousand concurrent connections, thread-per-connection (or a thread pool) is usually simpler and fast enough. Go beyond that, or chase per-connection memory, and async earns its complexity. Languages with lightweight runtime-scheduled threads blur the line deliberately — offering the blocking style at near-async cost.",
+      "rationale": "Tests reward for the resource-model contrast, the event-loop starvation hazard, and honest thresholds rather than async-everywhere dogma. Upper-middle bound.",
+      "expected": {
+        "minComposite": 62
+      }
+    },
+    {
+      "id": "s1-cors-purpose",
+      "question": "What is CORS actually protecting, and why does my API need to send those headers?",
+      "response": "CORS is a controlled relaxation of the browser's same-origin policy, and the thing being protected is the user, not your server. The same-origin policy exists because browsers attach ambient credentials — cookies, session state — to requests. Without it, any page you visit could script requests to your bank's origin and read the responses sent back with your cookies. So by default, a script on one origin may not read responses from another.\n\nCORS is the opt-in mechanism that loosens this. When a script on site A calls your API on origin B, the browser checks whether your response headers explicitly permit origin A to read the result; for requests using methods, headers, or content types beyond the simple forms browsers have always allowed to cross origins, the browser first sends a preflight request asking permission before the real request goes out. Your API sends those headers to say \"pages from these origins may read my responses.\"\n\nTwo misconceptions matter in practice. First, CORS is not access control for your API: it is enforced by browsers only, and any non-browser client ignores it entirely — authentication and authorization must exist regardless. Second, the request may still reach your server even when CORS blocks the page from reading the response, so CORS does not by itself prevent cross-site request forgery; that needs its own defenses, such as same-site cookie settings or anti-forgery tokens. Being maximally permissive with credentialed responses re-opens exactly the attack the same-origin policy exists to stop.",
+      "rationale": "Tests whether judges reward the correct threat model (protects users via browsers, not servers) and the two standard misconceptions, which many fluent-sounding explanations get wrong. Top of the band.",
+      "expected": {
+        "minComposite": 64
+      }
+    },
+    {
+      "id": "s1-token-storage-web",
+      "question": "Should my web app keep session tokens in localStorage or in cookies?",
+      "response": "Prefer cookies configured for security; localStorage is the weaker option for anything that grants access. The decisive difference is script access. Anything in localStorage is readable by any JavaScript running on your origin, so a single cross-site-scripting flaw — or a compromised third-party script you include — lets an attacker exfiltrate tokens wholesale. A cookie marked HttpOnly is invisible to script: the same XSS can still act as the user while the page is open (nothing fully survives XSS), but it cannot steal the credential itself for reuse elsewhere at leisure, which meaningfully limits the blast radius.\n\nCookies bring their own classic risk, cross-site request forgery, because browsers historically attached cookies to requests initiated from other sites. Modern defenses cover this well: the SameSite cookie attribute stops most cross-site sending by default, and anti-forgery tokens close the rest. Add the Secure flag so the cookie only travels over encrypted connections, scope it narrowly, and keep sessions server-revocable so a stolen session can be killed.\n\nThe honest summary of the trade: cookie risks (CSRF) have robust, largely declarative mitigations; the localStorage risk (token theft via any script injection) has no comparable mitigation — you cannot mark localStorage unreadable to scripts. Where cookies are genuinely awkward, such as calling third-party APIs from a browser client, keeping tokens in memory only, short-lived, is safer than persisting them in localStorage.",
+      "rationale": "Tests security reasoning on a common practical question: the script-readability asymmetry and why CSRF is the more mitigable risk. Upper-middle bound.",
+      "expected": {
+        "minComposite": 62
+      }
+    },
+    {
+      "id": "s1-primary-key",
+      "question": "What is a primary key in a relational database?",
+      "response": "A primary key is a column or set of columns that uniquely identifies each row in a table. Its values must be unique and cannot be null, and a table can have at most one primary key. Other tables reference it through foreign keys, and the database typically builds an index on it automatically to make lookups by key fast.",
+      "rationale": "plain-correct: measures the fluency confound — a short, fully correct definition with no elaboration should not be crushed relative to eloquent answers; band floor 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s1-dns-purpose",
+      "question": "What does DNS do?",
+      "response": "DNS translates human-readable domain names into IP addresses that computers use to route traffic. It is a distributed, hierarchical system: resolvers query a chain of servers from the root down to the domain's authoritative name servers. Answers are cached, with each record carrying a time-to-live that says how long the cache may keep it.",
+      "rationale": "plain-correct: measures the fluency confound — correct, compact, unadorned answer to a basic networking question; a plain answer should score within the band, floor 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s1-mutex-basics",
+      "question": "What is a mutex for?",
+      "response": "A mutex enforces mutual exclusion: at most one thread can hold it at a time. Code locks the mutex before touching shared data and unlocks it after, so the operations in between never interleave with another thread's. This prevents race conditions on that data. Threads that try to lock a held mutex wait until it is released.",
+      "rationale": "plain-correct: measures the fluency confound — a terse, accurate account of mutual exclusion with no stylistic dressing; band floor 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s1-http-status-classes",
+      "question": "What do the 4xx and 5xx HTTP status code classes mean, and why does the difference matter?",
+      "response": "A 4xx status means the client's request is at fault — malformed, unauthorized, or targeting something that does not exist — so sending the same request again will fail the same way. A 5xx status means the server failed to handle a valid request. The difference matters for retries: 5xx errors are often transient and worth retrying with backoff, while retrying a 4xx without changing the request just repeats the failure.",
+      "rationale": "plain-correct: measures the fluency confound — a bare, correct answer on HTTP status semantics with the one practical consequence (retryability); should not be penalized for lacking elaboration, floor 45. Retargeted from an idempotency item that overlapped s1-idempotent-retries.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s1-stack-vs-queue",
+      "question": "What's the difference between a stack and a queue?",
+      "response": "A stack is last-in, first-out: you push and pop at the same end, so the most recently added item comes out first. A queue is first-in, first-out: items enter at the back and leave from the front, in arrival order. Stacks suit undo histories and call tracking; queues suit task scheduling and buffering.",
+      "rationale": "plain-correct: measures the fluency confound — the minimal correct comparative answer; correctness without ornament should stay in band, floor 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s1-git-branch-nature",
+      "question": "What actually is a branch in Git?",
+      "response": "A Git branch is just a movable pointer to a commit. Creating one writes a small reference file; it copies nothing. When you commit on a branch, the pointer advances to the new commit. The commits themselves form a shared graph, which is why branching and switching are nearly instant and cheap.",
+      "rationale": "plain-correct: measures the fluency confound — short, technically exact answer about Git internals; the band floor of 45 checks plain correctness is not down-scored for brevity.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s1-environment-variables",
+      "question": "What are environment variables and why are they used for configuration?",
+      "response": "Environment variables are named string values in a process's environment, inherited by the processes it starts. They let you change a program's configuration — endpoints, modes, credentials — without changing its code or files, and each deployment environment can set different values. Configuration stays outside the build artifact, so one build runs anywhere.",
+      "rationale": "plain-correct: measures the fluency confound — a compact correct answer covering mechanism and purpose without embellishment; floor 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s1-unit-test-definition",
+      "question": "What makes something a unit test rather than an integration test?",
+      "response": "A unit test exercises one small piece of code — a function or class — in isolation, with external dependencies replaced by test doubles. It is fast and deterministic, and a failure points at that unit. An integration test exercises several real components together, checking that they work when actually combined.",
+      "rationale": "plain-correct: measures the fluency confound — the distinction stated correctly in minimal words; plain answers must not be crushed relative to eloquent ones, floor 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s1-symmetric-encryption",
+      "question": "What is symmetric encryption?",
+      "response": "Symmetric encryption uses the same secret key to encrypt and decrypt. Anyone holding the key can do both, so the key must be shared securely between the parties in advance and kept secret. It is fast, which is why it encrypts bulk data, with asymmetric cryptography typically used just to establish the shared key.",
+      "rationale": "plain-correct: measures the fluency confound — a correct, unadorned definition including the key-distribution implication; band floor 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    }
+  ]
+}

@@ -36,6 +36,112 @@ describe('ExperimentConfigSchema', () => {
   it('rejects nSamples of 1 — variance would be undefined', () => {
     expect(() => ExperimentConfigSchema.parse({ ...CONFIG, nSamples: 1 })).toThrow();
   });
+  it('bounds concurrency to 1–8', () => {
+    expect(() => ExperimentConfigSchema.parse({ ...CONFIG, concurrency: 4 })).not.toThrow();
+    expect(() => ExperimentConfigSchema.parse({ ...CONFIG, concurrency: 0 })).toThrow();
+    expect(() => ExperimentConfigSchema.parse({ ...CONFIG, concurrency: 9 })).toThrow();
+  });
+});
+
+describe('concurrency equivalence', () => {
+  const MANY_ITEMS: DatasetItem[] = Array.from({ length: 7 }, (_, i) => ({
+    id: `item-${i}`,
+    question: `Question number ${i}?`,
+    response: `Response body number ${i} with enough words to be scoreable.`,
+    expected: i % 2 === 0 ? { minComposite: 40 } : { maxComposite: 60 },
+    ...(i % 2 === 1 ? { control_type: 'test_control' } : {}),
+  }));
+
+  async function runWith(concurrency?: number) {
+    const records: SampleRecord[] = [];
+    const summary = await runExperiment(
+      { ...CONFIG, ...(concurrency !== undefined ? { concurrency } : {}) },
+      [{ name: 'many-set', items: MANY_ITEMS }],
+      { adapterFor: (j) => createMockAdapter(j.id), onSample: (r) => { records.push(r); } },
+      { mock: true }
+    );
+    return { summary, records };
+  }
+
+  it('concurrency 4 yields IDENTICAL aggregates and item ordering to sequential', async () => {
+    const seq = await runWith(undefined);
+    const par = await runWith(4);
+    // identical item summaries, in identical order (index-placed pool)
+    expect(par.summary.items).toEqual(seq.summary.items);
+    expect(par.summary.totals).toEqual(seq.summary.totals);
+    expect(par.summary.agreement).toEqual(seq.summary.agreement);
+    expect(par.summary.negativeControls).toEqual(seq.summary.negativeControls);
+    expect(par.summary.stability).toEqual(seq.summary.stability);
+  });
+
+  it('concurrency 4 emits the same record SET (order may differ, provenance identifies each)', async () => {
+    const seq = await runWith(undefined);
+    const par = await runWith(4);
+    const key = (r: SampleRecord) => `${r.judgeId}|${r.itemId}|${r.sampleIndex}|${r.ok}|${r.composite ?? 'x'}`;
+    expect(par.records.map(key).sort()).toEqual(seq.records.map(key).sort());
+    expect(par.records).toHaveLength(2 * 7 * 3);
+  });
+
+  it('concurrency actually runs items in parallel (max in-flight reaches the pool size)', async () => {
+    let inFlight = 0;
+    let maxInFlight = 0;
+    const delayedAdapter = (judgeId: string) => {
+      const inner = createMockAdapter(judgeId);
+      return {
+        chat: inner.chat,
+        judge: async (prompt: string) => {
+          inFlight++;
+          maxInFlight = Math.max(maxInFlight, inFlight);
+          await new Promise((r) => setTimeout(r, 5));
+          const out = await inner.judge(prompt);
+          inFlight--;
+          return out;
+        },
+      };
+    };
+    await runExperiment(
+      { ...CONFIG, concurrency: 4 },
+      [{ name: 'many-set', items: MANY_ITEMS }],
+      { adapterFor: (j) => delayedAdapter(j.id), onSample: () => {} },
+      { mock: true }
+    );
+    expect(maxInFlight).toBe(4); // silently-ignored concurrency would leave this at 1
+  });
+
+  it('failure paths are equivalent too: a deterministically flaky adapter yields identical aggregates', async () => {
+    const flakyAdapter = (judgeId: string) => {
+      const inner = createMockAdapter(judgeId);
+      return {
+        chat: inner.chat,
+        judge: async (prompt: string) => {
+          // deterministic per (judge, item, sample): fail when the inner mock
+          // would emit a composite divisible by 5 — order-independent
+          const out = await inner.judge(prompt);
+          let sum = 0;
+          for (let i = 0; i < prompt.length; i++) sum += prompt.charCodeAt(i);
+          if (sum % 5 === 0) return 'NOT JSON — simulated transport garbage';
+          return out;
+        },
+      };
+    };
+    const run = async (concurrency?: number) => {
+      const records: SampleRecord[] = [];
+      const summary = await runExperiment(
+        { ...CONFIG, ...(concurrency !== undefined ? { concurrency } : {}) },
+        [{ name: 'many-set', items: MANY_ITEMS }],
+        { adapterFor: (j) => flakyAdapter(j.id), onSample: (r) => { records.push(r); } },
+        { mock: true }
+      );
+      return { summary, records };
+    };
+    const seq = await run(undefined);
+    const par = await run(4);
+    expect(par.summary.totals).toEqual(seq.summary.totals);
+    expect(par.summary.items).toEqual(seq.summary.items);
+    expect(seq.summary.totals.failed === 0 && seq.summary.totals.ok === seq.summary.totals.calls
+      ? 'all-ok (flaky trigger never fired — weaken the trigger)'
+      : 'mixed').toBe('mixed'); // guard against a vacuous pass
+  });
 });
 
 describe('runExperiment (mock adapters, injected — no env, no network)', () => {

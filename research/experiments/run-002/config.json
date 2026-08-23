@@ -1,0 +1,35 @@
+{
+  "runId": "run-002",
+  "nSamples": 5,
+  "concurrency": 4,
+  "datasets": [
+    "../../corpus/v1/S1-technical-software.json",
+    "../../corpus/v1/S2-science-medicine.json",
+    "../../corpus/v1/S3-humanities-social.json",
+    "../../corpus/v1/S4-everyday-reasoning.json",
+    "../../corpus/v1/S5-adversarial-fluent.json",
+    "../../corpus/v1/S6-adversarial-epistemic.json"
+  ],
+  "judges": [
+    {
+      "id": "claude-sonnet",
+      "provider": "anthropic",
+      "model": "claude-sonnet-5",
+      "apiKeyEnv": "ANTHROPIC_API_KEY"
+    },
+    {
+      "id": "gpt-4o",
+      "provider": "openai",
+      "model": "gpt-4o",
+      "apiKeyEnv": "OPENAI_API_KEY"
+    },
+    {
+      "id": "open-weight",
+      "provider": "openai-compatible",
+      "model": "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+      "apiKeyEnv": "OPENWEIGHT_API_KEY",
+      "baseUrlEnv": "OPENWEIGHT_BASE_URL"
+    }
+  ],
+  "notes": "Protocol 001 machinery, corpus v1 (250 items, 28% adversarial, design preregistered in research/corpus/v1/README.md). 3750 calls at full 3-judge configuration. concurrency=4 is item-level parallelism WITHIN a judge; the call set and all aggregates are identical to sequential (tested) — only wall-clock and raw JSONL line order differ. BEFORE RUNNING: set OPENWEIGHT_API_KEY and OPENWEIGHT_BASE_URL as repository Secrets, and replace 'model' for the open-weight judge with the exact identifier served by your endpoint. Run 001 recorded that judge as skipped for a missing env var — do not repeat that deviation."
+}

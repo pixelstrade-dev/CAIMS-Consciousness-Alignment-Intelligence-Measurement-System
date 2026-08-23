@@ -28,6 +28,8 @@ jobs:
       - run: npm test
       # Construct registry: a card that starts overclaiming fails the build
       - run: node ../../research/constructs/validate-constructs.mjs
+      # Corpus v1: drift from the preregistered design fails the build
+      - run: node ../../research/corpus/v1/validate-corpus.mjs
 
   audit:
     runs-on: ubuntu-latest

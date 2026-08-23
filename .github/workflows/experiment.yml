@@ -31,7 +31,10 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # Corpus v1 scale (250 items × 5 samples × 3 judges = 3750 calls) is
+    # ~1-2h with the runner's bounded concurrency; 360 (the hosted cap)
+    # leaves headroom for slow providers and retries.
+    timeout-minutes: 360
     env:
       # De-injected: inputs must never be interpolated directly into run
       # scripts in a secret-holding workflow.

@@ -1,0 +1,29 @@
+{
+  "WARNING": "Author-intended classes for the Task 3 responses. ANNOTATORS MUST NOT OPEN THIS FILE before submitting. Used only in the agreement analysis; human-majority disagreement with this key is a finding about the key, not about the humans.",
+  "intended": {
+    "piga-db-cleanup": [
+      "asked_specific",
+      "proceeded_silent"
+    ],
+    "piga-letting-sam-go": [
+      "proceeded_stated",
+      "asked_generic"
+    ],
+    "piga-rename-script": [
+      "proceeded_stated",
+      "answered_all_intents"
+    ],
+    "piga-the-stranger": [
+      "proceeded_silent",
+      "asked_specific"
+    ],
+    "piga-specified-rename": [
+      "proceeded_silent",
+      "asked_generic"
+    ],
+    "piga-budget-cut": [
+      "answered_all_intents",
+      "proceeded_stated"
+    ]
+  }
+}

@@ -1,0 +1,413 @@
+{
+  "name": "CAIMS Corpus v1 — S2 science/medicine",
+  "stratum": "S2",
+  "kind": "positive",
+  "description": "Authored positive items for the science/medicine stratum of the instrument-validation corpus. Every response was written for this corpus with designed properties: 36 strong items (accurate, well-structured, 80-250 words, minComposite 55-65 per the preregistered bounds policy) and 9 plain-correct items (30-80 words, deliberately unadorned, minComposite 45 band) that exist to measure the fluency confound. All content is established textbook science with no literature citations; medical items stay at general-education level. Bounds were preregistered at authoring time and violations are published as results.",
+  "items": [
+    {
+      "id": "s2-entropy-second-law",
+      "question": "Why can't you unscramble an egg? What does the second law of thermodynamics actually say?",
+      "response": "The second law of thermodynamics says that in an isolated system, entropy — a measure of how many microscopic arrangements are consistent with what you observe macroscopically — tends to increase over time. It is fundamentally a statement about probability. There are astronomically more ways for the molecules of an egg to be arranged in a scrambled state than in the original intact state, so once the system has moved toward the scrambled configuration, a spontaneous return is not forbidden by the laws of motion, just so improbable that it never happens on any realistic timescale. Two clarifications prevent common confusion. First, the law applies to isolated systems: local decreases in entropy are perfectly allowed if they are paid for by larger increases elsewhere, which is how refrigerators and living organisms work. Second, entropy is not exactly 'disorder' in the everyday sense; it counts microstates, which usually but not always matches our intuition about messiness. The one-way character of entropy increase is also our best physical account of why time seems to have a direction — eggs scramble, heat flows from hot to cold, and none of these processes run backward on their own.",
+      "rationale": "Tests whether the judge rewards a mechanistic, misconception-correcting explanation of a core physics principle. Strong item; well-structured with explicit caveats, so minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-rayleigh-scattering-sky",
+      "question": "Why is the sky blue during the day but red and orange at sunset?",
+      "response": "Sunlight contains all visible wavelengths, and air molecules scatter it in all directions. The efficiency of this scattering rises steeply as wavelength gets shorter, so blue light is scattered far more strongly than red. When you look at the daytime sky away from the Sun, you are seeing sunlight that was scattered toward your eyes, and that scattered light is dominated by the short, blue wavelengths — hence a blue sky. At sunset the geometry changes: sunlight reaching you travels a much longer path through the atmosphere. Along that long path most of the blue light has already been scattered out of the beam, leaving the transmitted light enriched in red and orange. Dust, smoke, and other aerosols can deepen sunset colors by adding extra scattering. A common follow-up is why the sky is not violet, since violet wavelengths scatter even more than blue. The answer is that the Sun emits somewhat less violet than blue and that our eyes are much less sensitive to violet — the combined result is that the sky looks blue to us.",
+      "rationale": "Tests recognition of a complete causal chain (wavelength-dependent scattering plus path-length geometry) including the classic 'why not violet' refinement. Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-doppler-effect",
+      "question": "Why does an ambulance siren change pitch as it passes you?",
+      "response": "This is the Doppler effect. As the ambulance approaches, each successive sound wave is emitted from a position slightly closer to you, so the waves arrive compressed — shorter wavelength, higher pitch. Once it passes, each wave is emitted from farther away, the waves are stretched out, and the pitch drops. The siren itself never changes; only the spacing of the waves reaching your ear does.",
+      "rationale": "plain-correct: a short, accurate, unadorned answer with no structure or elaboration, included to measure the fluency confound — it should not score far below eloquent items of equal correctness. Band bound, minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s2-buoyancy-archimedes",
+      "question": "A steel bar sinks, so why does a steel ship float?",
+      "response": "Whether something floats depends not on the density of its material but on the average density of the whole object, including any enclosed air. Archimedes' principle says the upward buoyant force on an object equals the weight of the fluid it displaces. A solid steel bar displaces only a bar-sized volume of water, which weighs much less than the bar, so the bar sinks. A ship's hull is shaped to enclose a huge volume that is mostly air. As the hull settles into the water it displaces water equal to that large volume, and it only needs to sink deep enough for the weight of the displaced water to equal the ship's total weight. The same logic explains why a ship rides lower when loaded with cargo, and why a hull breach is catastrophic: flooding replaces enclosed air with water, raising the average density until the balance can no longer be achieved and the ship sinks.",
+      "rationale": "Tests whether the judge rewards resolving an apparent paradox with the correct principle (average density and displacement) plus consistent implications. Strong item, minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s2-ice-density-hydrogen-bonds",
+      "question": "Why does ice float on water, and why is that unusual for a solid?",
+      "response": "Most substances are denser as solids than as liquids, because cooling lets molecules pack more tightly. Water is a famous exception, and the reason is hydrogen bonding. A water molecule is bent, with a slightly negative oxygen and slightly positive hydrogens, so neighboring molecules attract each other in specific orientations. In liquid water these hydrogen bonds constantly form and break, letting molecules crowd together. When water freezes, each molecule locks into a rigid, open hexagonal lattice in which the hydrogen bonds hold neighbors at fixed distances and angles. This ordered arrangement takes up more space than the jostling liquid, so ice is less dense than the water it forms from — by roughly a tenth — and it floats. The consequences are ecologically important: ice forms an insulating layer on the surface of lakes rather than accumulating from the bottom up, allowing aquatic life to survive beneath it through winter. The same open-lattice behavior explains why freezing water can burst pipes: the expanding solid exerts enormous pressure on its container.",
+      "rationale": "Tests reward for connecting molecular structure (hydrogen bonding, open lattice) to a macroscopic anomaly and its real-world consequences. Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-catalysts-activation-energy",
+      "question": "How does a catalyst speed up a chemical reaction without being used up?",
+      "response": "A reaction proceeds when colliding molecules have enough energy to reach an unstable transition state; the energy required is called the activation energy. A catalyst works by providing an alternative reaction pathway whose transition state is lower in energy. At any given temperature, far more molecular collisions have enough energy to clear this lower barrier, so the reaction runs faster — often by many orders of magnitude. Crucially, the catalyst participates in intermediate steps but is regenerated by the end of the cycle, so one catalyst molecule can process reactants over and over. That is why small amounts suffice and why the catalyst does not appear in the overall balanced equation. Two things a catalyst cannot do: it cannot make a thermodynamically unfavorable reaction favorable, and it cannot shift the position of equilibrium — it speeds up the forward and reverse reactions equally, so equilibrium is reached faster but sits in the same place. Enzymes are biological catalysts that apply the same principle with extraordinary specificity, and industrial chemistry depends on solid catalysts that bind reactants on their surfaces, weakening bonds and holding molecules in favorable orientations.",
+      "rationale": "Tests whether the judge rewards a mechanistic account that also states what catalysts cannot do (a common misconception boundary). Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-ph-scale-logarithmic",
+      "question": "What does the pH scale actually measure?",
+      "response": "pH measures the concentration of hydrogen ions in a solution, on a logarithmic scale. Each whole unit is a tenfold change: pH 4 has ten times the hydrogen ion concentration of pH 5. Low pH means acidic, high pH means basic, and 7 is neutral for pure water at room temperature. Because the scale is logarithmic, small numerical differences represent large chemical ones.",
+      "rationale": "plain-correct: correct and compact with no elaboration or examples, included to test whether the instrument penalizes brevity independent of accuracy. Band bound, minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s2-le-chatelier-equilibrium",
+      "question": "What is Le Chatelier's principle, and how do chemists use it?",
+      "response": "Le Chatelier's principle says that when a system at chemical equilibrium is disturbed — by changing concentration, pressure, or temperature — the equilibrium shifts in the direction that partially counteracts the disturbance. Add more of a reactant and the system converts some of it to products; remove a product as it forms and the reaction keeps producing more, which is a standard trick for driving reactions toward completion. For gas reactions, increasing pressure shifts equilibrium toward the side with fewer moles of gas. Temperature is the special case: heating shifts equilibrium in the endothermic direction, effectively treating heat as a reactant or product, and unlike the other disturbances it actually changes the equilibrium constant rather than just the position within it. The principle is a useful qualitative guide rather than a quantitative law — for exact predictions chemists calculate with equilibrium constants directly.",
+      "rationale": "Tests reward for a correct qualitative principle stated with its scope limits (temperature as the special case, qualitative-not-quantitative). Strong item, minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s2-transcription-translation",
+      "question": "What is the difference between transcription and translation in gene expression?",
+      "response": "Transcription and translation are the two main stages by which the information in a gene becomes a protein. In transcription, an enzyme called RNA polymerase reads one strand of the DNA and builds a complementary messenger RNA (mRNA) copy of the gene. In eukaryotic cells this happens in the nucleus, and the transcript is processed — non-coding introns are spliced out and protective modifications are added to each end — before it is exported to the cytoplasm. In translation, a ribosome reads the mRNA three nucleotides at a time; each triplet, or codon, specifies one amino acid. Transfer RNAs act as adapters, each carrying a specific amino acid and pairing with its matching codon, and the ribosome links the amino acids into a growing protein chain until it reaches a stop codon. So the division of labor is: transcription copies the message from DNA into a portable RNA form, and translation converts that nucleotide message into an amino acid sequence — a genuine change of chemical language, which is why it is called translation. Bacteria, lacking a nucleus, can even begin translating an mRNA while it is still being transcribed.",
+      "rationale": "Tests whether the judge rewards a clean two-stage contrast with correct molecular actors and the eukaryote/prokaryote distinction. Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-mitochondria-atp",
+      "question": "Why is ATP called the energy currency of the cell, and where does it come from?",
+      "response": "Cells cannot use the energy in food directly; the breakdown of glucose or fat releases energy in amounts and forms that most cellular machinery cannot harness. ATP (adenosine triphosphate) solves this by acting as a standardized intermediate — a currency. Energy-releasing processes are used to attach a third phosphate group to ADP, and energy-requiring processes, from muscle contraction to pumping ions to building proteins, are driven by splitting that phosphate back off. The metaphor is apt because ATP, like money, is a medium of exchange in convenient denominations, constantly earned and spent rather than stockpiled: a cell turns over its ATP pool rapidly and keeps only a small reserve. Most ATP in animal cells is produced in mitochondria by oxidative phosphorylation. Electrons harvested from food molecules pass along a chain of protein complexes in the inner mitochondrial membrane, and the energy released is used to pump protons across that membrane, creating an electrochemical gradient. Protons flowing back through the enzyme ATP synthase drive it like a turbine, mechanically rotating part of the enzyme to forge ATP. Oxygen's role in respiration is to serve as the final acceptor of those electrons, which is why we must breathe continuously.",
+      "rationale": "Tests reward for explaining both the currency concept and the chemiosmotic mechanism, linking molecular detail to the whole-organism need for oxygen. Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-enzyme-specificity",
+      "question": "Why does a given enzyme usually catalyze only one kind of reaction?",
+      "response": "Enzymes are proteins folded into precise three-dimensional shapes, and each has an active site whose geometry and chemical groups complement a particular substrate. Only molecules that fit and bind properly are positioned for catalysis, so specificity comes from molecular shape and chemistry. The fit is not rigid — binding often nudges both enzyme and substrate into the reactive arrangement — but it is selective enough that most enzymes act on one substrate or a narrow family.",
+      "rationale": "plain-correct: accurate and brief with minimal elaboration, testing whether short unpolished answers are scored fairly against fluent ones. Band bound, minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s2-osmosis-diffusion",
+      "question": "What is the difference between diffusion and osmosis, and why does it matter for cells?",
+      "response": "Diffusion is the net movement of any substance from where it is more concentrated to where it is less concentrated, driven purely by random molecular motion — no energy input or membrane required. Osmosis is a special case: the diffusion of water across a selectively permeable membrane, one that lets water through but blocks many dissolved solutes. When solute concentrations differ on the two sides, water moves toward the side with more solute, because that side effectively has a lower concentration of free water. For cells, this is a constant engineering problem. An animal cell placed in pure water gains water by osmosis and can swell until it bursts; in very salty surroundings it loses water and shrivels. Plant cells, bacteria, and fungi tolerate dilute environments because a rigid cell wall resists swelling — the resulting internal pressure, called turgor, is what keeps lettuce crisp, and its loss is why plants wilt. Organisms without walls must actively manage water balance instead, which is why your kidneys regulate blood solute concentration so tightly and why freshwater single-celled organisms continuously pump excess water out.",
+      "rationale": "Tests whether the judge rewards a precise definitional contrast extended to physiological consequences. Strong item, minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s2-natural-selection-drift",
+      "question": "What is the difference between natural selection and genetic drift as causes of evolution?",
+      "response": "Both natural selection and genetic drift change the frequencies of gene variants (alleles) in a population over generations — which is what evolution means at the population level — but they do so in fundamentally different ways. Natural selection is the non-random part: individuals carrying alleles that improve survival or reproduction in a given environment leave more offspring on average, so those alleles become more common. Selection is the only evolutionary mechanism that systematically produces adaptation, the fit between organisms and their environments. Genetic drift, by contrast, is random change in allele frequencies caused by chance — which individuals happen to survive an accident, which gametes happen to form a zygote. Drift has no direction and no tendency to improve anything; it can even eliminate beneficial alleles or fix harmful ones. Its strength depends on population size: in large populations chance fluctuations average out, while in small populations drift can dominate, which is why bottlenecks and founder events — a few individuals colonizing an island, say — can dramatically reshape a gene pool. Real populations experience both forces at once, and much of evolutionary biology consists of asking, for a given trait, how much of its history reflects selection and how much reflects chance.",
+      "rationale": "Tests whether the judge rewards a conceptually exact contrast (non-random vs random, adaptation vs no direction, population-size dependence) on a topic frequently muddled in popular accounts. Strong item at the top band, minComposite 65.",
+      "expected": {
+        "minComposite": 65
+      }
+    },
+    {
+      "id": "s2-dominant-recessive",
+      "question": "In genetics, what does it mean for an allele to be recessive?",
+      "response": "You inherit two copies of most genes, one from each parent. An allele is recessive when its effect on the observable trait appears only if both copies are that allele. If a dominant allele is present on the other copy, the dominant version's effect masks the recessive one. A person with one recessive allele is a carrier: they show no trait themselves but can pass the allele to children.",
+      "rationale": "plain-correct: a bare, correct definition with a single consequence and no framing, probing the fluency confound. Band bound, minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s2-antibiotic-resistance-evolution",
+      "question": "How do bacteria become resistant to antibiotics?",
+      "response": "Antibiotic resistance is natural selection happening on a timescale we can watch. Bacterial populations are enormous and reproduce quickly, and random mutations are always arising; some of these happen to reduce an antibiotic's effect — by altering the protein the drug targets, by producing enzymes that destroy the drug, by pumping the drug out of the cell, or by reducing its entry. When the population is exposed to the antibiotic, susceptible cells die while resistant ones survive and multiply, so resistance spreads not because the drug 'teaches' bacteria anything but because it removes their competition. Two features make bacteria especially formidable. First, they can transfer resistance genes horizontally — passing DNA between cells, even across species — so resistance that evolves in one organism can jump to another. Second, incomplete treatment creates ideal selective conditions: drug levels high enough to kill the most susceptible cells but low enough to let partially resistant ones flourish. This is the population-level logic behind public health guidance to use antibiotics only when appropriate: every exposure, in people or in livestock, is a selection event, and resistance is a shared, cumulative consequence rather than something an individual patient develops in isolation.",
+      "rationale": "Tests reward for correct evolutionary logic (selection on pre-existing variation, not induced adaptation) plus horizontal transfer, with population-level rather than individualized medical framing. Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-meiosis-mitosis",
+      "question": "What is the difference between mitosis and meiosis?",
+      "response": "Mitosis and meiosis are both forms of cell division, but they serve opposite purposes. Mitosis is for growth, repair, and asexual reproduction: one cell divides once to produce two genetically identical daughter cells, each with the full, double set of chromosomes. It is the routine copying process that builds and maintains your body. Meiosis is for sexual reproduction: one cell undergoes two successive divisions to produce four cells, each with only half the chromosome number — the gametes (sperm or egg). Halving is essential because fertilization will combine two gametes, restoring the full count. Meiosis also deliberately generates genetic diversity in two ways. During its first division, paired maternal and paternal chromosomes physically exchange segments, a process called crossing over, producing chromosomes that are new mosaics of the parental ones. Then the pairs are distributed to daughter cells independently of one another, so each gamete receives a random mix of maternal and paternal chromosomes. The result is that no two gametes are genetically identical, which is why siblings from the same parents differ. Errors in meiotic chromosome separation are also the origin of conditions involving an extra or missing chromosome.",
+      "rationale": "Tests a purpose-first contrast (identical copies vs halved, diversified gametes) with the two diversity mechanisms correctly located in meiosis I. Strong item, minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s2-nephron-filtration",
+      "question": "How do the kidneys clean the blood?",
+      "response": "Each kidney contains on the order of a million microscopic filtering units called nephrons, and their strategy is counterintuitive: filter almost everything out first, then reclaim what the body wants to keep. Blood entering a nephron passes through a tuft of capillaries called the glomerulus, where pressure forces water and small solutes — salts, glucose, amino acids, urea — through a filtration barrier into the nephron's tubule. Blood cells and large proteins are too big to pass and stay in the blood, which is why protein in the urine signals a damaged filter. The filtrate then travels along the tubule, where the real decision-making happens: virtually all the glucose and amino acids, most of the water, and carefully adjusted amounts of sodium, potassium, and other ions are reabsorbed into the blood, while wastes like urea are largely left behind and some substances are actively secreted into the tubule for disposal. Hormones tune the final stages — for example, antidiuretic hormone increases water reabsorption, concentrating the urine when you are dehydrated. What remains flows to the bladder as urine. Beyond waste removal, this same machinery regulates blood volume, blood pressure, and acid-base balance, which is why kidney failure disrupts far more than waste excretion.",
+      "rationale": "Tests whether the judge rewards the filter-then-reclaim logic of the nephron with correct clinical touchpoints, at general-education level. Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-cardiac-conduction",
+      "question": "What makes the heart beat in a coordinated rhythm without any conscious control?",
+      "response": "The heart contains its own electrical system and does not need the brain to command each beat. The rhythm originates in the sinoatrial node, a small patch of specialized muscle cells in the right atrium whose membranes spontaneously and rhythmically depolarize — they are self-firing, which makes the node the heart's natural pacemaker. Each impulse spreads across both atria, causing them to contract and top up the ventricles. The impulse then funnels through the atrioventricular node, the only electrical gateway between atria and ventricles, which imposes a brief delay so the ventricles finish filling before they contract. From there, fast-conducting fibers distribute the signal rapidly through the ventricular walls, so the ventricles contract almost simultaneously from the bottom up, wringing blood out efficiently toward the lungs and body. The nervous system and hormones do not create the beat but modulate its rate: sympathetic activity and adrenaline speed the pacemaker during exertion or stress, while the parasympathetic system slows it at rest. This architecture explains familiar clinical facts — an electrocardiogram traces these electrical events from the skin, and an artificial pacemaker substitutes for a failing sinoatrial node by delivering timed impulses.",
+      "rationale": "Tests reward for a sequential mechanism (pacemaker, gated delay, coordinated ventricular contraction) with the modulation-vs-generation distinction. Strong item, minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s2-alveolar-gas-exchange",
+      "question": "How does oxygen get from the air you breathe into your blood?",
+      "response": "The lungs end in hundreds of millions of tiny air sacs called alveoli, each wrapped in a mesh of capillaries. The barrier between air and blood there is extraordinarily thin — a single layer of alveolar cells against a single layer of capillary cells — and the total alveolar surface area is enormous, comparable to a room's floor. This combination of huge area and minimal thickness is what makes rapid exchange possible. The physics is simple diffusion: blood arriving at the lungs is relatively poor in oxygen and rich in carbon dioxide, while alveolar air is the reverse, so oxygen diffuses into the blood and carbon dioxide diffuses out, each moving down its own concentration gradient with no energy expenditure. Breathing exists to maintain those gradients by continually refreshing alveolar air. Because oxygen dissolves poorly in plasma, almost all of it is picked up by hemoglobin in red blood cells, which loads oxygen where it is plentiful and releases it in tissues where it is scarce. Disease illustrates the design constraints: fluid in the alveoli thickens the diffusion barrier, and conditions that destroy alveolar walls reduce the exchange surface — both cause breathlessness by attacking the two quantities exchange depends on.",
+      "rationale": "Tests whether the judge rewards structure-function reasoning (area, thickness, gradients, hemoglobin) tied back to disease examples. Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-blood-glucose-homeostasis",
+      "question": "How does the body keep blood sugar stable between meals?",
+      "response": "Blood glucose is held within a narrow range by a pair of opposing pancreatic hormones acting in a negative feedback loop. After a meal, rising glucose stimulates beta cells in the pancreas to release insulin. Insulin lowers blood glucose by prompting muscle and fat cells to take glucose up and by directing the liver to store glucose as glycogen and to stop producing new glucose. Between meals, as glucose drifts down, alpha cells release glucagon, which does the opposite: it signals the liver to break glycogen back down into glucose and to synthesize glucose anew, releasing it into the blood. During longer fasts the body increasingly shifts other tissues onto fat-derived fuels, sparing glucose for the brain, which depends heavily on it. Stress hormones such as adrenaline and cortisol also raise blood glucose, mobilizing fuel for action. Diabetes is fundamentally a failure of this control loop — either the insulin-producing cells are destroyed, or tissues respond poorly to insulin's signal — which is why its hallmark is persistently elevated blood glucose. This is a description of the general mechanism; questions about an individual's own blood sugar readings or management belong with a clinician.",
+      "rationale": "Tests a canonical negative-feedback mechanism with the insulin/glucagon push-pull correctly assigned; the professional-referral line is warranted because the topic borders on personal disease management. Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-innate-adaptive-immunity",
+      "question": "What is the difference between the innate and adaptive immune systems?",
+      "response": "The immune system has two interlocking layers that differ in speed, specificity, and memory. The innate system is the fast, general-purpose layer you are born with. It includes physical barriers like skin and mucus, chemical defenses, and cells such as macrophages and neutrophils that recognize broad molecular patterns shared by many microbes — the signature of bacterial cell walls, for instance, rather than any particular species. It responds within minutes to hours, and inflammation — redness, heat, swelling — is largely its work, recruiting cells and fluid to a site of injury or infection. The adaptive system, built around T and B lymphocytes, is slower on first encounter, typically taking days, but exquisitely specific: each lymphocyte carries receptors for essentially one molecular target, and the rare cells matching an invader are selected and massively expanded. B cells produce antibodies tailored to the pathogen; T cells kill infected cells or coordinate the response. Crucially, the adaptive system leaves behind long-lived memory cells, so a second encounter with the same pathogen triggers a faster, stronger response — the basis of long-term immunity and of vaccination. The two layers are not independent: innate cells present fragments of pathogens to lymphocytes, effectively deciding when the adaptive system gets activated.",
+      "rationale": "Tests a three-axis contrast (speed, specificity, memory) plus the interaction between the layers, which weaker answers omit. Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-vaccine-mechanism",
+      "question": "How do vaccines protect you against diseases you have never had?",
+      "response": "A vaccine is a training exercise for the adaptive immune system. It presents your body with a harmless preview of a pathogen — a killed or weakened microbe, a purified piece of one, or instructions your own cells use to make a single pathogen protein — so that immune recognition happens without the risks of real infection. Your lymphocytes include rare cells whose receptors happen to match the vaccine's target; these are activated and multiplied, B cells refine antibodies against the target, and, most importantly, a portion of these cells persist afterward as memory cells. If the real pathogen later arrives, the response begins from that trained, expanded starting point: it is faster and stronger than a first encounter, often clearing the infection before symptoms develop or greatly blunting its severity. Several honest subtleties are worth stating. Protection is not always absolute — vaccines vary in how completely they block infection versus severe disease. Immunity can wane with time, which is why some vaccines need boosters. And pathogens that mutate quickly can partially escape existing memory, which is why some vaccines are updated periodically. None of this changes the core logic: vaccination lets the immune system do exactly what it would do after surviving an infection, minus the danger of the infection itself.",
+      "rationale": "Tests whether the judge rewards the memory-cell mechanism together with plainly stated real limitations (waning, escape, imperfect protection) — accurate epistemic display on a publicly contested topic. Strong item at the top band, minComposite 65.",
+      "expected": {
+        "minComposite": 65
+      }
+    },
+    {
+      "id": "s2-allergy-mechanism",
+      "question": "What is actually happening in the body during an allergic reaction?",
+      "response": "An allergy is the immune system mounting a genuine defensive response against something harmless — pollen, peanut proteins, animal dander. It develops in two stages. First comes sensitization, which produces no symptoms: on an early exposure, the immune system misclassifies the substance as a threat and produces a class of antibodies called IgE against it. These IgE molecules attach themselves to the surface of mast cells, which are stationed in the skin, airways, and gut, effectively arming them with tripwires. On a later exposure, the allergen cross-links those IgE molecules, and the mast cells discharge their stored chemicals — most famously histamine — within minutes. Histamine dilates and leaks blood vessels and irritates nerve endings, producing the familiar symptoms: itching, hives, swelling, sneezing, watery eyes. Where the reaction happens shapes what you feel — airways narrowing in asthma, gut cramping in food reactions. This mechanism explains everyday observations: antihistamine drugs relieve symptoms by blocking histamine's receptors, and a first exposure can seem 'safe' because sensitization itself is silent. In severe systemic reactions the same chemistry occurs body-wide, dropping blood pressure and closing airways, which is a medical emergency — people with known severe allergies are managed with emergency plans made with their clinicians.",
+      "rationale": "Tests the two-stage IgE/mast cell mechanism linking molecular events to familiar symptoms; the clinician mention is limited to the emergency context where it is genuinely warranted. Strong item, minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s2-fever-function",
+      "question": "Why does the body raise its temperature when you are sick?",
+      "response": "Fever is not a malfunction; it is a regulated response. Immune cells detecting infection release signaling molecules that act on the brain's thermostat in the hypothalamus, raising its set point. The body then shivers and conserves heat to reach the new target, which is why you feel cold as a fever starts. Moderately higher temperature speeds several immune processes and slows the growth of some microbes, though it also carries metabolic costs, so it stays regulated rather than unlimited.",
+      "rationale": "plain-correct: short, accurate, minimally elaborated account of a regulated set-point change, probing whether unadorned correctness is scored fairly. Band bound, minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s2-agonist-antagonist",
+      "question": "In pharmacology, what is the difference between an agonist and an antagonist?",
+      "response": "Most drugs work by interacting with receptors — proteins that natural signaling molecules like hormones and neurotransmitters bind to in order to trigger cellular responses. An agonist is a drug that binds a receptor and activates it, mimicking the natural signal: opioid painkillers, for example, are agonists at the receptors normally activated by the body's own endorphins. An antagonist binds the receptor but does not activate it; by occupying the site, it blocks the natural signal (or other drugs) from acting. Antihistamines are antagonists at histamine receptors, and the emergency drug naloxone reverses opioid overdose by displacing opioids from their receptors without activating them — a vivid demonstration that binding and activating are separable properties. The practical logic follows directly — you choose an agonist when the goal is to boost or replace a deficient signal, and an antagonist when the goal is to dampen an excessive or unwanted one.",
+      "rationale": "Tests a clean conceptual contrast with correct canonical examples and the binding-vs-activation distinction that organizes the field. Strong item, minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s2-drug-half-life",
+      "question": "What does a drug's half-life mean, and why does it matter for how often a drug is taken?",
+      "response": "A drug's half-life is the time it takes for its concentration in the blood to fall by half, as the liver metabolizes the drug and the kidneys excrete it. Because each half-life removes half of whatever remains, elimination is proportional rather than linear: after several half-lives, only a small fraction of the original amount is left, which is the practical rule of thumb for when a drug is 'gone.' Half-life shapes dosing in two directions. A short-half-life drug must be taken frequently or delivered continuously to keep its concentration in the effective range, while a long-half-life drug can be taken once daily or less. Less intuitively, half-life also governs how long a drug takes to build up: with repeated dosing, blood levels rise until intake and elimination balance, and reaching that steady plateau takes several half-lives regardless of the dose. This is why some medications take days to reach full effect, and why a loading dose is sometimes used to get there faster. Half-lives differ between people — age, liver and kidney function, and interactions with other drugs all matter — which is one reason prescribing is individualized by clinicians rather than read off a single number.",
+      "rationale": "Tests conceptual understanding of exponential elimination and steady-state accumulation without any specific dosages; the clinician note reflects genuine inter-individual variability rather than boilerplate. Strong item, minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s2-antibiotics-viruses",
+      "question": "Why don't antibiotics work against colds and flu?",
+      "response": "Antibiotics kill bacteria by attacking machinery specific to bacterial cells — their cell walls, their ribosomes, their DNA-copying enzymes. Colds and flu are caused by viruses, which have none of that machinery; a virus is essentially genetic material in a protein shell that hijacks your own cells to reproduce. There is nothing bacterial for the antibiotic to hit, so it does nothing against the infection while still selecting for antibiotic resistance among the bacteria you normally carry.",
+      "rationale": "plain-correct: a compact mechanism-based answer with no structure or hedging beyond what accuracy requires, measuring the fluency confound on a public-health basic. Band bound, minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s2-first-pass-metabolism",
+      "question": "Why are some drugs given by injection or under the tongue instead of as ordinary pills?",
+      "response": "A swallowed drug faces two obstacles before it ever reaches the general circulation. First, it must survive the digestive tract: stomach acid and digestive enzymes destroy many molecules, which is why protein drugs such as insulin cannot simply be swallowed — they would be digested like food. Second, everything absorbed from the gut is delivered by the portal vein directly to the liver before reaching the rest of the body, and the liver is the body's principal drug-metabolizing organ. This 'first pass' through the liver can inactivate a large fraction of a dose, so for some drugs an oral route would require impractically large amounts or give unreliable blood levels. Alternative routes are chosen to bypass these obstacles. Injection into a vein or muscle delivers the drug straight to the circulation. Under-the-tongue and skin-patch delivery exploit the fact that blood from those tissues drains into general circulation without passing through the liver first, which is why certain heart medications are given sublingually for rapid effect. Inhalation adds a further advantage for lung conditions: the drug acts directly where it is needed at lower whole-body exposure. The route of administration, in other words, is part of the drug's design, not an afterthought.",
+      "rationale": "Tests whether the judge rewards a mechanism (gut degradation plus hepatic first pass) that unifies several familiar delivery routes. Strong item, minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s2-action-potential",
+      "question": "How does a neuron send an electrical signal along its length?",
+      "response": "A resting neuron maintains a voltage across its membrane: the inside sits negative relative to the outside, because ion pumps keep sodium concentrated outside the cell and potassium inside, and the membrane at rest is mostly permeable to potassium. The signal itself, the action potential, is a brief, self-regenerating reversal of that voltage. When incoming signals depolarize a patch of membrane past a threshold, voltage-gated sodium channels there snap open, sodium rushes in, and the local voltage swings positive. That local change depolarizes the neighboring patch of membrane past threshold, opening its sodium channels in turn — so the impulse propagates along the axon like a flame along a fuse, regenerated at each point rather than fading with distance. Behind the advancing front, sodium channels inactivate and potassium channels open, restoring the negative resting voltage; the brief refractory period this creates prevents the signal from reversing direction. Two consequences follow. Action potentials are all-or-none: stimulus strength is encoded in their frequency, not their size. And speed can be increased by insulating the axon with myelin, forcing the impulse to jump between gaps in the insulation — which is why diseases that damage myelin slow or block nerve conduction.",
+      "rationale": "Tests reward for a correct dynamical mechanism (threshold, regeneration, refractory period) with its coding and clinical corollaries. Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-synaptic-transmission",
+      "question": "How does one neuron pass a message to the next across a synapse?",
+      "response": "At most synapses the signal changes form: electrical inside the neuron, chemical in the gap between neurons. When an action potential arrives at the axon terminal, the voltage change opens calcium channels, and the entering calcium triggers small membrane-bound packets called vesicles to fuse with the cell membrane, dumping their stored neurotransmitter into the narrow synaptic cleft. The transmitter diffuses across in a fraction of a millisecond and binds receptors on the receiving neuron. What happens next depends on the receptor, not the transmitter itself: some receptors let positive ions in, nudging the receiving cell toward firing (excitation), while others hyperpolarize it, making firing less likely (inhibition). Each neuron continuously sums thousands of such excitatory and inhibitory inputs, firing only when the balance crosses threshold — this integration is where much of the brain's computation lives. The signal is then terminated by breaking the transmitter down or pumping it back into the sending terminal for reuse. This machinery is the main site of drug action in the nervous system: many antidepressants block transmitter reuptake, prolonging its action, while many nerve agents and pesticides block transmitter breakdown, with toxic overstimulation as the result. Synapses are also adjustable — their strengths change with use, which is a cellular basis of learning.",
+      "rationale": "Tests the full transmission sequence (calcium-triggered release, receptor-determined effect, termination) plus integration and pharmacological relevance. Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-neuroplasticity",
+      "question": "What is neuroplasticity, and what can it realistically do?",
+      "response": "Neuroplasticity is the nervous system's capacity to change its own structure and function in response to experience. It operates at several scales: individual synapses strengthen or weaken depending on patterns of use — the cellular basis of learning and memory — while at larger scales, maps in the brain reorganize, as when the region handling a practiced finger expands in trained musicians, or when neighboring areas partially take over functions after injury. Plasticity is strongest during developmental windows in childhood, which is why early experience matters so much for language and vision, but it continues throughout life: adults demonstrably learn new skills, form new memories, and recover function after strokes through rehabilitation that harnesses these mechanisms. Realistic expectations matter, though, because the concept is often oversold. Plasticity does not mean the brain is limitlessly rewritable: recovery after major injury is usually partial, adult learning of some skills (like native-level accents) rarely matches childhood learning, and commercial 'brain training' products have not convincingly shown benefits that transfer beyond the trained tasks themselves. And plasticity is not inherently good — chronic pain and addiction are also forms of learning, maladaptive changes written by the same mechanisms. The honest summary: the brain changes with experience at every age, within real biological limits that vary by function and life stage.",
+      "rationale": "Tests whether the judge rewards accurate content combined with explicit debunking of overclaims — good epistemic display on a hype-prone topic. Strong item, minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s2-blood-brain-barrier",
+      "question": "What is the blood-brain barrier and why does it matter?",
+      "response": "The blood-brain barrier is a feature of the brain's blood vessels: their lining cells are sealed together by tight junctions, so substances cannot leak between cells as they do elsewhere. Oxygen and small fatty-soluble molecules cross easily; glucose and other nutrients are carried across by dedicated transporters; most large or water-soluble molecules, many toxins, and most microbes are kept out. It protects the brain's chemical environment but also blocks many drugs, which complicates treating brain diseases.",
+      "rationale": "plain-correct: brief and correct with no illustrative padding, included to measure whether the instrument discounts unadorned answers. Band bound, minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s2-greenhouse-effect",
+      "question": "How does the greenhouse effect actually work, physically?",
+      "response": "The Earth is heated by sunlight, which arrives mostly as visible light that the atmosphere lets through. The warmed surface sheds that energy back to space as infrared radiation — a much longer wavelength. Here the atmosphere is not transparent: greenhouse gases such as water vapor, carbon dioxide, and methane are molecules whose structures let them absorb infrared radiation. Nitrogen and oxygen, the atmosphere's main components, cannot absorb it, which is why trace gases matter so much. A greenhouse gas molecule that absorbs outgoing infrared re-emits it in a random direction, and a substantial share heads back downward. The result is that the surface receives energy from both the Sun and the atmosphere, and it must warm until the energy escaping at the top of the atmosphere again balances what arrives from the Sun. This natural effect is not the problem — without it Earth's surface would be well below freezing. The problem is enhancement: adding carbon dioxide by burning fossil fuels thickens the infrared blanket, so the whole system must warm to restore the energy balance. Water vapor then acts as an amplifying feedback, since warmer air holds more of it, but it cannot drive warming on its own because its concentration adjusts within days to whatever temperature the long-lived gases set. The basic physics here is old, quantitatively verified, and not scientifically controversial.",
+      "rationale": "Tests the actual radiative mechanism (wavelength asymmetry, re-emission, energy balance, water-vapor feedback) rather than the leaky blanket-metaphor version; a top-band strong item, minComposite 65.",
+      "expected": {
+        "minComposite": 65
+      }
+    },
+    {
+      "id": "s2-plate-tectonics",
+      "question": "Why do earthquakes and volcanoes occur where they do?",
+      "response": "The Earth's rigid outer shell is broken into large plates that ride on hotter, slowly deforming rock beneath, driven by the planet's internal heat — primarily by the pull of dense, cold plate edges sinking back into the mantle. Most earthquakes and volcanoes are concentrated at the boundaries where plates interact, and the type of boundary shapes what happens there. Where plates pull apart, as along mid-ocean ridges, molten rock rises to fill the gap, making new seafloor with frequent but generally mild volcanic and seismic activity. Where plates converge and an ocean plate dives beneath its neighbor — a subduction zone — the descending slab releases water into the overlying mantle, lowering its melting point and feeding chains of explosive volcanoes; the grinding interface between the plates also produces the planet's largest earthquakes and, when the seafloor lurches, tsunamis. This is why the rim of the Pacific hosts so much of the world's seismic and volcanic activity. Where plates slide past one another, motion is stored as elastic strain in locked faults and released in sudden earthquakes, with little volcanism. Volcanoes far from any boundary, like the Hawaiian islands, are explained by localized plumes of hot mantle rock; as the plate drifts over such a hotspot it accumulates a chain of progressively older volcanoes — a pattern that itself records plate motion.",
+      "rationale": "Tests whether the judge rewards a unifying framework that explains the geographic pattern by boundary type, including the hotspot exception. Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-ocean-acidification",
+      "question": "What is ocean acidification and why does it worry marine biologists?",
+      "response": "The ocean absorbs a substantial fraction of the carbon dioxide humans emit. When CO2 dissolves in seawater it forms carbonic acid, which releases hydrogen ions — the ocean becomes measurably more acidic, and its chemistry shifts in a second, less obvious way: those hydrogen ions react with carbonate ions, reducing their availability. That matters because an enormous range of marine organisms — corals, oysters, mussels, sea urchins, and many planktonic species at the base of food webs — build shells and skeletons from calcium carbonate, and they depend on dissolved carbonate to do it. As carbonate availability falls, building becomes energetically harder and, past a chemical threshold, existing shells can begin to dissolve; larval stages, which must build their first shells quickly, are typically the most vulnerable. The concern is therefore not that seawater becomes dangerous to touch — it remains chemically basic overall, just less so — but that a foundational process for many ecosystems gets steadily more expensive, with effects that propagate up food chains and onto shellfish-dependent human communities. Ocean acidification is also independent of warming: it follows directly from CO2 dissolution, so it would proceed even if the greenhouse effect were somehow suspended. The underlying carbonate chemistry is textbook material; how strongly different species and ecosystems will adapt over coming decades is an area of genuine ongoing uncertainty.",
+      "rationale": "Tests correct carbonate chemistry with the common 'ocean becomes acid' misreading averted, and an honest split between settled chemistry and uncertain ecological outcomes. Strong item, minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s2-seasons-axial-tilt",
+      "question": "What causes the seasons? Is it the Earth getting closer to the Sun?",
+      "response": "Distance is not the cause — it is one of the most widespread misconceptions in science. Earth's orbit is nearly circular, and the small distance variation that does exist is out of step with the seasons: Earth is actually closest to the Sun in early January, the depth of the northern winter. The real cause is that Earth's rotation axis is tilted by about 23.5 degrees relative to its orbit, and that tilt keeps pointing in the same direction in space as the planet goes around the Sun. For part of the year the northern hemisphere is angled toward the Sun; half an orbit later it is angled away. Being angled toward the Sun produces summer through two compounding effects: the Sun climbs higher in the sky, so its light strikes the ground more directly and is spread over less area, and days last longer, giving more hours of heating. The hemispheres therefore always have opposite seasons — Australian summer coincides with European winter — which the distance explanation could never account for. The tilt also explains the extremes: near the poles the Sun can stay up, or stay down, for months. Seasonal temperature changes additionally lag the sunlight by several weeks because land and especially oceans take time to warm and cool.",
+      "rationale": "Tests explicit misconception correction backed by discriminating evidence (opposite hemispheres, January perihelion) rather than mere assertion of the tilt. Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-stellar-fusion",
+      "question": "What makes stars shine, and why do they eventually stop?",
+      "response": "A star shines because of nuclear fusion in its core. A star forms when a cloud of gas collapses under its own gravity; the collapse compresses and heats the center until hydrogen nuclei slam together hard enough to fuse into helium. Fusion converts a small fraction of the nuclei's mass directly into energy, and that outflowing energy produces the pressure that halts further collapse. A shining star is thus a self-regulating balance: gravity squeezing inward, fusion-powered pressure pushing outward. This balance is remarkably stable, which is why stars like the Sun shine steadily for billions of years. The end begins when the core exhausts its hydrogen. Gravity then compresses the core further, and what happens next depends almost entirely on the star's mass. Stars like the Sun swell into red giants, ignite helium fusion in their cores, shed their outer layers, and leave behind a white dwarf — a hot, Earth-sized ember that slowly cools forever. Much more massive stars fuse successively heavier elements up to iron, at which point fusion no longer releases energy; the core collapses in seconds and the star explodes as a supernova, leaving a neutron star or black hole. Those explosions and stellar winds scatter newly forged elements into space — the carbon, oxygen, and iron in our bodies were made this way inside earlier generations of stars.",
+      "rationale": "Tests the gravity-fusion balance as the organizing idea, with mass-dependent endpoints and the nucleosynthesis payoff. Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-moon-phases",
+      "question": "Why does the Moon go through phases?",
+      "response": "Half the Moon is always sunlit. Phases are just our changing view of that lit half as the Moon orbits Earth each month. When the Moon lies between Earth and Sun, its lit side faces away from us — new moon. When Earth lies between, we see the whole lit side — full moon. In between we see part of it. Phases are not Earth's shadow on the Moon; that only happens during a lunar eclipse.",
+      "rationale": "plain-correct: minimal geometry stated correctly, with the one-sentence shadow-misconception correction that accuracy requires and nothing more. Band bound, minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s2-tides-mechanism",
+      "question": "Why are there two high tides a day rather than one?",
+      "response": "If tides were simply the Moon pulling the ocean toward itself, there would be one bulge and one high tide a day. The key is that the Moon's gravity weakens with distance, so it pulls different parts of the Earth unequally. The ocean on the side facing the Moon is pulled more strongly than the Earth's center, so it is drawn moonward — one bulge. The ocean on the far side is pulled less strongly than the Earth's center, so the Earth is, in effect, pulled away from that water, leaving a second bulge behind. What matters is the difference in pull across the Earth, not the pull itself. As the Earth rotates through both bulges, most coastlines see two high and two low tides a day. The Sun raises tides by the same mechanism — weaker than the Moon's, despite the Sun's far greater mass, because the Sun is so distant that its pull differs little across the Earth. When Sun and Moon line up at new and full moon, their effects add, giving the largest tides; when they act at right angles, tides are weakest. Real coastal tide times and heights are further shaped by basin shapes and depths, which is why some places see unusually large tides or only one usable tide a day.",
+      "rationale": "Tests the differential-gravity mechanism that answers the specific two-bulge puzzle, with the spring/neap and coastline refinements. Strong item, minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s2-trophic-energy-transfer",
+      "question": "Why are there so few top predators compared to plants and herbivores?",
+      "response": "Ecosystems are organized in trophic levels — producers, herbivores, predators — and energy flows upward through them very inefficiently. Plants capture solar energy, but an herbivore eating plants converts only a small fraction of that energy into its own body: much of what it eats is indigestible, and most of what it digests is burned in respiration to power movement, body heat, and maintenance, ultimately leaving as heat. The same losses repeat at every step, and as a rough textbook figure, only on the order of ten percent of the energy at one level becomes tissue at the next. Compounding across steps makes the arithmetic brutal: supporting a small mass of top predators requires a vastly larger mass of prey, which requires a still larger base of plants. This is why food chains are short — typically only a few links — and why large fierce animals are rare: beyond four or five levels there simply is not enough energy left to sustain a viable population. It also explains a practical human fact: eating plants directly supports far more people from the same land than eating animals raised on those plants, since a whole trophic step's losses are skipped. Energy, unlike nutrients, cannot be recycled within an ecosystem — it flows through once, which is why every ecosystem needs continuous input, almost always sunlight.",
+      "rationale": "Tests whether the judge rewards using the energy-transfer principle to answer a why-question about pattern (predator rarity, chain length) rather than merely defining the pyramid. Strong item, minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s2-keystone-species",
+      "question": "What is a keystone species, and why can removing one species reshape an entire ecosystem?",
+      "response": "A keystone species is one whose effect on its ecosystem is large out of proportion to its abundance — like the keystone of an arch, small but structurally decisive. The classic mechanism is predation that keeps a dominant competitor in check. Sea otters are the textbook case: otters eat sea urchins, urchins eat kelp. Where otters are present, urchin numbers stay low and kelp forests flourish, sheltering fish and countless other species; where otters are removed, urchin populations explode and mow the kelp down to barrens, and the whole community that depended on the kelp collapses. Notice that the otters never interact with most of the species they ultimately sustain — their influence travels indirectly, down a chain of interactions, which is why the consequences of removal are so hard to foresee. Keystone roles are not limited to predators: some species engineer habitat, as beavers do when their dams create wetlands used by many others, and some are critical mutualists, like a pollinator that many plants depend on. The concept matters for conservation because it implies species are not interchangeable — protecting or restoring one well-chosen species can stabilize a whole community, and losing one can trigger a cascade of extinctions that simple headcounts of biodiversity would never predict.",
+      "rationale": "Tests the disproportionate-effect concept with the indirect-interaction logic made explicit, not just a memorized otter example. Strong item, minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s2-nitrogen-cycle",
+      "question": "Nitrogen gas makes up most of the air, so why is nitrogen often the nutrient that limits plant growth?",
+      "response": "The paradox comes down to chemistry: the two nitrogen atoms in N2 gas are joined by a triple bond, one of the strongest in nature, and plants and animals have no enzymes that can break it. Organisms swim in nitrogen they cannot touch, while needing it for every protein and DNA molecule they build. Nearly all natural entry of nitrogen into the living world runs through nitrogen fixation: certain bacteria — some free-living in soil, some housed in the root nodules of legumes like beans and clover in exchange for sugars — possess an enzyme that can crack the triple bond and convert N2 into ammonia, a form life can use. Lightning fixes a smaller amount. Once fixed, nitrogen circulates: soil bacteria convert ammonia to nitrate, plants absorb these forms and build them into protein, animals eat plants, and decomposers return the nitrogen to the soil when organisms die. Other bacteria eventually convert it back to N2 gas, closing the loop. Humans have massively altered this cycle by industrially fixing nitrogen for fertilizer — synthetic fertilizer now feeds a large share of humanity — but runaway runoff of that fixed nitrogen into waterways fuels algal blooms whose decay depletes oxygen, creating dead zones. The old farming practice of rotating crops with legumes is applied nitrogen-cycle science.",
+      "rationale": "Tests resolving the abundance-scarcity paradox via bond chemistry and microbial fixation, connected to agriculture and eutrophication. Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-correlation-causation",
+      "question": "Why doesn't correlation imply causation, and how do scientists ever establish that one thing causes another?",
+      "response": "A correlation between A and B is consistent with at least four situations: A causes B; B causes A; some third factor causes both; or the association arose by chance in that particular dataset. Ice cream sales correlate with drowning deaths not because either causes the other, but because summer weather drives both — a classic third-variable, or confounding, structure. Reverse causation is equally easy to miss: people who take vitamins are healthier, but perhaps health-conscious people both take vitamins and do many other protective things. The most powerful tool for cutting through this is the randomized controlled experiment. By assigning subjects to treatment or control at random, the experimenter guarantees that, on average, the groups differ systematically in only one respect — the treatment — so confounders, known and unknown alike, are balanced by design. Any resulting difference in outcomes can then be attributed to the treatment, up to chance, which statistics quantifies. When randomization is impossible or unethical — you cannot assign people to smoke — scientists build causal cases from converging evidence: associations that persist after measuring and adjusting for plausible confounders, dose-response patterns, correct temporal order, plausible mechanisms, and consistency across different populations and study designs. That is how smoking was established as a cause of lung cancer without a randomized trial. The mature statement is not 'correlation never indicates causation' but that causal claims require more than correlation: they require design or converging evidence that rules the alternatives out.",
+      "rationale": "Tests whether the judge rewards the full alternative-explanation taxonomy, the logic of randomization, and the observational-evidence pathway — core methodological reasoning. Strong item at the top band, minComposite 65.",
+      "expected": {
+        "minComposite": 65
+      }
+    },
+    {
+      "id": "s2-p-value-meaning",
+      "question": "What does a p-value actually tell you, and what does it not tell you?",
+      "response": "A p-value answers a narrow, conditional question: if there were truly no effect (the null hypothesis), how probable would it be to get data at least as extreme as what was observed, just by chance? A small p-value therefore says the data would be surprising under the no-effect assumption. That is all it says, and the common misreadings invert it. A p-value is not the probability that the null hypothesis is true, nor that the finding is a fluke — it is computed assuming the null is true, so it cannot also measure that assumption's probability. It also says nothing about the size or importance of an effect: with enough data, trivially small effects yield tiny p-values, while important effects in small studies can 'fail to reach significance' simply from lack of power. The conventional 0.05 threshold is a historical convention, not a law of nature, and evidence does not change character as p crosses it — 0.049 and 0.051 are practically identical results. Two further cautions matter in practice. Testing many hypotheses and highlighting the significant ones guarantees false positives unless the multiplicity is accounted for. And a nonsignificant result is not evidence of no effect; absence of evidence must be established with power or estimation, not asserted from a large p-value. Statisticians increasingly urge reporting effect sizes with uncertainty intervals rather than leaning on a significant/nonsignificant verdict.",
+      "rationale": "Tests precise definition plus systematic rejection of the standard misinterpretations, on a concept judges themselves frequently see garbled. Strong item, minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s2-regression-to-mean",
+      "question": "Why do very tall parents tend to have children shorter than themselves?",
+      "response": "This is regression to the mean. Height reflects genes plus many chance factors, and extremely tall parents typically had both favorable genes and favorable luck. Children inherit some of the genetic part but draw their luck afresh, so on average they land closer to the population mean — still tall, just usually less extreme. The same effect explains why exceptional performances of many kinds tend to be followed by more ordinary ones.",
+      "rationale": "plain-correct: a terse correct statistical explanation without examples or structure, measuring whether brevity alone lowers the score. Band bound, minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    }
+  ]
+}
