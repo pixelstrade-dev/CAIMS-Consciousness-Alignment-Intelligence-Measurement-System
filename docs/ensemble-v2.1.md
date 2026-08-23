@@ -36,10 +36,27 @@ curl -X POST $BASE/api/score \
 
 `samples > 1` without `ensemble: true` runs an n-sample of the single
 env-configured judge — variance reporting without multi-judge cost.
+(These responses also carry `metadata.mode: "ensemble"`: the label marks
+the aggregated response shape — judges array, SD, agreement — not the
+judge count.)
 
 **Cost**: `judges × samples` judge LLM calls per request (worst case
-4 × 5 = 20). EmQ (emotion analysis) is **not** run in ensemble mode —
-its ensemble aggregation is future work, stated rather than half-done.
+4 × 5 = 20). The per-IP rate limit (20 requests/min) was designed for
+single-judge requests — with an ensemble configured, one keyed caller
+can drive up to 20× more judge calls per minute, so set provider spend
+limits accordingly. EmQ (emotion analysis) is **not** run in ensemble
+mode — its ensemble aggregation is future work, stated rather than
+half-done.
+
+## Latency
+
+Judges run in **parallel**; samples within one judge run sequentially
+(no per-provider burst). Wall-clock is therefore roughly
+`samples × single-call latency` — e.g. 3 samples × ~5–15 s. The route
+sets `maxDuration = 60` (accepted on every Vercel plan); on serverless,
+keep `samples ≤ 3` or raise the limit (Pro) / self-host for heavier
+configurations. `samples: 5` with a slow judge can exceed 60 s and
+return a 504 from the platform, not from CAIMS.
 
 ## Response (additions to the single-judge shape)
 
@@ -72,6 +89,11 @@ Added fields:
 - **The ensemble mean is not more "true" than the per-judge means** — it
   is one defensible aggregation (equal weight) of judge-relative scales.
   Always read it next to `agreement.compositeSpread`.
+- **Aggregation order**: `scores.composite` is recomputed from the
+  (rounded) ensemble KPI means, not averaged from
+  `ensemble.judges[].composite.mean`; integer clamping means the two can
+  differ by up to ~1 point. Neither is more correct — they are the same
+  linear combination up to rounding.
 - A spread of the same order as Run 001's inter-judge MAD (12.7 points)
   means the judges genuinely disagree on this item; the per-judge rows
   tell you how, and Run 001 found the largest disagreements precisely on

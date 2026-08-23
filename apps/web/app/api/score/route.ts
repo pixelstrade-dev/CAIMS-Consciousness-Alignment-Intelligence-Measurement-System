@@ -1,4 +1,9 @@
 export const dynamic = 'force-dynamic';
+// Ensemble/n-sample requests run judges in parallel but samples sequentially:
+// a worst-case request is still several judge calls long. 60s is accepted on
+// every Vercel plan; raise it (Pro) or self-host for heavy configurations —
+// see docs/ensemble-v2.1.md#latency.
+export const maxDuration = 60;
 
 import { NextRequest } from 'next/server';
 import { z } from 'zod';

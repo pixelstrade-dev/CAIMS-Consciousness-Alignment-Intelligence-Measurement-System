@@ -138,18 +138,21 @@ export async function scoreEnsemble(params: {
   const judgeResults: EnsembleJudgeResult[] = [];
   const failedJudges: EnsembleScores['failedJudges'] = [];
 
-  // Sequential across judges and samples: bounded, predictable provider load
-  // (worst case MAX_ENSEMBLE_JUDGES × MAX_SAMPLES_PER_JUDGE = 20 calls).
-  for (const judge of params.judges) {
+  // PARALLEL across judges (they usually target different providers, so this
+  // divides wall-clock latency by the judge count — a serverless-timeout
+  // concern raised in review); SEQUENTIAL across samples within one judge so
+  // no single provider sees a burst. Worst case stays bounded at
+  // MAX_ENSEMBLE_JUDGES × MAX_SAMPLES_PER_JUDGE = 20 calls per request.
+  const perJudge = await Promise.all(params.judges.map(async (judge):
+    Promise<{ ok: EnsembleJudgeResult } | { fail: EnsembleScores['failedJudges'][number] }> => {
     let adapter: LLMAdapter;
     try {
       adapter = adapterFor(judge);
     } catch (e) {
-      failedJudges.push({
+      return { fail: {
         id: judge.id, provider: judge.provider, model: judge.model,
         reason: e instanceof Error ? e.message : String(e),
-      });
-      continue;
+      } };
     }
 
     const kpiSamples: Record<(typeof KPI_KEYS)[number], number[]> =
@@ -179,14 +182,14 @@ export async function scoreEnsemble(params: {
     }
 
     if (composites.length === 0) {
-      failedJudges.push({
+      return { fail: {
         id: judge.id, provider: judge.provider, model: judge.model,
         reason: `all ${samples} sample(s) failed (transport/parse/validation)`,
-      });
-      continue;
+      } };
     }
 
-    judgeResults.push({
+    const sd = sampleSd(composites);
+    return { ok: {
       id: judge.id,
       provider: judge.provider,
       model: judge.model,
@@ -200,11 +203,14 @@ export async function scoreEnsemble(params: {
         eq: round1(mean(kpiSamples.eq)),
         sq: round1(mean(kpiSamples.sq)),
       },
-      composite: (() => {
-        const sd = sampleSd(composites);
-        return { mean: round1(mean(composites)), sd: sd === null ? null : round1(sd) };
-      })(),
-    });
+      composite: { mean: round1(mean(composites)), sd: sd === null ? null : round1(sd) },
+    } };
+  }));
+
+  // Preserve the configured judge order in both result lists.
+  for (const r of perJudge) {
+    if ('ok' in r) judgeResults.push(r.ok);
+    else failedJudges.push(r.fail);
   }
 
   if (judgeResults.length === 0) {

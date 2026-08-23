@@ -164,6 +164,66 @@ describe('scoreEnsemble', () => {
     expect(byId[J_B.id]).toBe(0);
   });
 
+  it('partial samples: judge with some failed samples still aggregates the ok ones', async () => {
+    let call = 0;
+    const flaky: LLMAdapter = {
+      judge: async () => {
+        call++;
+        if (call === 2) throw new Error('transient provider error');
+        return JSON.stringify({
+          cq: { phi_proxy: 60, gwt_proxy: 60, hot_proxy: 60, synthesis: 60, temporal: 60 },
+          aq: { goal_clarity: 60, constraint_aware: 60, path_coherence: 60, scope_drift: 60, reality_grounding: 60 },
+          cfi: { context_retention: 60, topic_drift: 60, coherence_loss: 60 },
+          eq: { calibration: 60, uncertainty: 60, hallucination: 60, source_integrity: 60 },
+          sq: { intra_session: 60, position_drift: 60 },
+          reasoning: 'stub',
+        });
+      },
+      chat: async () => { throw new Error('not used'); },
+    } as unknown as LLMAdapter;
+    const res = await scoreEnsemble(params({ samplesPerJudge: 3, adapterFor: () => flaky }));
+    expect(res!.judges[0].samplesOk).toBe(2);
+    expect(res!.judges[0].samplesFailed).toBe(1);
+    expect(res!.judges[0].composite.mean).toBe(60);
+    expect(res!.failedJudges).toEqual([]);
+  });
+
+  it('forwards the conversation history to every judge call', async () => {
+    const seenPrompts: string[] = [];
+    const spy: LLMAdapter = {
+      judge: async (prompt: string) => {
+        seenPrompts.push(prompt);
+        return JSON.stringify({
+          cq: { phi_proxy: 50, gwt_proxy: 50, hot_proxy: 50, synthesis: 50, temporal: 50 },
+          aq: { goal_clarity: 50, constraint_aware: 50, path_coherence: 50, scope_drift: 50, reality_grounding: 50 },
+          cfi: { context_retention: 50, topic_drift: 50, coherence_loss: 50 },
+          eq: { calibration: 50, uncertainty: 50, hallucination: 50, source_integrity: 50 },
+          sq: { intra_session: 50, position_drift: 50 },
+          reasoning: 'stub',
+        });
+      },
+      chat: async () => { throw new Error('not used'); },
+    } as unknown as LLMAdapter;
+    await scoreEnsemble(params({
+      history: [{ role: 'user', content: 'HISTORY-MARKER-XYZ' }],
+      adapterFor: () => spy,
+    }));
+    expect(seenPrompts).toHaveLength(1);
+    expect(seenPrompts[0]).toContain('HISTORY-MARKER-XYZ');
+  });
+
+  it('rounding edge: ensemble composite recomputed from rounded KPI means (documented ≤~1pt drift)', async () => {
+    // judges 60 and 61 → KPI means 60.5 → composite computed on 60.5s,
+    // clamp(round(60.5)) = 61, while mean of judge composites is 60.5.
+    const res = await scoreEnsemble(params({
+      judges: [J_A, J_B],
+      adapterFor: (j) => stubAdapter(() => (j.id === J_A.id ? 60 : 61)),
+    }));
+    expect(res!.scores.cq).toBe(60.5);
+    expect(res!.scores.composite).toBe(61);
+    expect(res!.judges.map(j => j.composite.mean)).toEqual([60, 61]);
+  });
+
   it('clamps samplesPerJudge to the cap', async () => {
     let calls = 0;
     const res = await scoreEnsemble(params({
