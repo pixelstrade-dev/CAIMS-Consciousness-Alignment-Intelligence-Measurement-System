@@ -62,16 +62,27 @@ const AUTHOR_STOPWORDS = new Set([
   'During', 'After', 'Before', 'Around', 'Circa', 'About', 'And', 'But',
 ]);
 
-const trimTrailing = (s: string) => s.replace(/[.,;:\]]+$/, '');
+// Linear-time trailing trim — the regex form ([.,;:\]]+$) is polynomial on
+// adversarial inputs (many repeated ',') per CodeQL js/polynomial-redos.
+const TRIM_CHARS = new Set(['.', ',', ';', ':', ']']);
+const trimTrailing = (s: string): string => {
+  let end = s.length;
+  while (end > 0 && TRIM_CHARS.has(s[end - 1])) end--;
+  return s.slice(0, end);
+};
 
 // Trim trailing ')' only while unbalanced — keeps "..._(disambiguation)".
+// Counts once then decrements: O(n), no per-iteration rescans.
 function trimUnbalancedParens(s: string): string {
+  let opens = 0, closes = 0;
+  for (const ch of s) {
+    if (ch === '(') opens++;
+    else if (ch === ')') closes++;
+  }
   let out = s;
-  while (out.endsWith(')')) {
-    const opens = (out.match(/\(/g) || []).length;
-    const closes = (out.match(/\)/g) || []).length;
-    if (closes > opens) out = out.slice(0, -1);
-    else break;
+  while (out.endsWith(')') && closes > opens) {
+    out = out.slice(0, -1);
+    closes--;
   }
   return out;
 }
