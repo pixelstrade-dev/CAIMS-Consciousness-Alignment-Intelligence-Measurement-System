@@ -35,7 +35,7 @@ describe('AnthropicAdapter', () => {
     mockCreate.mockResolvedValue({
       content: [{ type: 'text', text: '{}' }],
       usage: { input_tokens: 1, output_tokens: 2 },
-      model: 'claude-sonnet-5',
+      model: 'anthropic-test-model',
     });
   });
 
