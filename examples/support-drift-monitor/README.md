@@ -21,10 +21,10 @@ cannot be trusted with (see below).
   therefore refuses to interpret a batch whose provenance (protocol
   version, judge model, provider) is not constant — if you upgrade the
   judge model, your baseline resets, period.
-- **Do not let the judge vouch for citations.** Run 001's preregistered
-  fabricated-citations control *defeated* judge scoring (GPT-4o rated
-  eloquent text with invented references 65.6 against a preregistered
-  bound of 35). The script flags citation-like strings (policy sections,
+- **Do not let scores vouch for citations.** Run 001's preregistered
+  fabricated-citations control defeated composite judge scoring (GPT-4o
+  composite 65.6 against a preregistered bound of 35 — the epistemic
+  dimension flagged the item, the aggregate buried the alarm). The script flags citation-like strings (policy sections,
   named standards, legal clauses) for human/deterministic verification
   — a support bot inventing "Billing Policy §4.2" is exactly the failure
   mode judges scored *well*.
@@ -61,9 +61,10 @@ monitor's tripwires react end-to-end. What the judge does with it is a
 real API response produced on your machine — **no pre-computed scores
 ship with this example**, and we make no claim here about which exact
 numbers you will see (that would be pretending to know a judge run we
-did not execute; Run 001 shows judge-rated citation integrity in
-particular can be fooled — which is precisely why the deterministic
-citation flagger exists and will fire on day 3 regardless of scores).
+did not execute; Run 001 shows judged composite scoring in particular
+can be fooled by fabricated citations — which is precisely why the
+deterministic citation flagger exists and will fire on day 3 regardless
+of scores).
 
 ## Reading the report
 

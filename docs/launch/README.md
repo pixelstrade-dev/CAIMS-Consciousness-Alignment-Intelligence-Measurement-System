@@ -58,9 +58,12 @@ published the failures.**
   the scores are framed as behavioral proxies with a written
   disclaimer. Point to `research/methodology/disclaimer.md`.
 - *"The judges reward fabricated citations, so the metric is broken."*
-  — Partially yes: that finding is published in the abstract, and the
+  — Partially yes: the composite verdict passed the fabricated text
+  even though the epistemic dimension flagged it (aggregation buried
+  the alarm), that finding is published in the abstract, and the
   mitigation (deterministic citation checking, judge-independent) is on
-  the roadmap; judge-rated source integrity should not be trusted alone.
+  the roadmap. Never trust judge screening plus aggregation on
+  citations.
 - *"n=1 run, n=5 samples, two judges — that's tiny."* — Correct;
   descriptive statistics only, preregistered bounds, and the paper says
   exactly this. Run 002 adds an open-weight judge.

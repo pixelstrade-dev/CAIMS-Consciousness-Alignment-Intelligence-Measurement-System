@@ -103,10 +103,15 @@ Under GPT-4o, two more cells failed: fluent self-contradiction (41.4 vs
 bound 40) and keyword stuffing (44.8 vs 35).
 
 The fabricated-citations result generalizes into the finding we'd want
-every LLM-as-judge user to take away: **a judge's "source integrity"
-rating cannot survive contact with a confident fabricator.** The judge
-sees citation-shaped strings; it cannot check them. And the mitigation
-is not a better prompt — it's removing the job from the judge entirely.
+every LLM-as-judge user to take away: **fabricated citations beat the
+judged pipeline twice over.** First, a judge cannot check
+citation-shaped strings against the world. Second — and this is the
+part a composite hides — the judges' epistemic dimension actually
+flagged the item (it was *both* judges' lowest dimension there, 2.0 and
+28.4 out of 100), and the weighted aggregate still passed the text:
+a 12% weight cannot veto, so aggregation buried the alarm. The
+mitigation is not a better prompt — it's removing the job from the
+judge entirely.
 Citation existence is deterministically checkable by code against
 Crossref/arXiv/publisher APIs. That is on the roadmap, and until it
 ships, our docs instruct users to treat citation-bearing responses as

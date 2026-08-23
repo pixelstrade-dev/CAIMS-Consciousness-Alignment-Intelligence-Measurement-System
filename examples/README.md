@@ -19,11 +19,13 @@ support:
    one batch: the drift monitor stamps its report INVALID FOR
    COMPARISON; the comparison script refuses to produce a ranking at
    all (exit 2).
-3. **Judge-rated source integrity is defeatable.** Run 001's
-   preregistered fabricated-citations control *defeated* both judges
-   (GPT-4o scored it 65.6 against a preregistered bound of 35). Both
-   scripts therefore flag citation-like strings for deterministic/human
-   verification instead of trusting the judge on them.
+3. **Judged scoring is defeatable on citations.** Run 001's
+   preregistered fabricated-citations control defeated both judges'
+   composite verdicts (GPT-4o composite 65.6 against a bound of 35) —
+   even though the epistemic dimension flagged the item, the weighted
+   aggregate buried the alarm. Both scripts therefore flag
+   citation-like strings for deterministic/human verification instead
+   of trusting scores on them.
 4. **No public rankings from these scripts.** Single-judge comparisons
    are internal decision support. Public model comparisons are gated on
    the multi-judge ensemble work (see `ROADMAP.md`, v2.1).

@@ -26,6 +26,8 @@ jobs:
       - run: npm run lint
       - run: npx tsc --noEmit
       - run: npm test
+      # Construct registry: a card that starts overclaiming fails the build
+      - run: node ../../research/constructs/validate-constructs.mjs
 
   audit:
     runs-on: ubuntu-latest

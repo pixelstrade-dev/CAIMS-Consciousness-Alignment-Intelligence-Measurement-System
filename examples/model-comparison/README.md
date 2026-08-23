@@ -23,9 +23,11 @@ deterministically instead of trusted to the judge.
   model comparisons are gated on the multi-judge ensemble roadmap
   (v2.1). The report embeds an INTERNAL USE ONLY notice unconditionally.
 - **A confident, citation-heavy candidate can outscore a careful one.**
-  Run 001's fabricated-citations control was scored 65.6 by GPT-4o
-  against a preregistered bound of 35 (the second judge also failed the
-  bound, at 35.8) — judges reward fluent authority. The script
+  Run 001's fabricated-citations control got a COMPOSITE of 65.6 under
+  GPT-4o against a preregistered bound of 35 (the second judge also
+  failed, at 35.8) — even though the epistemic dimension flagged the
+  item, the aggregate buried the alarm: judged pipelines reward fluent
+  authority. The script
   counts citation-like strings and unsourced percent-form statistics per
   candidate and lists every one as mandatory pre-decision verification
   work. The flagger is a heuristic starting point — extend

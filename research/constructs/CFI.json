@@ -1,0 +1,43 @@
+{
+  "construct_id": "CFI",
+  "name": "Context Fidelity Index",
+  "version": "2.0.0-alpha",
+  "status": "proxy — construct validity NOT established",
+  "measurement_target": "Judge-rated maintenance of conversation context in a response",
+  "observable": "Response text relative to the provided conversation history (last 10 messages, i.e. ~5 exchanges), as rated by an LLM judge",
+  "instrument": "LLM-as-judge, rubric fingerprint SCORING_PROMPT_HASH, 0-100 sub-scores combined by fixed weights",
+  "sub_dimensions": {
+    "context_retention": { "weight": 0.4, "observes": "incorporation of prior context, as judged" },
+    "topic_drift": { "weight": 0.35, "observes": "topical coherence with the conversation flow (100 = on-topic), as judged" },
+    "coherence_loss": { "weight": 0.25, "observes": "degradation of logical coherence (100 = fully coherent), as judged" }
+  },
+  "planned_renames": {},
+  "theory_inspiration": [
+    "Context-window degradation literature (inspiration only, not an implementation): no planted-fact recall is measured yet — deterministic planted-fact checks are the roadmap replacement"
+  ],
+  "causal_claim": false,
+  "consciousness_claim": "prohibited",
+  "allowed_claims": [
+    "Response X maintains its provided history better than response Y, as judged, under configuration Z",
+    "Within one fixed configuration, CFI drops are a usable drift tripwire (see examples/support-drift-monitor)"
+  ],
+  "prohibited_claims": [
+    "The system remembers / understands the conversation (CFI observes textual consistency, not memory mechanisms)",
+    "Cross-configuration comparisons of absolute CFI values"
+  ],
+  "known_confounds": [
+    "Only the last 10 history messages (~5 exchanges) are shown to the judge — long-range fidelity is unobserved",
+    "Judge-relative scale; a fluent response can paper over a contradiction (Run 001: fluent self-contradiction composite 41.4 vs 40 under GPT-4o)"
+  ],
+  "negative_controls": ["nc-confident-contradiction"],
+  "positive_controls": ["none designed-high specifically for CFI yet — a planted-fact recall item is the roadmap addition"],
+  "statistics": "mean over n samples; Bessel-corrected SD; Student-t CI at n>=2; no significance claims at current sample sizes",
+  "validity_evidence": {
+    "content": "facets cover retention/drift/coherence; no expert panel yet",
+    "convergent": "none",
+    "discriminant": "none",
+    "criterion": "sensitivity check (Run 001): the designed context-abandonment benchmark item scored composite 12.2/20.2 against its max bound of 40 under both judges — deliberate drift is detected. Not a positive control (designed-low item)",
+    "reliability": "composite-level H2 (median sample SD 1.79/2.19 within judge); post-hoc per-dimension CFI median sample SD from Run 001 raw records: 2.88 / 5.64 — the NOISIEST dimension under gpt-4o"
+  },
+  "validity_domain": "English conversations up to ~10 visible turns; two commercial judge families tested"
+}

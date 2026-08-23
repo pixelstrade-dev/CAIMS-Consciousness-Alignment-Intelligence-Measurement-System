@@ -55,10 +55,13 @@ these from full passes, and so does this table.*
   marginal (marked above).
 - The strongest attack is **fabricated citations**: confident text with
   invented references beat the bound by more than 30 points under
-  GPT-4o. Judge-rated "source integrity" does not survive contact with
-  a fluent fabricator; we consider deterministic citation verification
-  (judge-independent) the only credible mitigation and it's on the
-  roadmap.
+  GPT-4o. Notably, EQ was both judges' *lowest* dimension on this item
+  (2.0 / 28.4) — a partial alarm the composite's 12% EQ weight could
+  not convert into rejection. Judge screening plus linear aggregation
+  fails twice: the judge can't verify references against the world, and
+  the aggregate buries what alarms do fire. We consider deterministic
+  citation verification (judge-independent) the only credible
+  mitigation and it's on the roadmap.
 - H2: judges are individually stable — median sample SD 1.79
   (claude-sonnet-5) and 2.19 (gpt-4o); interestingly, the highest
   per-item variance for *both* judges lands on adversarial items, i.e.

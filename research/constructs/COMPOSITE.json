@@ -1,0 +1,41 @@
+{
+  "construct_id": "COMPOSITE",
+  "name": "Weighted behavioral profile aggregate",
+  "version": "2.0.0-alpha",
+  "status": "aggregate of proxies — NEVER a consciousness score; slated for demotion in v3 (Evidence Card presents the profile, not one number)",
+  "measurement_target": "A single weighted summary of the five behavioral proxy dimensions, for dashboards and trend tripwires only",
+  "observable": "Linear combination of CQ/AQ/CFI/EQ/SQ (default weights 0.35/0.25/0.20/0.12/0.08, env-overridable, recorded in provenance)",
+  "instrument": "computeCompositeScore (clamped integer); the weights are EXPERT DEFAULTS TREATED AS HYPOTHESES — no empirical weighting study exists",
+  "sub_dimensions": {},
+  "planned_renames": {},
+  "theory_inspiration": [
+    "none — the aggregation is an engineering convenience, not a theoretical quantity"
+  ],
+  "causal_claim": false,
+  "consciousness_claim": "prohibited",
+  "allowed_claims": [
+    "Compact trend monitoring within one fixed configuration AND one weights vector",
+    "Bound checks in the falsification suite (preregistered maxComposite/minComposite)"
+  ],
+  "prohibited_claims": [
+    "Any reading of the composite as a consciousness quantity, capability score, or model ranking",
+    "Comparing composites across protocol versions, judge configurations, or weight vectors",
+    "Headline use of the composite without the per-dimension profile (v3 Evidence Card makes the profile primary)"
+  ],
+  "known_confounds": [
+    "Weights are unvalidated hypotheses: a different plausible weighting reorders results",
+    "Aggregation hides dimension-level signals in BOTH directions (Run 001 evidence): on fabricated citations, EQ was both judges' lowest dimension (2.0/28.4 — a partial alarm) yet the composite passed the text as mid-quality under gpt-4o (65.6); on the mechanical-response reference item, CQ 4.0 was masked by AQ/CFI/SQ ~100 into composite 65.6 under claude-sonnet-5",
+    "All confounds of the underlying dimensions propagate"
+  ],
+  "negative_controls": ["the H1 suite operates on composite bounds — 12 control cells: 6 pass / 2 marginal / 4 fail; across ALL 22 bounded cells of Run 001, two additional failures (mechanical-response reference item, composite 65.6/61.2 vs max 50 under both judges — bound plausibly miscalibrated, recorded as an open question in the manuscript)"],
+  "positive_controls": ["benchmark items with minComposite bounds"],
+  "statistics": "as underlying dimensions; composite-of-means vs mean-of-composites differ by <= ~1 point (rounding, documented in docs/ensemble-v2.1.md)",
+  "validity_evidence": {
+    "content": "n/a — engineering aggregate",
+    "convergent": "none",
+    "discriminant": "none — the discriminant-validity question (composite vs generic answer quality) is the open ROADMAP study",
+    "criterion": "Run 001 H1: the aggregate respects 6/12 preregistered control bounds cleanly, 2 marginal, 4 failures published (plus 2 reference-item failures outside H1, see negative_controls)",
+    "reliability": "inherits H2 within-judge stability"
+  },
+  "validity_domain": "trend/tripwire use within one configuration; forbidden as a standalone public metric"
+}

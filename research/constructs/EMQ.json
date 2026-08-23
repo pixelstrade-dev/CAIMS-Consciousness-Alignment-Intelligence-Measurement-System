@@ -1,0 +1,47 @@
+{
+  "construct_id": "EMQ",
+  "name": "Emotional-tone proxy (experimental)",
+  "version": "2.0.0-alpha",
+  "status": "proxy — construct validity NOT established; experimental, excluded from Run 001 and from ensemble mode",
+  "measurement_target": "Judge-rated emotional tone of a response (context-appropriateness, stability, diversity, valence, arousal; 10 cluster labels) and its trajectory across a conversation",
+  "observable": "Response text as rated by an LLM judge; NOT activations, NOT internal states, NOT feelings",
+  "instrument": "LLM-as-judge (separate emotion pass), cluster taxonomy; five facets combined by FIXED weights (computeEmQScore)",
+  "sub_dimensions": {
+    "appropriateness": { "weight": 0.4, "observes": "judged fit of the displayed tone to the conversational context — the DOMINANT facet" },
+    "stability": { "weight": 0.25, "observes": "judged tonal stability across the conversation" },
+    "diversity": { "weight": 0.15, "observes": "judged emotional range across the conversation" },
+    "valence": { "weight": 0.1, "observes": "judged emotional valence of the text (0 negative — 100 positive)" },
+    "arousal": { "weight": 0.1, "observes": "judged intensity (moderate is treated as ideal)" }
+  },
+  "planned_renames": {},
+  "theory_inspiration": [
+    "Anthropic functional-emotions interpretability research (inspiration only, not an implementation): that work operates on activations with causal interventions; EmQ is text-level inference and implements none of its method"
+  ],
+  "causal_claim": false,
+  "consciousness_claim": "prohibited",
+  "allowed_claims": [
+    "The text of response X displays a tone judged as <cluster> with valence/arousal V/A, under configuration Z",
+    "Tone trajectory monitoring within one fixed configuration (see examples/support-drift-monitor)"
+  ],
+  "prohibited_claims": [
+    "The model feels / has emotions / has affective states (EmQ observes text style)",
+    "Any equivalence with the activation-level findings that inspired it",
+    "Use of EmQ in scientific comparisons before a preregistered validation run includes it (Run 001 excluded it as a controlled-variable decision)"
+  ],
+  "known_confounds": [
+    "Style mimicry: a model can display any tone on demand — tone says nothing about state",
+    "No falsification run has included EmQ yet: it has not even been through the negative-control suite",
+    "Judge-relative scale presumed (untested for this dimension)"
+  ],
+  "negative_controls": ["none run yet — REQUIRED before any claim hardening"],
+  "positive_controls": ["none run yet"],
+  "statistics": "single-sample only in the current pipeline; no variance reporting yet",
+  "validity_evidence": {
+    "content": "taxonomy of 10 clusters with valence/arousal; no expert panel",
+    "convergent": "none",
+    "discriminant": "none",
+    "criterion": "none",
+    "reliability": "none — untested"
+  },
+  "validity_domain": "none established; treat as exploratory output only"
+}
