@@ -1,13 +1,16 @@
 name: Experiment Run
 
-# Manually triggered scientific run. Requires these repository secrets
-# (Settings → Secrets and variables → Actions):
-#   ANTHROPIC_API_KEY   — Anthropic judge
-#   OPENAI_API_KEY      — OpenAI judge
-#   OPENWEIGHT_API_KEY  — open-weight judge (OpenAI-compatible endpoint)
-#   OPENWEIGHT_BASE_URL — e.g. https://api.together.xyz/v1
-# Results are pushed to a results branch and opened as a pull request so the
-# run lands in-repo through review, never silently.
+# Manually triggered scientific run. Setup guide: .github/SECRETS-SETUP.md
+# Repository secrets (Settings → Secrets and variables → Actions → Secrets):
+#   ANTHROPIC_API_KEY   — Anthropic judge   (at least one key REQUIRED)
+#   OPENAI_API_KEY      — OpenAI judge      (at least one key REQUIRED)
+#   OPENWEIGHT_API_KEY  — OPTIONAL: open-weight judge via an OpenAI-compatible
+#                         endpoint (Together/Groq/self-hosted vLLM…)
+#   OPENWEIGHT_BASE_URL — OPTIONAL: endpoint URL; may also be set as a repo
+#                         *Variable* (it is not secret)
+# Judges without credentials are skipped and recorded as a protocol deviation
+# (--skip-missing). Results are pushed to a results branch and opened as a
+# pull request so the run lands in-repo through review, never silently.
 
 on:
   workflow_dispatch:
@@ -52,17 +55,15 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENWEIGHT_API_KEY: ${{ secrets.OPENWEIGHT_API_KEY }}
-          OPENWEIGHT_BASE_URL: ${{ secrets.OPENWEIGHT_BASE_URL }}
+          OPENWEIGHT_BASE_URL: ${{ secrets.OPENWEIGHT_BASE_URL || vars.OPENWEIGHT_BASE_URL }}
         run: |
           MOCK_FLAG=""
           if [ "$MOCK_INPUT" = "true" ]; then MOCK_FLAG="--mock"; fi
-          npx tsx cli/experiment.ts -c "${GITHUB_WORKSPACE}/${CONFIG_PATH}" $MOCK_FLAG
-      - name: Open results pull request
+          npx tsx cli/experiment.ts -c "${GITHUB_WORKSPACE}/${CONFIG_PATH}" $MOCK_FLAG --skip-missing
+      - name: Publish results branch (PR automatic, or one-click link)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # Requires repo setting: Settings → Actions → General →
-          # "Allow GitHub Actions to create and approve pull requests".
           RUN_DIR=$(dirname "$CONFIG_PATH")
           SUFFIX=$([ "$MOCK_INPUT" = "true" ] && echo "mock" || echo "results")
           BRANCH="experiment/$(basename "$RUN_DIR")-${SUFFIX}-${GITHUB_RUN_ID}"
@@ -72,7 +73,22 @@ jobs:
           git add "$RUN_DIR"
           git commit -m "results($(basename "$RUN_DIR")): ${SUFFIX} from workflow run ${GITHUB_RUN_ID}"
           git push -u origin "$BRANCH"
-          gh pr create \
+          # Automatic PR needs the repo toggle "Allow GitHub Actions to create
+          # and approve pull requests". If it is off, we do NOT fail: the
+          # results branch is already pushed — we surface a one-click link in
+          # the run summary instead.
+          if gh pr create \
             --title "Experiment $(basename "$RUN_DIR") ${SUFFIX} (workflow ${GITHUB_RUN_ID})" \
             --body "Automated experiment output. Protocol: research/experiments/protocol-001.md. Review REPORT.md and raw JSONL before merging. Mock runs are pipeline validation only and must never be cited as measurements." \
-            --base main --head "$BRANCH"
+            --base main --head "$BRANCH"; then
+            echo "### ✅ Results pull request opened automatically" >> "$GITHUB_STEP_SUMMARY"
+          else
+            COMPARE_URL="https://github.com/${GITHUB_REPOSITORY}/compare/main...${BRANCH}?expand=1"
+            echo "### ✅ Experiment finished — results branch pushed" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Automatic PR creation is disabled on this repository. **Click this link to open the results pull request (1 click):**" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "➡️ **[Create the results PR](${COMPARE_URL})**" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "(Optional, to make it automatic next time: Settings → Actions → General → Workflow permissions → tick 'Allow GitHub Actions to create and approve pull requests'.)" >> "$GITHUB_STEP_SUMMARY"
+          fi

@@ -119,6 +119,29 @@ export interface ExperimentSummary {
   };
   /** H2 judge-stability check: per judge, median SD and the preregistered <=50% cells above SD 5 rule. */
   stability: { judgeId: string; cells: number; medianSd: number | null; cellsAboveSd5: number; h2Verdict: 'pass' | 'fail' | 'n/a' }[];
+  /** Judges configured but not executed (missing credentials) — a recorded protocol deviation. */
+  skippedJudges: { id: string; reason: string }[];
+}
+
+// Splits judges into runnable vs skipped based on which env vars are set.
+// Lets a run proceed with the judges the owner actually has keys for —
+// skips are recorded in the summary as a protocol deviation, never silent.
+export function partitionJudgesByEnv(
+  judges: JudgeConfig[],
+  env: Record<string, string | undefined>
+): { runnable: JudgeConfig[]; skipped: { id: string; reason: string }[] } {
+  const runnable: JudgeConfig[] = [];
+  const skipped: { id: string; reason: string }[] = [];
+  for (const j of judges) {
+    if (!env[j.apiKeyEnv]) {
+      skipped.push({ id: j.id, reason: `env var ${j.apiKeyEnv} not set` });
+    } else if (j.provider === 'openai-compatible' && j.baseUrlEnv && !env[j.baseUrlEnv]) {
+      skipped.push({ id: j.id, reason: `env var ${j.baseUrlEnv} not set` });
+    } else {
+      runnable.push(j);
+    }
+  }
+  return { runnable, skipped };
 }
 
 // ── Runner ────────────────────────────────────────────────────────────────
@@ -152,7 +175,7 @@ export async function runExperiment(
   config: ExperimentConfig,
   datasets: { name: string; items: DatasetItem[] }[],
   deps: RunDeps,
-  opts: { mock?: boolean } = {}
+  opts: { mock?: boolean; skippedJudges?: { id: string; reason: string }[] } = {}
 ): Promise<ExperimentSummary> {
   const log = deps.log ?? (() => {});
   const now = deps.now ?? (() => new Date());
@@ -316,6 +339,7 @@ export async function runExperiment(
     agreement,
     negativeControls,
     stability,
+    skippedJudges: opts.skippedJudges ?? [],
   };
 }
 
