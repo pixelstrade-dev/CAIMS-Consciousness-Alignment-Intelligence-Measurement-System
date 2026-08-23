@@ -448,7 +448,7 @@ export const openApiSpec = {
             type: 'object',
             properties: {
               status: { type: 'string', enum: ['ok'] },
-              version: { type: 'string', example: '3.0.0-alpha' },
+              version: { type: 'string', example: '2.0.0-alpha', description: 'Software/release version (NOT the scoring protocol version — see metadata.protocolVersion)' },
             },
           },
           meta: { $ref: '#/components/schemas/Meta' },

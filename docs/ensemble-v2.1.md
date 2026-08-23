@@ -80,7 +80,7 @@ Added fields:
   }
 },
 "metadata": { "mode": "ensemble", "samplesPerJudge": 3,
-              "protocolVersion": "2.0.0-alpha", "promptHash": "…",
+              "protocolVersion": "3.0.0-alpha", "promptHash": "…",
               "weightsUsed": { … }, "emotionAnalysis": "skipped" }
 ```
 

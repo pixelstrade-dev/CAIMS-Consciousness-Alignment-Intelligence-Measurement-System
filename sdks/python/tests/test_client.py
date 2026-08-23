@@ -74,7 +74,7 @@ def test_score_roundtrip_sends_payload_and_parses(server):
         history=[{"role": "user", "content": "hi"}],
     )
     assert result.composite == 80.0
-    assert result.provenance.protocol_version == "2.0.0-alpha"
+    assert result.provenance.protocol_version == "3.0.0-alpha"
     path, body = _Handler.calls[0]
     assert path == "/api/score"
     assert body["question"] == "Explain Raft."

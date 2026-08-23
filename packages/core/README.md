@@ -53,7 +53,7 @@ const scores = await scoreInteraction({
 if (scores) {
   console.log(scores.composite);                  // 0-100
   console.log(interpretScore(scores.composite));  // { label: 'SCORE PROXY ...', color }
-  console.log(scores.metadata.protocolVersion);   // e.g. '2.0.0-alpha'
+  console.log(scores.metadata.protocolVersion);   // e.g. '3.0.0-alpha'
   console.log(scores.metadata.promptHash);        // rubric fingerprint
 }
 ```

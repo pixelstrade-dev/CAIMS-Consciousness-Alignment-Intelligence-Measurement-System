@@ -67,7 +67,8 @@ v3 = `SCORING_PROTOCOL_VERSION 3.0.0-alpha`, shipping together:
    integration_depth`, `gwt_proxy → knowledge_breadth`, `hot_proxy →
    metacognitive_display`, `temporal → temporal_coherence`) — rubric
    text, zod schema, weights code, types; protocol bumped to
-   `3.0.0-alpha`.
+   `3.0.0-alpha`. (OpenAPI `details` schemas and the UI turned out to be
+   key-generic — nothing to rename there.)
 2. `evidenceCard` becomes the primary response object; `scores` retained
    one minor version for compatibility with a deprecation note.
 3. `phenomenalConsciousness: "NOT_ASSESSED"` constant in every card.
