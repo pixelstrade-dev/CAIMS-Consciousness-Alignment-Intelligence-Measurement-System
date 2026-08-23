@@ -37,9 +37,10 @@ cd examples/support-drift-monitor
 python monitor.py --data data/support-logs.jsonl --out report.md
 ```
 
-Cost: one judge call per logged interaction — the bundled dataset makes
-**12 calls**. Exit code 1 when drift is flagged, so a nightly cron can
-alert on it.
+Cost: one scoring request per logged interaction — the bundled dataset
+makes **12 requests ≈ 24 provider LLM calls** (each request runs the KPI
+judge plus the emotion analyzer). Exit code 1 when drift is flagged, so
+a nightly cron can alert on it.
 
 ## The bundled dataset (synthetic, authored — marked as such per record)
 

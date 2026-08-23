@@ -16,9 +16,10 @@ and not do:
   aggregate batches whose provenance (protocol version, judge model,
   provider) is not constant.
 - The preregistered fabricated-citations control DEFEATED judge scoring
-  (65.6 scored vs a bound of 35), so citation-like strings in responses
-  are flagged for human/deterministic verification instead of trusting
-  the judge's source-integrity rating.
+  (GPT-4o scored it 65.6 vs a bound of 35; the second judge also failed
+  the bound, at 35.8), so citation-like strings in responses are flagged
+  for human/deterministic verification instead of trusting the judge's
+  source-integrity rating.
 
 This is descriptive monitoring, not hypothesis testing: with a handful of
 interactions per day, no significance claim is made — thresholds are
@@ -202,12 +203,24 @@ def build_report(days: List[str], summaries: Dict[str, Dict[str, Any]],
         lines.append("")
 
     prov = rows[0]["provenance"]
+    prov_known = any(v is not None for v in prov.values())
     lines += [
         "## Provenance",
         "",
-        f"- protocol version: `{prov['protocol_version']}`",
-        f"- judge model: `{prov['model_used']}` ({prov['provider']})",
-        f"- provenance constant across batch: **{'yes' if prov_ok else 'NO'}**",
+    ]
+    if prov_known:
+        lines += [
+            f"- protocol version: `{prov['protocol_version']}`",
+            f"- judge model: `{prov['model_used']}` ({prov['provider']})",
+            f"- provenance constant across batch: **{'yes' if prov_ok else 'NO'}**",
+        ]
+    else:
+        lines += [
+            "- **UNKNOWN** — the server returned no provenance metadata, so",
+            "  configuration constancy cannot be verified. Treat trends with",
+            "  caution and upgrade the server before relying on this report.",
+        ]
+    lines += [
         "",
         "_Scores are consciousness-related behavioral proxy indicators, not_",
         "_consciousness measurements. Descriptive monitoring only — no_",
@@ -243,7 +256,8 @@ def main() -> int:
 
     client = CaimsClient(args.base_url, api_key=args.api_key)
     print(f"scoring {len(records)} interactions against {args.base_url} "
-          f"({len(records)} judge calls)...", file=sys.stderr)
+          f"({len(records)} requests, ~{2 * len(records)} provider LLM calls: "
+          "KPI judge + emotion analyzer per request)...", file=sys.stderr)
     try:
         rows = score_records(client, records)
     except CaimsError as e:

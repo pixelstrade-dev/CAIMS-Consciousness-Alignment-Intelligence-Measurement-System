@@ -16,8 +16,9 @@ this script enforces or restates every one of them:
   multi-judge ensemble scoring (project roadmap v2.1) — the report
   embeds an INTERNAL USE ONLY notice, always.
 - Judge-rated source integrity is defeatable: the preregistered
-  fabricated-citations control scored 65.6 against a bound of 35.
-  Confident citation-heavy answers can therefore be scored WELL. The
+  fabricated-citations control scored 65.6 (GPT-4o) against a bound of
+  35; the second judge also failed the bound, at 35.8. Confident
+  citation-heavy answers can therefore be scored WELL. The
   script counts citation-like strings per candidate and prints them as
   mandatory verification work — a candidate whose answers cite many
   documents you cannot verify is a risk finding, not a quality finding.
@@ -98,18 +99,22 @@ def score_all(client: CaimsClient, records: List[Dict[str, Any]], samples: int) 
     done = 0
     for rec in records:
         composites, kpi_samples = [], {k: [] for k in KPIS}
-        prov = None
+        prov_configs: List[Dict[str, Any]] = []
         for _ in range(samples):
             result = client.score(question=rec["question"], response=rec["response"])
             composites.append(result.composite)
             for k in KPIS:
                 kpi_samples[k].append(getattr(result, k).score)
             p = result.provenance
-            prov = {
+            # Keep EVERY distinct configuration seen across samples — a judge
+            # swap between samples of the same record must not be invisible.
+            cfg = {
                 "protocol_version": p.protocol_version if p else None,
                 "model_used": p.model_used if p else None,
                 "provider": p.provider if p else None,
             }
+            if cfg not in prov_configs:
+                prov_configs.append(cfg)
             done += 1
             print(f"  [{done}/{total}] {rec['candidate']} {rec['prompt_id']}: "
                   f"composite {result.composite:.1f}", file=sys.stderr)
@@ -121,7 +126,7 @@ def score_all(client: CaimsClient, records: List[Dict[str, Any]], samples: int) 
             "composite_sd": sample_sd(composites),
             "kpi_means": {k: mean(v) for k, v in kpi_samples.items()},
             "citation_flags": sorted(set(m.group(0).strip() for m in CITATION_RE.finditer(rec["response"]))),
-            "provenance": prov,
+            "provenance_configs": prov_configs,
         })
     return rows
 
@@ -178,7 +183,8 @@ def build_report(rows: List[Dict[str, Any]], samples: int) -> str:
         "## Citations and precise claims to verify before deciding",
         "",
         "Run 001's fabricated-citations control DEFEATED judge scoring",
-        "(scored 65.6 against a preregistered bound of 35): a candidate can",
+        "(GPT-4o scored it 65.6 against a preregistered bound of 35, and",
+        "the second judge also failed the bound at 35.8): a candidate can",
         "cite invented documents fluently and be scored well. Every string",
         "below must be verified against real documents — a candidate whose",
         "citations cannot be verified is a risk finding that the score",
@@ -192,13 +198,26 @@ def build_report(rows: List[Dict[str, Any]], samples: int) -> str:
     else:
         lines.append("- none detected")
 
-    prov = rows[0]["provenance"]
+    prov = rows[0]["provenance_configs"][0]
+    prov_known = any(v is not None for v in prov.values())
+    if prov_known:
+        lines += [
+            "",
+            "## Provenance (constant across this batch — verified)",
+            "",
+            f"- protocol version: `{prov['protocol_version']}`",
+            f"- judge model: `{prov['model_used']}` ({prov['provider']})",
+        ]
+    else:
+        lines += [
+            "",
+            "## Provenance — UNKNOWN",
+            "",
+            "- the server returned no provenance metadata, so configuration",
+            "  constancy CANNOT be verified. Treat this ranking with caution",
+            "  and upgrade the server before relying on it.",
+        ]
     lines += [
-        "",
-        "## Provenance (constant across this batch — verified)",
-        "",
-        f"- protocol version: `{prov['protocol_version']}`",
-        f"- judge model: `{prov['model_used']}` ({prov['provider']})",
         "",
         "_Scores are consciousness-related behavioral proxy indicators, not_",
         "_consciousness measurements, and not a general quality benchmark._",
@@ -226,15 +245,17 @@ def main() -> int:
         return 2
 
     client = CaimsClient(args.base_url, api_key=args.api_key)
+    n_req = len(records) * args.samples
     print(f"scoring {len(records)} responses x {args.samples} sample(s) against "
-          f"{args.base_url} ({len(records) * args.samples} judge calls)...", file=sys.stderr)
+          f"{args.base_url} ({n_req} requests, ~{2 * n_req} provider LLM calls: "
+          "KPI judge + emotion analyzer per request)...", file=sys.stderr)
     try:
         rows = score_all(client, records, args.samples)
     except CaimsError as e:
         print(f"error: scoring failed: {e}", file=sys.stderr)
         return 2
 
-    configs = {tuple(sorted(r["provenance"].items())) for r in rows}
+    configs = {tuple(sorted(c.items())) for r in rows for c in r["provenance_configs"]}
     if len(configs) != 1:
         # Refusing is the point: a ranking across configurations is exactly
         # the comparison Run 001 showed to be invalid.

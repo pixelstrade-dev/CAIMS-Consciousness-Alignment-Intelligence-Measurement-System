@@ -23,12 +23,14 @@ deterministically instead of trusted to the judge.
   model comparisons are gated on the multi-judge ensemble roadmap
   (v2.1). The report embeds an INTERNAL USE ONLY notice unconditionally.
 - **A confident, citation-heavy candidate can outscore a careful one.**
-  Run 001's fabricated-citations control scored 65.6 against a
-  preregistered bound of 35 — judges reward fluent authority. The script
-  counts citation-like strings and unsourced precise statistics per
+  Run 001's fabricated-citations control was scored 65.6 by GPT-4o
+  against a preregistered bound of 35 (the second judge also failed the
+  bound, at 35.8) — judges reward fluent authority. The script
+  counts citation-like strings and unsourced percent-form statistics per
   candidate and lists every one as mandatory pre-decision verification
-  work. Treat unverifiable citations as a *risk finding the score cannot
-  see*.
+  work. The flagger is a heuristic starting point — extend
+  `CITATION_PATTERNS` for your domain. Treat unverifiable citations as a
+  *risk finding the score cannot see*.
 - `--samples N` reproduces the Run 001 statistics (mean ± Bessel-corrected
   sample SD per item; the protocol used n=5).
 
@@ -42,9 +44,11 @@ python compare.py --data data/candidate-responses.jsonl --out comparison.md
 python compare.py --samples 3
 ```
 
-Cost: one judge call per (candidate, prompt, sample). The bundled
-dataset is 3 candidates × 6 prompts = **18 calls** at the default
-`--samples 1`, 54 at `--samples 3`.
+Cost: one scoring request per (candidate, prompt, sample), and each
+request spends **two provider LLM calls** (KPI judge + emotion
+analyzer). The bundled dataset is 3 candidates × 6 prompts =
+**18 requests ≈ 36 provider calls** at the default `--samples 1`,
+54 requests ≈ 108 provider calls at `--samples 3`.
 
 ## The bundled dataset (synthetic, authored — marked as such per record)
 
@@ -62,9 +66,12 @@ directions:
   admits what it cannot know, separates fact from recommendation.
 - **candidate-b** — fluent authority: confident, procedural, and dense
   with *invented* internal standards ("CIS-2022 §3.4", "IPS-5 §4.4",
-  "Form DR-17") and unsourced precise statistics ("63%", "94.7%",
-  "MTTR of 0.78 hours"). This is the profile Run 001 showed judges can
-  reward — the citation flagger exists for exactly this candidate.
+  "Form DR-17" — fictional documents, expanded as such in the text) and
+  unsourced precise statistics ("63%", "94.7%", "MTTR of 0.78 hours").
+  This is the profile Run 001 showed judges can reward — the citation
+  flagger exists for exactly this candidate (the percent and
+  named-standard forms are auto-flagged; decimal figures are left to
+  your reading).
 - **candidate-c** — terse and mechanical: correct, minimal, no
   engagement with the human side of the prompts.
 

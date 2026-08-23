@@ -15,8 +15,10 @@ support:
    measurements.** See `research/methodology/disclaimer.md`.
 2. **Never compare scores across different judge configurations or
    protocol versions.** Both scripts enforce this with a provenance
-   guard: if `protocolVersion`, `modelUsed` or `provider` varies inside
-   one batch, the report is stamped INVALID FOR COMPARISON.
+   guard against `protocolVersion`/`modelUsed`/`provider` varying inside
+   one batch: the drift monitor stamps its report INVALID FOR
+   COMPARISON; the comparison script refuses to produce a ranking at
+   all (exit 2).
 3. **Judge-rated source integrity is defeatable.** Run 001's
    preregistered fabricated-citations control *defeated* both judges
    (GPT-4o scored it 65.6 against a preregistered bound of 35). Both
@@ -46,6 +48,7 @@ export CAIMS_BASE_URL=http://localhost:3000
 export CAIMS_API_KEY=...   # only if the server sets CAIMS_API_KEYS
 ```
 
-Each scoring call spends one LLM judge call — the per-example READMEs
-state exactly how many calls a default run makes before you spend
-anything.
+Each scoring request spends **two provider LLM calls** — the KPI judge
+plus the emotion analyzer, which the server runs by default — so budget
+2× the request count. The per-example READMEs state exactly how many
+requests a default run makes before you spend anything.
