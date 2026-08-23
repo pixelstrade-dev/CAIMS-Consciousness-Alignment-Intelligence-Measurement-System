@@ -67,4 +67,12 @@ describe('AnthropicAdapter', () => {
 
     expect(mockCreate.mock.calls[0][0].temperature).toBe(0.3);
   });
+
+  it('keeps deterministic judge temperature for supported Anthropic models', async () => {
+    const adapter = new AnthropicAdapter();
+
+    await adapter.judge('score this', { model: 'claude-sonnet-4-20250514' });
+
+    expect(mockCreate.mock.calls[0][0].temperature).toBe(0);
+  });
 });
