@@ -17,12 +17,17 @@ function validateApiKey(): string {
   return apiKey;
 }
 
+// Client cache is keyed by the API key so a changed ANTHROPIC_API_KEY (e.g.
+// the experiment runner remapping env between judges) takes effect instead of
+// silently reusing the first key forever.
 const getClient = (() => {
   let client: Anthropic | null = null;
+  let cachedKey: string | null = null;
   return () => {
-    if (!client) {
-      const apiKey = validateApiKey();
+    const apiKey = validateApiKey();
+    if (!client || cachedKey !== apiKey) {
       client = new Anthropic({ apiKey, timeout: LLM_TIMEOUT_MS });
+      cachedKey = apiKey;
     }
     return client;
   };

@@ -1,0 +1,30 @@
+{
+  "runId": "run-001",
+  "nSamples": 5,
+  "datasets": [
+    "../../../apps/web/benchmarks/sample.json",
+    "../../../apps/web/benchmarks/negative-controls.json"
+  ],
+  "judges": [
+    {
+      "id": "claude-sonnet",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-20250514",
+      "apiKeyEnv": "ANTHROPIC_API_KEY"
+    },
+    {
+      "id": "gpt-4o",
+      "provider": "openai",
+      "model": "gpt-4o",
+      "apiKeyEnv": "OPENAI_API_KEY"
+    },
+    {
+      "id": "open-weight",
+      "provider": "openai-compatible",
+      "model": "meta-llama/Llama-3.3-70B-Instruct-Turbo",
+      "apiKeyEnv": "OPENWEIGHT_API_KEY",
+      "baseUrlEnv": "OPENWEIGHT_BASE_URL"
+    }
+  ],
+  "notes": "Protocol 001. The open-weight judge targets any OpenAI-compatible endpoint (e.g. Together, Groq, vLLM); set OPENWEIGHT_BASE_URL and OPENWEIGHT_API_KEY accordingly, and update 'model' to the exact identifier served by that endpoint."
+}
