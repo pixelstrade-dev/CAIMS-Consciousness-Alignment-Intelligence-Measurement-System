@@ -26,7 +26,8 @@ Overleaf (paste `main.tex` into a new Overleaf project) will build it.
      full, cross-check against the arXiv page before submitting
    - arXiv:2306.05685 (Zheng et al., MT-Bench)
    - transformer-circuits.pub emotions paper (2026) — confirm exact title
-3. Insert the Zenodo DOI in the Data Availability section once minted.
+3. Zenodo DOIs are inserted (concept 10.5281/zenodo.22069134, version
+   10.5281/zenodo.22069135) — verify both resolve before submission.
 4. Decide the arXiv category: `cs.CL` (primary) with `cs.AI` cross-list
    is the natural fit.
 

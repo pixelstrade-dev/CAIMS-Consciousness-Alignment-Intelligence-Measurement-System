@@ -13,7 +13,15 @@ authors:
 repository-code: "https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System"
 license: Apache-2.0
 version: 2.0.0-alpha
-date-released: 2026-08-21
+date-released: 2026-08-23
+doi: 10.5281/zenodo.22069134
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.22069134
+    description: "Concept DOI — resolves to the latest archived version (use this to cite the software)"
+  - type: doi
+    value: 10.5281/zenodo.22069135
+    description: "Version DOI — v2.0.0-alpha snapshot"
 keywords:
   - AI evaluation
   - consciousness proxies

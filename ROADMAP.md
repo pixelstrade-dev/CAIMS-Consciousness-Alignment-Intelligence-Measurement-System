@@ -27,11 +27,11 @@ Status legend: 🟢 shipped · 🟡 in progress · ⚪ planned · 🔬 research
 
 ## v2.2 — Ecosystem
 
-- 🟡 Python SDK — code + tests shipped in `sdks/python/`; PyPI publication pending the owner's token
+- 🟢 Python SDK — published: `pip install caims` (2.0.0a1, pre-release) — https://pypi.org/project/caims/
 - ⚪ Metric plugin interface: implement a custom KPI without forking the core
 - ⚪ Reproducible Jupyter notebooks (first evaluation, model comparison, judge agreement)
 - ⚪ Public leaderboard with uncertainty-aware ranking (no ordering when intervals overlap)
-- ⚪ Zenodo DOI per release
+- 🟢 Zenodo DOI per release — concept DOI 10.5281/zenodo.22069134 (all versions), v2.0.0-alpha version DOI 10.5281/zenodo.22069135
 
 ## Research track (no date — gated by evidence, not calendar)
 
