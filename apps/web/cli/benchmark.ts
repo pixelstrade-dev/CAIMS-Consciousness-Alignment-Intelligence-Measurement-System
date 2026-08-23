@@ -343,7 +343,10 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const provider = process.env.CAIMS_LLM_PROVIDER || 'anthropic';
+  // Same normalization as the engine so the header reports the model
+  // actually used (a raw env read mis-reported e.g. " OpenAI ").
+  const { getProviderFromEnv } = await import('@/lib/adapters');
+  const provider = getProviderFromEnv();
   const model = args.model || process.env.CAIMS_SCORING_MODEL || (provider === 'openai' ? 'gpt-4o' : 'claude-sonnet-4-20250514');
   const total = dataset.items.length;
 

@@ -74,7 +74,11 @@ export function getEnsembleConfig(raw: string | undefined = process.env.CAIMS_EN
 /** The single env-configured judge, for n-sample runs without an ensemble. */
 export function defaultJudge(): EnsembleJudge {
   const provider = getProviderFromEnv();
-  const model = process.env.CAIMS_SCORING_MODEL || 'claude-sonnet-4-20250514';
+  // Provider-aware default — a Claude model name must never be sent to the
+  // OpenAI API (same rule as scoreInteraction's default).
+  const model =
+    process.env.CAIMS_SCORING_MODEL ||
+    (provider === 'openai' ? 'gpt-4o' : 'claude-sonnet-4-20250514');
   return { id: `${provider}:${model}`, provider, model };
 }
 

@@ -42,6 +42,7 @@ const FILES = [
   'scorers/__tests__/composite.test.ts',
   'scorers/__tests__/scoring-engine-injection.test.ts',
   'scorers/__tests__/ensemble.test.ts',
+  'scorers/__tests__/default-model.test.ts',
   'scorers/__tests__/prompt-safety.test.ts',
   'emotions/__tests__/taxonomy.test.ts',
   'emotions/__tests__/analyzer.test.ts',
@@ -70,7 +71,9 @@ function transform(content, relFile) {
 }
 
 // Files allowed to exist in packages/core/src without being synced.
-const HANDWRITTEN = new Set(['index.ts']);
+// cli.ts is the npx-runnable binary — its usage text and import paths differ
+// from apps/web/cli/benchmark.ts on purpose.
+const HANDWRITTEN = new Set(['index.ts', 'cli.ts', '__tests__/cli.test.ts']);
 
 function listDstFiles() {
   const out = [];
