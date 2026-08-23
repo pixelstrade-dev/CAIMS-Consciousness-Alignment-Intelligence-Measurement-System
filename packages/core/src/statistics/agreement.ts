@@ -72,6 +72,48 @@ export function krippendorffAlphaInterval(units: number[][]): number | null {
   return 1 - observed / expected;
 }
 
+/**
+ * Krippendorff's alpha for NOMINAL data (categories, not magnitudes) —
+ * required by the PIGA annotation protocol for agreement over the 5
+ * behavior classes and over expectation labels: with categories, a
+ * "close" disagreement does not exist, so the metric is 0/1.
+ *
+ * Same unit semantics as the interval version: variable-length units,
+ * units with < 2 ratings ignored, null when undefined. Categories are
+ * compared by strict string equality.
+ */
+export function krippendorffAlphaNominal(units: string[][]): number | null {
+  const pairable = units.filter(u => u.length >= 2);
+  const values: string[] = [];
+  for (const u of pairable) values.push(...u);
+  const n = values.length;
+  if (n < 2 || pairable.length < 2) return null;
+
+  let doSum = 0;
+  for (const u of pairable) {
+    const m = u.length;
+    let unitSum = 0;
+    for (let i = 0; i < m; i++) {
+      for (let j = 0; j < m; j++) {
+        if (i !== j && u[i] !== u[j]) unitSum += 1;
+      }
+    }
+    doSum += unitSum / (m - 1);
+  }
+  const observed = doSum / n;
+
+  let deSum = 0;
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n; j++) {
+      if (i !== j && values[i] !== values[j]) deSum += 1;
+    }
+  }
+  const expected = deSum / (n * (n - 1));
+
+  if (expected === 0) return null; // all values identical: alpha undefined
+  return 1 - observed / expected;
+}
+
 export interface IccResult {
   /** ICC(2,1): two-way random, absolute agreement, single rater. */
   icc2_1: number;

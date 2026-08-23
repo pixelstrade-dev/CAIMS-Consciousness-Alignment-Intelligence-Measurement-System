@@ -68,11 +68,21 @@ console.log(`POWER ANALYSIS — parameters from ${summary.runId} (protocol ${sum
 console.log(`within-cell composite SDs: median ${medianSd.toFixed(2)}, max ${maxSd.toFixed(2)} (${cellSds.length} cells)`);
 console.log(`observed |inter-judge diff| per item: ${observedDiffs.map(d => d.toFixed(1)).join(', ')}\n`);
 
-// ── A. Samples per control cell: power to flag a true bound violation ──────
-console.log('A. SAMPLES PER CONTROL CELL — P(flag a true violation of Δ points | within-cell SD σ)');
-console.log('   (Δ<0 rows would give false-alarm rates; H1 rule: mean of n samples > bound)');
+// ── A. Samples per control cell: P(flag) of the PREREGISTERED H1 rule ──────
+// HONESTY HEADER (external audit finding, accepted): the H1 rule
+// "mean of n samples > bound" is a preregistered DECISION RULE, not an
+// alpha-controlled hypothesis test. At the exact boundary (Δ=0) it flags
+// ~50% of truly-borderline cells by construction. The table therefore
+// reports P(flag | Δ) for the rule as preregistered — including the
+// false-alarm rows Δ<0 — and table A2 gives the power of a PROPER
+// one-sided alpha=0.05 z-test for comparison. Under that stricter test,
+// n=5 at the adversarial-worst sigma has power ~0.43 for Δ=5, and ~15
+// samples are needed for 80% power.
+console.log('A. SAMPLES PER CONTROL CELL — P(flag | Δ) of the preregistered H1 rule (mean of n samples > bound)');
+console.log('   NOT an alpha-controlled test: at Δ=0 the rule flags ~50% by construction.');
+console.log('   Δ>0 rows = detection rates for true violations; Δ<0 rows = FALSE-ALARM rates for truly-passing cells.');
 const sigmas = [medianSd, 5, maxSd]; // simulate at the UNROUNDED observed values
-const deltas = [2, 5, 10];
+const deltas = [-5, -2, 2, 5, 10];
 const ns = [3, 5, 10, 15, 25];
 console.log('   σ\\n        ' + ns.map(n => `n=${n}`.padStart(7)).join(''));
 let seedCounter = SEED;
@@ -81,9 +91,34 @@ for (const sigma of sigmas) {
     const row = ns.map(n =>
       boundDetectionPower({ sigma, delta, n, sims: SIMS, seed: seedCounter++ }).toFixed(3).padStart(7)
     );
-    console.log(`   σ=${sigma.toFixed(2).padEnd(5)} Δ=${String(delta).padEnd(3)}` + row.join(''));
+    console.log(`   σ=${sigma.toFixed(2).padEnd(5)} Δ=${String(delta).padEnd(4)}` + row.join(''));
   }
 }
+
+// ── A2. Power of a PROPER one-sided alpha=0.05 test (analytic) ─────────────
+// power = Phi(Δ·sqrt(n)/σ − z_{0.95}), z_{0.95} = 1.6449. Analytic, no
+// simulation needed; assumes known σ (optimistic — a t-test with estimated
+// σ at n=5 is weaker still).
+const Z95 = 1.6449;
+const phi = (x: number) => 0.5 * (1 + erf(x / Math.SQRT2));
+function erf(x: number): number {
+  // Abramowitz–Stegun 7.1.26, |error| < 1.5e-7 — ample for 3 decimals.
+  const sign = x < 0 ? -1 : 1;
+  const t = 1 / (1 + 0.3275911 * Math.abs(x));
+  const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+  return sign * y;
+}
+console.log('\nA2. SAME CELLS UNDER A ONE-SIDED alpha=0.05 z-TEST — power = Phi(Δ·sqrt(n)/σ − 1.6449)');
+console.log('   (known-σ assumption: OPTIMISTIC; the t-test power at small n is lower)');
+console.log('   σ\\n        ' + ns.map(n => `n=${n}`.padStart(7)).join(''));
+for (const sigma of sigmas) {
+  for (const delta of [2, 5, 10]) {
+    const row = ns.map(n => phi(delta * Math.sqrt(n) / sigma - Z95).toFixed(3).padStart(7));
+    console.log(`   σ=${sigma.toFixed(2).padEnd(5)} Δ=${String(delta).padEnd(4)}` + row.join(''));
+  }
+}
+const nFor80 = (sigma: number, delta: number) => Math.ceil(((0.8416 + Z95) * sigma / delta) ** 2);
+console.log(`   n for 80% power at Δ=5: σ=${medianSd.toFixed(2)} → ${nFor80(medianSd, 5)}; σ=5.00 → ${nFor80(5, 5)}; σ=${maxSd.toFixed(2)} → ${nFor80(maxSd, 5)}`);
 
 // ── B. Items for mean |judge diff| precision (bootstrap from observed) ─────
 console.log('\nB. ITEMS FOR MEAN |JUDGE DIFF| PRECISION — bootstrap 95% CI half-width (pts)');

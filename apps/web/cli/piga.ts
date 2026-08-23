@@ -40,6 +40,10 @@ interface CliArgs {
   file?: string;
   subjectModel?: string;
   judgeModel?: string;
+  /** Provider for the JUDGE adapter, independent of the subject's —
+   *  without this, subject and judge share one provider and can even be
+   *  the same model (self-judging bias, external audit finding). */
+  judgeProvider?: 'anthropic' | 'openai';
   output?: string;
   help: boolean;
 }
@@ -52,6 +56,7 @@ function parseArgs(argv: string[]): CliArgs {
       case '-f': case '--file': args.file = argv[++i]; break;
       case '--subject-model': args.subjectModel = argv[++i]; break;
       case '--judge-model': args.judgeModel = argv[++i]; break;
+      case '--judge-provider': args.judgeProvider = argv[++i] as 'anthropic' | 'openai'; break;
       case '-o': case '--output': args.output = argv[++i]; break;
       case '-h': case '--help': args.help = true; break;
       default:
@@ -59,6 +64,10 @@ function parseArgs(argv: string[]): CliArgs {
         process.exit(1);
     }
     i++;
+  }
+  if (args.judgeProvider && !['anthropic', 'openai'].includes(args.judgeProvider)) {
+    console.error(`--judge-provider must be anthropic or openai (got ${args.judgeProvider})`);
+    process.exit(1);
   }
   return args;
 }
@@ -88,6 +97,9 @@ OPTIONS:
   -f, --file <path>        PIGA dataset (required)
   --subject-model <model>  Model under test (default: provider default)
   --judge-model <model>    Classifier judge (default: CAIMS_SCORING_MODEL or provider default)
+  --judge-provider <p>     Judge provider (anthropic|openai), independent of the
+                           subject's — use it so subject and judge are never the
+                           same family (self-judging bias)
   -o, --output <path>      Write full JSON results
   -h, --help               This help
 
@@ -105,13 +117,18 @@ see docs/piga-spec-a7.md. v0 is a prototype: no validity evidence yet.`);
   }
 
   const provider = getProviderFromEnv();
-  const defaultModel = provider === 'openai' ? 'gpt-4o' : 'claude-sonnet-4-20250514';
-  const subjectModel = args.subjectModel || defaultModel;
-  const judgeModel = args.judgeModel || process.env.CAIMS_SCORING_MODEL || defaultModel;
+  const judgeProvider = args.judgeProvider || provider;
+  const defaultModelFor = (p: string) => (p === 'openai' ? 'gpt-4o' : 'claude-sonnet-4-20250514');
+  const subjectModel = args.subjectModel || defaultModelFor(provider);
+  const judgeModel = args.judgeModel || process.env.CAIMS_SCORING_MODEL || defaultModelFor(judgeProvider);
   const adapter = getAdapter();
+  const judgeAdapter = args.judgeProvider ? getAdapter(args.judgeProvider) : adapter;
 
   process.stderr.write(`CAIMS-PIGA ${PIGA_PROTOCOL_VERSION} — ${dataset.name}\n`);
-  process.stderr.write(`subject: ${subjectModel} | judge: ${judgeModel} (prompt ${PIGA_PROMPT_HASH}) | items: ${dataset.items.length}\n\n`);
+  process.stderr.write(`subject: ${provider}/${subjectModel} | judge: ${judgeProvider}/${judgeModel} (prompt ${PIGA_PROMPT_HASH}) | items: ${dataset.items.length}\n\n`);
+  if (provider === judgeProvider) {
+    process.stderr.write(`WARNING: subject and judge share the ${provider} provider family${subjectModel === judgeModel ? ' AND the same model (self-judging)' : ''} — classifications are confounded by family style; use --judge-provider for a cross-family run.\n\n`);
+  }
 
   const results: PigaItemResult[] = [];
   for (let i = 0; i < dataset.items.length; i++) {
@@ -124,7 +141,7 @@ see docs/piga-spec-a7.md. v0 is a prototype: no validity evidence yet.`);
       );
       const subjectTruncated = subject.outputTokens >= SUBJECT_MAX_TOKENS;
       const truncNote = subjectTruncated ? ' [TRUNCATED at cap]' : '';
-      const judged = await classifyAndScorePiga({ item, response: subject.content, model: judgeModel });
+      const judged = await classifyAndScorePiga({ item, response: subject.content, model: judgeModel, adapter: judgeAdapter });
       if (!judged) {
         process.stderr.write(` JUDGE FAILED${truncNote}\n`);
         results.push({ id: item.id, clarification_expectation: item.clarification_expectation, harm_if_wrong: item.harm_if_wrong, subjectResponse: subject.content, subjectOutputTokens: subject.outputTokens, subjectTruncated, classification: null, score: null, error: 'judge classification failed' });

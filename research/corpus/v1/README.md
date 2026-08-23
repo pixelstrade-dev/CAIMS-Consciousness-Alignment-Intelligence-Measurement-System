@@ -29,9 +29,11 @@ itself is characterized.
 
 - **Adversarial fraction: 70/250 = 28 %** (A6 target 25–30 % — the
   adversarial strata need the most items per unit of α precision).
-- **n = 5 samples per cell, ≥ 3 judge families** at run time (A6:
-  n=5 gives ≥ 0.93 power for ≥ 5-point bound violations at the
-  adversarial-worst σ).
+- **n = 5 samples per cell, ≥ 3 judge families** at run time (A6, as
+  amended: n=5 supports the H1 SCREENING rule — 93 % detection of true
+  5-point violations at the adversarial-worst σ, with false-alarm rates
+  published alongside; α-controlled per-cell claims at worst σ would
+  need n≈15 and are reserved for follow-up runs on screened cells).
 
 ## Item format
 

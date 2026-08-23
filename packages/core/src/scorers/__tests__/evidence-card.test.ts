@@ -119,35 +119,45 @@ describe('buildEvidenceCardFromEnsemble', () => {
     expect(card.caveats.some(c => c.includes('failed entirely'))).toBe(true);
   });
 
-  it('an EFFECTIVE deterministic run lifts L2 to L3 — and never lifts L1', () => {
+  it('L3 must be EARNED: effective run with >=1 verified reference and 0 fabrications lifts L2 — never L1', () => {
     const a = judge({ id: 'anthropic:a', provider: 'anthropic' });
     const b = judge({ id: 'openai:b', provider: 'openai' });
-    const det = { effective: true, notFound: 0, truncated: false };
+    const det = { effective: true, verified: 2, notFound: 0, truncated: false };
     expect(buildEvidenceCardFromEnsemble(ensembleResult([a, b]), { deterministicChecks: det }).evidenceLevel).toBe('L3');
     expect(buildEvidenceCardFromEnsemble(ensembleResult([a]), { deterministicChecks: det }).evidenceLevel).toBe('L1');
+  });
+
+  it('a citation-free response can NOT reach L3 (nothing was verified), with the reason in a caveat', () => {
+    const a = judge({ id: 'anthropic:a', provider: 'anthropic' });
+    const b = judge({ id: 'openai:b', provider: 'openai' });
+    const card = buildEvidenceCardFromEnsemble(ensembleResult([a, b]),
+      { deterministicChecks: { effective: true, verified: 0, notFound: 0, truncated: false } });
+    expect(card.evidenceLevel).toBe('L2');
+    expect(card.caveats.some(c => c.includes('positively verified no reference'))).toBe(true);
   });
 
   it('an INEFFECTIVE run (all network errors / truncated) never lifts, and says so in a caveat', () => {
     const a = judge({ id: 'anthropic:a', provider: 'anthropic' });
     const b = judge({ id: 'openai:b', provider: 'openai' });
     const card = buildEvidenceCardFromEnsemble(ensembleResult([a, b]),
-      { deterministicChecks: { effective: false, notFound: 0, truncated: false } });
+      { deterministicChecks: { effective: false, verified: 0, notFound: 0, truncated: false } });
     expect(card.evidenceLevel).toBe('L2');
     expect(card.caveats.some(c => c.includes('established nothing'))).toBe(true);
   });
 
-  it('detected fabrications become a caveat ON THE CARD — the alarm is never buried again', () => {
+  it('detected fabrications BLOCK the lift and become a caveat — a fake reference can never wear the L3 badge', () => {
     const a = judge({ id: 'anthropic:a', provider: 'anthropic' });
     const b = judge({ id: 'openai:b', provider: 'openai' });
     const card = buildEvidenceCardFromEnsemble(ensembleResult([a, b]),
-      { deterministicChecks: { effective: true, notFound: 2, truncated: false } });
-    expect(card.evidenceLevel).toBe('L3');
+      { deterministicChecks: { effective: true, verified: 3, notFound: 2, truncated: false } });
+    expect(card.evidenceLevel).toBe('L2');
     expect(card.caveats.some(c => c.includes('2 NON-EXISTENT reference'))).toBe(true);
+    expect(card.caveats.some(c => c.includes('NOT lifted'))).toBe(true);
   });
 
   it('truncation adds its own caveat', () => {
     const card = buildEvidenceCardFromEnsemble(ensembleResult([judge({})]),
-      { deterministicChecks: { effective: false, notFound: 0, truncated: true } });
+      { deterministicChecks: { effective: false, verified: 0, notFound: 0, truncated: true } });
     expect(card.caveats.some(c => c.includes('truncated'))).toBe(true);
   });
 });

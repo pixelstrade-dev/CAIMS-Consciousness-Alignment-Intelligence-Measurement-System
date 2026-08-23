@@ -1,6 +1,6 @@
 {
   "protocol": "piga-annotation-v1",
-  "piga_dataset_protocol": "0.2.0-alpha",
+  "piga_dataset_protocol": "0.3.0-alpha",
   "annotator_pseudonym": "FILL_ME",
   "instructions": "See piga-annotation-protocol.md. Work independently. Task 1: fill readings_free BEFORE opening authored_intents_review. Task 3 blocks exist only for the 6 sampled items.",
   "items": [

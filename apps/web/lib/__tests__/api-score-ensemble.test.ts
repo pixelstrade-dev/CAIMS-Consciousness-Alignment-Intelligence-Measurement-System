@@ -148,7 +148,26 @@ describe('POST /api/score — ensemble & n-sample (v2.1)', () => {
     expect(body.data.evidenceCard.profile.cq.n).toBe(2);
   });
 
-  it('verifyCitations on the ensemble path: runs the verifier, attaches results, lifts L2→L3', async () => {
+  it('verifyCitations on the ensemble path: a VERIFIED reference earns the L2→L3 lift', async () => {
+    process.env.CAIMS_ENSEMBLE_JUDGES = 'anthropic:judge-a,openai:judge-b';
+    mockJudge
+      .mockResolvedValueOnce(rubricJson(60))
+      .mockResolvedValueOnce(rubricJson(80));
+    mockVerifyCitations.mockResolvedValueOnce({
+      ran: true,
+      citations: [{ kind: 'doi', raw: '10.1/x', id: '10.1/x', status: 'verified' }],
+      totals: { total: 1, extractedTotal: 1, truncated: false, verified: 1, notFound: 0, unverifiable: 0, networkErrors: 0 },
+      note: 'stub',
+    });
+    const res = await handler(makeRequest({ ...BASE_BODY, ensemble: true, verifyCitations: true }));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(mockVerifyCitations).toHaveBeenCalledWith(BASE_BODY.response);
+    expect(body.data.evidenceCard.evidenceLevel).toBe('L3');
+    expect(body.data.verification.citations.totals.verified).toBe(1);
+  });
+
+  it('a detected fabrication BLOCKS the lift (stays L2) and is a caveat ON THE CARD', async () => {
     process.env.CAIMS_ENSEMBLE_JUDGES = 'anthropic:judge-a,openai:judge-b';
     mockJudge
       .mockResolvedValueOnce(rubricJson(60))
@@ -162,11 +181,25 @@ describe('POST /api/score — ensemble & n-sample (v2.1)', () => {
     const res = await handler(makeRequest({ ...BASE_BODY, ensemble: true, verifyCitations: true }));
     const body = await res.json();
     expect(res.status).toBe(200);
-    expect(mockVerifyCitations).toHaveBeenCalledWith(BASE_BODY.response);
-    expect(body.data.evidenceCard.evidenceLevel).toBe('L3');
+    expect(body.data.evidenceCard.evidenceLevel).toBe('L2'); // a fake reference can never wear the L3 badge
     expect(body.data.verification.citations.totals.notFound).toBe(1);
-    // detected fabrication is a caveat ON THE CARD, not just a sibling payload
     expect(body.data.evidenceCard.caveats.some((c: string) => c.includes('NON-EXISTENT'))).toBe(true);
+  });
+
+  it('a citation-free response can NOT reach L3 — nothing was verified', async () => {
+    process.env.CAIMS_ENSEMBLE_JUDGES = 'anthropic:judge-a,openai:judge-b';
+    mockJudge
+      .mockResolvedValueOnce(rubricJson(60))
+      .mockResolvedValueOnce(rubricJson(80));
+    mockVerifyCitations.mockResolvedValueOnce({
+      ran: true, citations: [],
+      totals: { total: 0, extractedTotal: 0, truncated: false, verified: 0, notFound: 0, unverifiable: 0, networkErrors: 0 },
+      note: 'stub',
+    });
+    const res = await handler(makeRequest({ ...BASE_BODY, ensemble: true, verifyCitations: true }));
+    const body = await res.json();
+    expect(body.data.evidenceCard.evidenceLevel).toBe('L2');
+    expect(body.data.evidenceCard.caveats.some((c: string) => c.includes('positively verified no reference'))).toBe(true);
   });
 
   it('an all-network-error verification run does NOT lift the level (stays L2, with caveat)', async () => {

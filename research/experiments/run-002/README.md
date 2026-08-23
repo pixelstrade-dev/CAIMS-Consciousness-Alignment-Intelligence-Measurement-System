@@ -58,5 +58,9 @@ Budget rough order: a few tens of dollars depending on providers.
   instrument); plus mean |judge diff| per stratum.
 - Fluency confound: compare plain-correct vs strong-positive composite
   distributions per stratum; report the gap with CIs.
-- Power notes from A6 apply: n=5 detects ≥ 5-point violations with
-  ≥ 0.93 power at the adversarial-worst σ observed in Run 001.
+- Power notes from A6 apply, AS AMENDED (external audit): the per-cell
+  H1 rule is a SCREENING rule (it flags 93 % of true 5-point violations
+  at n=5 and worst σ, but also ~27 % of cells 2 points on the passing
+  side); α-controlled per-cell claims at worst σ would need n≈15. H1
+  flags are reported with mean/SD/CI, never as confirmed violations
+  alone; test-level claims live in the per-stratum aggregates.

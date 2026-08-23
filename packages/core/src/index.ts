@@ -40,6 +40,7 @@ export type {
 export {
   buildEvidenceCardFromSingle,
   buildEvidenceCardFromEnsemble,
+  deterministicLiftEarned,
   EVIDENCE_LEVEL_LABELS,
   STANDING_CAVEATS,
 } from './scorers/evidence-card';
@@ -136,6 +137,6 @@ export {
   meanAbsDiff,
 } from './statistics/descriptive';
 export type { SummaryStats } from './statistics/descriptive';
-export { krippendorffAlphaInterval, icc2_1, interRaterAgreement } from './statistics/agreement';
+export { krippendorffAlphaInterval, krippendorffAlphaNominal, icc2_1, interRaterAgreement } from './statistics/agreement';
 export type { IccResult, InterRaterAgreement } from './statistics/agreement';
 export { mulberry32, makeNormalSampler, boundDetectionPower, bootstrapHalfWidth } from './statistics/simulation';

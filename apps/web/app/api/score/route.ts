@@ -50,6 +50,7 @@ const ScoreRequestSchema = z.object({
 function toDetSummary(check: Awaited<ReturnType<typeof verifyCitations>> | null) {
   return check ? {
     effective: verificationEffective(check),
+    verified: check.totals.verified,
     notFound: check.totals.notFound,
     truncated: check.totals.truncated,
   } : undefined;

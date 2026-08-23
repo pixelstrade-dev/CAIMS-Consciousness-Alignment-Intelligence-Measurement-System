@@ -1,5 +1,37 @@
 // GENERATED from apps/web/lib — do not edit here. Run: node scripts/sync-core.mjs
-import { krippendorffAlphaInterval, icc2_1, interRaterAgreement } from '../agreement';
+import { krippendorffAlphaInterval, krippendorffAlphaNominal, icc2_1, interRaterAgreement } from '../agreement';
+
+describe('krippendorffAlphaNominal', () => {
+  it('perfect agreement → alpha = 1', () => {
+    expect(krippendorffAlphaNominal([['ask', 'ask'], ['act', 'act'], ['ask', 'ask']])).toBeCloseTo(1, 10);
+  });
+
+  it('hand-computed anchor: units (a,a),(b,b),(a,b) → alpha = 4/9', () => {
+    // values pooled: a,a,b,b,a,b (n=6; 3 a's, 3 b's)
+    // Do = (1/6)[0 + 0 + (1+1)/1] = 2/6 = 1/3
+    // De = ordered unequal pairs / (6·5) = (2·3·3)/30 = 18/30 = 3/5
+    // alpha = 1 - (1/3)/(3/5) = 1 - 5/9 = 4/9
+    expect(krippendorffAlphaNominal([['a', 'a'], ['b', 'b'], ['a', 'b']])).toBeCloseTo(4 / 9, 10);
+  });
+
+  it('systematic disagreement → alpha below 0 (worse than chance)', () => {
+    const alpha = krippendorffAlphaNominal([['a', 'b'], ['a', 'b'], ['a', 'b'], ['b', 'a']]);
+    expect(alpha).not.toBeNull();
+    expect(alpha!).toBeLessThan(0);
+  });
+
+  it('undefined cases return null, never a fake number', () => {
+    expect(krippendorffAlphaNominal([])).toBeNull();
+    expect(krippendorffAlphaNominal([['solo']])).toBeNull();
+    expect(krippendorffAlphaNominal([['x', 'x'], ['x', 'x']])).toBeNull(); // zero expected disagreement
+    expect(krippendorffAlphaNominal([['a', 'b']])).toBeNull(); // single pairable unit
+  });
+
+  it('singleton units are ignored, not counted', () => {
+    const withSingleton = krippendorffAlphaNominal([['a', 'a'], ['b', 'b'], ['a', 'b'], ['orphan']]);
+    expect(withSingleton).toBeCloseTo(4 / 9, 10);
+  });
+});
 
 describe('krippendorffAlphaInterval', () => {
   it('perfect agreement → alpha = 1', () => {
