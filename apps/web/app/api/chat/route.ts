@@ -8,6 +8,7 @@ import { checkContextAlert } from '@/lib/scorers/composite';
 import prisma from '@/lib/db/client';
 import { checkRateLimit, getRateLimitHeaders, clientIp } from '@/lib/middleware/rate-limit';
 import { apiSuccess, apiError } from '@/lib/middleware/api-response';
+import { checkApiKey } from '@/lib/middleware/auth';
 import { logger } from '@/lib/logger';
 
 const MAX_MESSAGE_LENGTH = 50_000;
@@ -21,6 +22,17 @@ const ChatRequestSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  const auth = checkApiKey(req.headers);
+  if (!auth.ok) {
+    return apiError(
+      'UNAUTHORIZED',
+      auth.reason === 'missing_key'
+        ? 'API key required: send Authorization: Bearer <key> or x-api-key'
+        : 'Invalid API key',
+      401
+    );
+  }
+
   const startTime = Date.now();
 
   // Rate limit by IP

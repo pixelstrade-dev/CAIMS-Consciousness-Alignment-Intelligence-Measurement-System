@@ -182,3 +182,24 @@ def test_version_consistency_package_metadata():
     import caims
 
     assert caims.__version__ == importlib.metadata.version("caims")
+
+
+def test_api_key_sent_as_bearer():
+    class KeyCheckHandler(_Handler):
+        def do_POST(self):
+            if self.headers.get("Authorization") != "Bearer sk-demo":
+                self._send(401, {"success": False, "error": {"code": "UNAUTHORIZED", "message": "key required"}})
+            else:
+                self._send(200, {"success": True, "data": API_DATA, "meta": {}})
+
+    httpd = _spawn(KeyCheckHandler)
+    try:
+        no_key = CaimsClient(f"http://127.0.0.1:{httpd.server_port}")
+        with pytest.raises(CaimsAPIError) as exc:
+            no_key.score(question="q", response="r")
+        assert exc.value.code == "UNAUTHORIZED"
+
+        keyed = CaimsClient(f"http://127.0.0.1:{httpd.server_port}", api_key="sk-demo")
+        assert keyed.score(question="q", response="r").composite == 80.0
+    finally:
+        httpd.shutdown()

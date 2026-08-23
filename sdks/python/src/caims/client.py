@@ -52,17 +52,21 @@ class CaimsClient:
         max_retries: retries for retryable statuses (429/5xx) with
             exponential backoff.
         user_agent: sent with every request.
+        api_key: CAIMS API key — required when the server sets
+            CAIMS_API_KEYS; sent as ``Authorization: Bearer <key>``.
     """
 
     def __init__(
         self,
         base_url: str,
         *,
+        api_key: Optional[str] = None,
         timeout: float = 60.0,
         max_retries: int = 2,
         user_agent: Optional[str] = None,
     ):
         self.base_url = base_url.rstrip("/")
+        self.api_key = api_key
         self.timeout = timeout
         self.max_retries = max_retries
         self.user_agent = user_agent or f"caims-python/{__version__}"
@@ -116,6 +120,8 @@ class CaimsClient:
         url = self.base_url + path
         data = json.dumps(body).encode("utf-8") if body is not None else None
         headers = {"User-Agent": self.user_agent, "Accept": "application/json"}
+        if self.api_key:
+            headers["Authorization"] = f"Bearer {self.api_key}"
         if data is not None:
             headers["Content-Type"] = "application/json"
 

@@ -26,6 +26,12 @@ export const openApiSpec = {
   servers: [
     { url: '/', description: 'Current server' },
   ],
+  security: [],
+  // Cost-bearing POST operations require an API key WHEN the deployment
+  // sets CAIMS_API_KEYS (open when unset — local/private use). Send either
+  // header; both are accepted.
+  'x-authentication':
+    'Opt-in API keys: set CAIMS_API_KEYS (comma-separated) on the server, then send Authorization: Bearer <key> or x-api-key: <key> on POST endpoints. GET endpoints stay public (read-only).',
   tags: [
     { name: 'Chat', description: 'Conversational AI with automatic KPI scoring' },
     { name: 'Score', description: 'Standalone behavioral-proxy scoring' },
@@ -335,6 +341,10 @@ export const openApiSpec = {
   },
 
   components: {
+    securitySchemes: {
+      bearerKey: { type: 'http', scheme: 'bearer', description: 'CAIMS API key (enforced when CAIMS_API_KEYS is set on the server)' },
+      headerKey: { type: 'apiKey', in: 'header', name: 'x-api-key' },
+    },
     schemas: {
       // ── Request schemas ──────────────────────────────────────────
       ChatRequest: {
@@ -575,6 +585,7 @@ export const openApiSpec = {
           meta: { $ref: '#/components/schemas/Meta' },
         },
       },
+      // (securitySchemes live under components alongside schemas)
       DetectedEmotion: {
         type: 'object',
         description: 'A detected emotional-tone label (text-level inference; 10 clusters, valence/arousal)',
