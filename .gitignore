@@ -38,3 +38,4 @@ coverage/
 # Docker
 postgres_data/
 redis_data/
+__pycache__/
