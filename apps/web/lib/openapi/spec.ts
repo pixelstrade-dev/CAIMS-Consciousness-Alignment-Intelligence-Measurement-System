@@ -26,6 +26,12 @@ export const openApiSpec = {
   servers: [
     { url: '/', description: 'Current server' },
   ],
+  security: [],
+  // Cost-bearing POST operations require an API key WHEN the deployment
+  // sets CAIMS_API_KEYS (open when unset — local/private use). Send either
+  // header; both are accepted.
+  'x-authentication':
+    'Opt-in API keys: set CAIMS_API_KEYS (comma-separated) on the server, then send Authorization: Bearer <key> or x-api-key: <key> on POST endpoints. GET endpoints stay public (read-only).',
   tags: [
     { name: 'Chat', description: 'Conversational AI with automatic KPI scoring' },
     { name: 'Score', description: 'Standalone behavioral-proxy scoring' },
@@ -62,6 +68,7 @@ export const openApiSpec = {
         tags: ['Chat'],
         summary: 'Send a message and receive a scored response',
         operationId: 'postChat',
+        security: [{ bearerKey: [] }, { headerKey: [] }],
         description:
           'Sends a user message to the LLM, saves both messages, and optionally scores the interaction across 5 KPIs.',
         requestBody: {
@@ -94,6 +101,7 @@ export const openApiSpec = {
             },
           },
           400: { $ref: '#/components/responses/ValidationError' },
+          401: { $ref: '#/components/responses/Unauthorized' },
           404: { $ref: '#/components/responses/NotFound' },
           429: { $ref: '#/components/responses/RateLimited' },
           500: { $ref: '#/components/responses/InternalError' },
@@ -137,6 +145,7 @@ export const openApiSpec = {
         tags: ['Session'],
         summary: 'Create a new session',
         operationId: 'createSession',
+        security: [{ bearerKey: [] }, { headerKey: [] }],
         requestBody: {
           required: true,
           content: {
@@ -159,6 +168,7 @@ export const openApiSpec = {
             },
           },
           400: { $ref: '#/components/responses/ValidationError' },
+          401: { $ref: '#/components/responses/Unauthorized' },
           429: { $ref: '#/components/responses/RateLimited' },
           500: { $ref: '#/components/responses/InternalError' },
         },
@@ -171,6 +181,7 @@ export const openApiSpec = {
         tags: ['Score'],
         summary: 'Score an LLM interaction across 5 KPIs',
         operationId: 'postScore',
+        security: [{ bearerKey: [] }, { headerKey: [] }],
         description:
           'Evaluates a question-response pair using the CAIMS scoring engine. Returns CQ (35%), AQ (25%), CFI (20%), EQ (12%), SQ (8%) scores and a weighted composite.',
         requestBody: {
@@ -196,6 +207,7 @@ export const openApiSpec = {
             },
           },
           400: { $ref: '#/components/responses/ValidationError' },
+          401: { $ref: '#/components/responses/Unauthorized' },
           429: { $ref: '#/components/responses/RateLimited' },
           503: {
             description: 'Scoring engine temporarily unavailable',
@@ -232,6 +244,7 @@ export const openApiSpec = {
         tags: ['Debate'],
         summary: 'Create a new multi-agent debate',
         operationId: 'createDebate',
+        security: [{ bearerKey: [] }, { headerKey: [] }],
         description:
           'Initializes a debate with 2-10 agents. The orchestrator agent is auto-added if enableOrchestrator is true.',
         requestBody: {
@@ -259,6 +272,7 @@ export const openApiSpec = {
             },
           },
           400: { $ref: '#/components/responses/ValidationError' },
+          401: { $ref: '#/components/responses/Unauthorized' },
           429: { $ref: '#/components/responses/RateLimited' },
           500: { $ref: '#/components/responses/InternalError' },
         },
@@ -297,6 +311,7 @@ export const openApiSpec = {
         tags: ['Debate'],
         summary: 'Advance the debate by one turn',
         operationId: 'advanceDebate',
+        security: [{ bearerKey: [] }, { headerKey: [] }],
         description:
           'Triggers the next agent to speak. Uses round-robin with orchestrator synthesis after each round. Auto-concludes when maxTurns reached.',
         parameters: [
@@ -326,6 +341,7 @@ export const openApiSpec = {
             },
           },
           400: { $ref: '#/components/responses/ValidationError' },
+          401: { $ref: '#/components/responses/Unauthorized' },
           404: { $ref: '#/components/responses/NotFound' },
           429: { $ref: '#/components/responses/RateLimited' },
           500: { $ref: '#/components/responses/InternalError' },
@@ -335,6 +351,10 @@ export const openApiSpec = {
   },
 
   components: {
+    securitySchemes: {
+      bearerKey: { type: 'http', scheme: 'bearer', description: 'CAIMS API key (enforced when CAIMS_API_KEYS is set on the server)' },
+      headerKey: { type: 'apiKey', in: 'header', name: 'x-api-key' },
+    },
     schemas: {
       // ── Request schemas ──────────────────────────────────────────
       ChatRequest: {
@@ -575,6 +595,7 @@ export const openApiSpec = {
           meta: { $ref: '#/components/schemas/Meta' },
         },
       },
+      // (securitySchemes live under components alongside schemas)
       DetectedEmotion: {
         type: 'object',
         description: 'A detected emotional-tone label (text-level inference; 10 clusters, valence/arousal)',
@@ -599,6 +620,12 @@ export const openApiSpec = {
     },
 
     responses: {
+      Unauthorized: {
+        description: 'API key missing or invalid (enforced when CAIMS_API_KEYS is set on the server). 503 AUTH_MISCONFIGURED is returned when keys are set but unparseable — the server fails closed.',
+        content: {
+          'application/json': { schema: { $ref: '#/components/schemas/ApiErrorResponse' } },
+        },
+      },
       ValidationError: {
         description: 'Request validation failed',
         content: {

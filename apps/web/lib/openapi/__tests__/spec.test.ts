@@ -127,3 +127,31 @@ describe('OpenAPI Specification', () => {
     }
   });
 });
+
+describe('security contract (orchestrator ruling: the spec must not claim the API is open)', () => {
+  const spec = openApiSpec as Record<string, any>;
+
+  it('declares both security schemes', () => {
+    expect(spec.components.securitySchemes.bearerKey.scheme).toBe('bearer');
+    expect(spec.components.securitySchemes.headerKey.name).toBe('x-api-key');
+  });
+
+  const protectedOps: Array<[string, string]> = [
+    ['/api/chat', 'post'],
+    ['/api/score', 'post'],
+    ['/api/session', 'post'],
+    ['/api/debate', 'post'],
+    ['/api/debate/{id}', 'post'],
+  ];
+
+  it.each(protectedOps)('%s %s declares security and a 401 response', (path, method) => {
+    const op = spec.paths[path][method];
+    expect(op.security).toEqual([{ bearerKey: [] }, { headerKey: [] }]);
+    expect(op.responses[401]).toEqual({ $ref: '#/components/responses/Unauthorized' });
+  });
+
+  it('read-only GETs remain public (no security requirement)', () => {
+    expect(spec.paths['/api/health'].get.security).toBeUndefined();
+    expect(spec.paths['/api/session'].get.security).toBeUndefined();
+  });
+});

@@ -8,6 +8,7 @@ import { computeDebateMetrics } from '@/lib/debate/metrics';
 import prisma from '@/lib/db/client';
 import { checkRateLimit, getRateLimitHeaders, clientIp } from '@/lib/middleware/rate-limit';
 import { apiSuccess, apiError } from '@/lib/middleware/api-response';
+import { checkApiKey } from '@/lib/middleware/auth';
 import { logger } from '@/lib/logger';
 
 // GET - Fetch a specific debate with all turns and scores
@@ -55,6 +56,22 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = checkApiKey(req.headers);
+  if (!auth.ok) {
+    if (auth.reason === 'misconfigured') {
+      // Fail closed: keys were intended but none parsed — a 5xx tells the
+      // operator to fix config; it must never silently open the API.
+      return apiError('AUTH_MISCONFIGURED', 'API keys are misconfigured on the server', 503);
+    }
+    return apiError(
+      'UNAUTHORIZED',
+      auth.reason === 'missing_key'
+        ? 'API key required: send Authorization: Bearer <key> or x-api-key'
+        : 'Invalid API key',
+      401
+    );
+  }
+
   const { id } = await params;
 
   const ip = clientIp(req.headers);
