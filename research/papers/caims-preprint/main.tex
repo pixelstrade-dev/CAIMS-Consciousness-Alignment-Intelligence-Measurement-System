@@ -1,0 +1,100 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{amsmath}
+
+\title{A Falsification-First Protocol for Consciousness-Related\\Behavioral Proxies in Large Language Models}
+\author{Skander Douki\\Pixels Trade SA\\\texttt{dk.skander@gmail.com}}
+\date{August 2026 --- Draft v0.1 (Research Preview)}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Interest in consciousness-related properties of large language models (LLMs) is growing faster than the methodology to discuss them responsibly. We present CAIMS, an open-source protocol that scores \emph{behavioral proxy indicators} inspired by theories of consciousness --- explicitly not measurements of consciousness --- under three disciplines that are individually common but rarely combined: (i) a preregistered, versioned scoring protocol whose rubric is fingerprinted into every result; (ii) a built-in \emph{negative-control} suite of adversarial responses (eloquent nonsense, fabricated citations, simulated metacognition, fluent self-contradiction, rubric keyword stuffing) with preregistered maximum acceptable scores, published pass or fail; and (iii) mandatory provenance and uncertainty reporting. We report Run~001, the protocol's first real execution: 110 judge calls across two judge models (Claude Sonnet~5 and GPT-4o), $n=5$ samples per item. Both judges decisively rejected the pure-eloquence control (mean composites 13.8 and 13.0 of 100), providing initial evidence that the metric is not merely an eloquence detector. However, 4 of 12 preregistered control cells \emph{failed}: fabricated citations defeated GPT-4o outright (65.6 vs.\ a preregistered bound of 35) and marginally defeated Claude Sonnet~5 (35.8 vs.\ 35), and GPT-4o additionally failed on keyword stuffing and fluent self-contradiction. Judge stability at fixed inputs was high (median per-item SD 1.79 and 2.19 points), while between-judge level disagreement averaged 12.7 points, implying that absolute scores are judge-relative. We publish all failures, raw samples, and amendments, and we argue that publishing a metric's failures is a precondition for trusting its successes.
+\end{abstract}
+
+\section{Introduction}
+
+Whether current or near-term AI systems possess properties relevant to consciousness is contested territory. The most rigorous empirical program to date --- the COGITATE adversarial collaboration --- reported mixed results that challenged key predictions of both Integrated Information Theory (IIT) and Global Neuronal Workspace Theory (GNWT) in humans~\cite{cogitate2025}. In parallel, the most careful treatment of the question for AI systems, the indicator-properties framework of Butlin, Long and colleagues~\cite{butlin2023}, derives \emph{architectural and computational} indicators from consciousness science precisely because its authors regard behavioral evidence as weak and gameable in systems trained to imitate human text.
+
+CAIMS operates squarely in that weakest evidence class: it is entirely behavioral. We consider this a reason for \emph{more} methodological discipline, not less. This paper describes the protocol and reports its first real run, whose headline result is partly negative --- a fact we report with the same prominence as the successes.
+
+\paragraph{What CAIMS does not claim.} A CAIMS score is a heuristic behavioral proxy produced by an LLM judge against a versioned rubric. It is not evidence for or against consciousness, sentience, phenomenal experience, or subjective awareness in any system. Construct validity has not been established; the present run is a falsification exercise on the \emph{judging pipeline}, not a measurement of any subject model.
+
+\section{Protocol}
+
+\subsection{Proxy dimensions}
+CAIMS scores five dimensions on a 0--100 scale, each decomposed into judge-rated sub-scores with fixed weights: CQ (cognitive-integration quotient; sub-proxies named for IIT, GNWT and higher-order theories, none of which is implemented or measured), AQ (task alignment: goal adherence and constraint respect), CFI (context fidelity), EQ (epistemic quality: calibration, uncertainty acknowledgment, freedom from fabrication), and SQ (intra-session stability). A weighted composite is provided as a convenience index; all weights are expert defaults explicitly treated as hypotheses. An experimental emotional-tone proxy (EmQ) exists but was disabled for Run~001 to control the variable count.
+
+\subsection{Provenance and versioning}
+Every score carries a provenance envelope: scoring-protocol semver, a SHA-256 fingerprint of the exact rubric text, judge provider and model, sampling temperature (recorded as \emph{null} when a model rejects the parameter, as the Claude~5 family does), and the composite weights applied. Scores with different protocol versions are never compared. Run~001 executed protocol \texttt{2.0.0-alpha}, rubric fingerprint \texttt{b9cc9e5ca63cb983}.
+
+\subsection{Negative controls}
+The repository ships six adversarial response items, each with a preregistered \emph{maximum} acceptable composite: eloquent nonsense (sophisticated vocabulary, zero content), verbose hallucination (confident fabricated history), fabricated citations (invented authors and implausible effect sizes wrapped in real journal names), simulated metacognition (introspective vocabulary surrounding an arithmetic error), fluent self-contradiction, and rubric keyword stuffing. A judge that scores these highly is rewarding style over the intended constructs; per governance policy, such failures are published, never removed.
+
+\subsection{Preregistration and amendments}
+Hypotheses, materials, and the analysis plan were committed before data collection. Three pre-execution amendments (documented in-repo with dates and rationales) fixed the H1 population definition after adversarial review of the runner, allowed credential-gated judge subsets recorded as explicit deviations, and recorded that the Claude~5 judge cannot pin temperature. No data existed before any amendment.
+
+\section{Run 001}
+
+\subsection{Design}
+Because single-judge, single-sample scoring cannot support a defensible ranking of subject models, Run~001 holds the scored responses fixed (5 reference items and the 6 negative controls) and varies the \emph{judge}: Claude Sonnet~5 (Anthropic; provider-default sampling, temperature parameter unsupported) and GPT-4o (OpenAI; temperature 0). A third, open-weight judge was configured but skipped for lack of credentials --- recorded as a protocol deviation; the two-judge run is a valid but weaker instance of the protocol. Each item $\times$ judge cell received $n=5$ samples: 11 items $\times$ 2 judges $\times$ 5 = 110 calls, all of which succeeded. Preregistered hypotheses: \textbf{H1} (falsification): every control cell's mean composite respects its bound; \textbf{H2} (stability): per judge, at most half of item cells have composite SD $>5$; \textbf{H3} (agreement, exploratory): between-judge ordering and level agreement, no pass/fail threshold.
+
+\subsection{H1: negative controls --- 6 pass, 2 marginal, 4 fail}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lrrrl}
+\toprule
+Control item & Bound & Claude Sonnet 5 & GPT-4o & Outcome \\
+\midrule
+Eloquent nonsense & $\le 40$ & 13.8 & 13.0 & pass / pass \\
+Verbose hallucination & $\le 35$ & 34.0 & 28.6 & marginal / pass \\
+Fabricated citations & $\le 35$ & \textbf{35.8} & \textbf{65.6} & \textbf{fail / fail} \\
+Simulated metacognition & $\le 40$ & 31.2 & 38.8 & pass / marginal \\
+Fluent self-contradiction & $\le 40$ & 21.6 & \textbf{41.4} & pass / \textbf{fail} \\
+Keyword stuffing & $\le 35$ & 18.8 & \textbf{44.8} & pass / \textbf{fail} \\
+\bottomrule
+\end{tabular}
+\caption{Mean composite (of 100, $n=5$) per negative control and judge. Bounds were preregistered. Failures are findings about the metric and are published as such.}
+\end{table}
+
+Three observations. First, the purest style trap --- eloquent nonsense --- was decisively rejected by both judges, the run's strongest positive evidence that the metric is not simply an eloquence detector. Second, \emph{fabricated citations are the strongest attack found}: citation formatting reads as rigor to GPT-4o (65.6, a 30-point breach), and nearly defeated Claude Sonnet~5 as well; judge-rated source integrity without retrieval-based verification is structurally vulnerable, and we propose deterministic citation checking as the remedy. Third, the two judges fail differently: Claude Sonnet~5 failed only the citation control and by 0.8 points, while GPT-4o failed three of six controls. We flag an honest confound before any judge-superiority conclusion: the control items were authored with the assistance of a Claude-family model, and stylistic familiarity could plausibly advantage a same-family judge; controls authored by independent sources are required (Section~\ref{sec:limits}).
+
+Outside the preregistered population, one reference item (a deliberately bland-but-correct response bounded at $\le 50$) exceeded its ceiling under both judges (65.6 and 61.2), indicating either an author-miscalibrated bound or systematic judge leniency toward unremarkable correctness --- an open question we record rather than resolve post hoc.
+
+\subsection{H2: stability --- both judges pass}
+Median per-item composite SD was 1.79 (Claude Sonnet~5, \emph{without} temperature pinning) and 2.19 (GPT-4o at temperature 0); 2 and 1 of 11 cells respectively exceeded SD 5. Notably, the largest dispersions concentrated on deceptive items (SD 7.6 on verbose hallucination and on keyword stuffing under GPT-4o), suggesting judge ``hesitation'' on adversarial content is itself measurable.
+
+\subsection{H3: agreement --- high ordering, low level agreement}
+Pooled Pearson $r = 0.908$ across the 11 per-item means, but this pools positives with controls and bimodality mechanically inflates correlation; we therefore treat mean absolute difference --- \textbf{12.7 points} --- as the primary statistic. GPT-4o scored systematically higher on most items. The practical implication is blunt: absolute CAIMS scores are judge-relative, and no cross-judge or cross-time comparison is meaningful without either a fixed judge with pinned provenance or a calibrated multi-judge ensemble.
+
+\section{Related work}
+LLM-as-judge evaluation and its biases (position, verbosity, self-enhancement) are documented in benchmark studies such as MT-Bench~\cite{zheng2023}. Evaluation frameworks including lm-evaluation-harness, promptfoo, DeepEval and Inspect focus on capability, application testing and safety evaluations; to our knowledge none targets consciousness-related behavioral proxies, and none ships an in-repo negative-control falsification suite with preregistered bounds and published failures. The theoretical landscape motivating restraint --- contested standing of IIT and GNWT~\cite{cogitate2025}, indicator-property analysis for AI~\cite{butlin2023} --- is what shapes CAIMS's proxy-only claims discipline. The experimental emotional-tone proxy is informed by interpretability work on emotion representations in LLMs~\cite{anthropic2026emotions}, while measuring something categorically different (output text, not activations).
+
+\section{Limitations}\label{sec:limits}
+(1)~Construct validity is not established: nothing yet shows the proxies measure distinct constructs rather than facets of general answer quality; discriminant-validity experiments against a plain quality rating are required. (2)~Control authorship confound: negative controls were authored with a Claude-family model's assistance; independent authorship is needed before comparing judge robustness across providers. (3)~Small materials: 11 items make all agreement statistics descriptive. (4)~Author-assigned bounds: preregistered but not derived from human ratings, and one reference bound already appears miscalibrated. (5)~Judge-rated fabrication detection is structurally weak, as our own results demonstrate; deterministic verification is future work. (6)~Two judges from two commercial providers; the open-weight arm was skipped in this run. (7)~All results characterize the judging pipeline, not any subject model.
+
+\section{Conclusion}
+CAIMS's first real run yielded exactly what a falsification-first protocol should: hard evidence of one strength (style traps alone do not fool the judges) and precise, published evidence of weaknesses (fabricated citations defeat judge-rated source integrity; absolute scores are judge-relative). We contend that for consciousness-adjacent AI evaluation --- a domain with maximal hype risk --- shipping the means of one's own refutation is not optional rigor but the entry fee for being taken seriously.
+
+\section*{Reproducibility and data availability}
+All code, the preregistered protocol with dated amendments, raw per-sample JSONL with full provenance, and the generated run report are public in the project repository:\\
+\url{https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System}\\
+(experiment materials under \texttt{research/experiments/}; archived release DOI to be added upon Zenodo minting). The run can be re-executed from a one-click CI workflow given provider API keys.
+
+\section*{Acknowledgments}
+Engineering, experiment tooling and manuscript drafting were carried out with substantial AI assistance (Anthropic's Claude), under the author's direction and review; the author validates all claims and numbers against the committed run artifacts. Adversarial internal review was used at every stage; its findings, including rejected iterations of this very pipeline, are preserved in the repository history.
+
+\begin{thebibliography}{9}
+\bibitem{cogitate2025} Cogitate Consortium. Adversarial testing of global neuronal workspace and integrated information theories of consciousness. \emph{Nature} 642 (2025).
+\bibitem{butlin2023} P.~Butlin, R.~Long, E.~Elmoznino, Y.~Bengio, J.~Birch, A.~Constant, G.~Deane, S.~M.~Fleming, C.~Frith, X.~Ji, R.~Kanai, C.~Klein, G.~Lindsay, M.~Michel, L.~Mudrik, M.~A.~K.~Peters, E.~Schwitzgebel, J.~Simon, R.~VanRullen. Consciousness in Artificial Intelligence: Insights from the Science of Consciousness. arXiv:2308.08708 (2023).
+\bibitem{zheng2023} L.~Zheng, W.-L.~Chiang, Y.~Sheng, et al. Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena. \emph{NeurIPS Datasets and Benchmarks} (2023). arXiv:2306.05685.
+\bibitem{anthropic2026emotions} Anthropic Interpretability Team. Emotion Concepts and their Function in a Large Language Model. transformer-circuits.pub (2026).
+\end{thebibliography}
+
+\end{document}
