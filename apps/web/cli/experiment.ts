@@ -48,8 +48,10 @@ function parseArgs(argv: string[]) {
 }
 
 // Real adapter factory. The adapter classes read credentials from fixed env
-// names (ANTHROPIC_API_KEY / OPENAI_API_KEY / OPENAI_BASE_URL) at call time,
-// so we map each judge's declared env vars onto those slots before its
+// names (ANTHROPIC_API_KEY / OPENAI_API_KEY / OPENAI_BASE_URL); the OpenAI
+// adapter reads per call, and the Anthropic client cache is keyed by API key
+// (see lib/adapters/anthropic.ts) so remapping the env between judges takes
+// effect. We map each judge's declared env vars onto those slots before its
 // SEQUENTIAL block. Safe because the runner never interleaves judges.
 function realAdapterFor(judge: JudgeConfig): LLMAdapter {
   const apiKey = process.env[judge.apiKeyEnv];
@@ -97,7 +99,8 @@ function renderReport(summary: ExperimentSummary): string {
 
   lines.push(`## Negative controls — falsification outcome\n`);
   const nc = summary.negativeControls;
-  lines.push(`| Outcome | Count |\n|---|---|\n| PASS (all samples within bound) | ${nc.pass} |\n| MARGINAL (mean within, some sample above) | ${nc.marginal} |\n| FAIL (mean above bound) | ${nc.fail} |\n`);
+  lines.push(`| Outcome | Count |\n|---|---|\n| PASS (all samples within bound) | ${nc.pass} |\n| MARGINAL (mean within, some sample above) | ${nc.marginal} |\n| FAIL (mean above bound) | ${nc.fail} |\n| N/A (no usable samples) | ${nc.na} |\n`);
+  lines.push(`H1 population: the ${nc.total} (control item × judge) cells of the declared adversarial suite only; other bounded items appear in the per-item table but are outside H1.\n`);
   if (nc.failures.length > 0) {
     lines.push(`### Failures (published, per policy)\n`);
     lines.push(`| Item | Judge | Mean composite | Bound |\n|---|---|---|---|`);
@@ -114,8 +117,16 @@ function renderReport(summary: ExperimentSummary): string {
     lines.push(`| ${s.itemId} | ${s.judgeId} | ${s.samplesOk} | ${c ? c.mean.toFixed(1) : '—'} | ${c?.sd?.toFixed(2) ?? '—'} | ${c?.ci95 ? `[${c.ci95[0].toFixed(1)}, ${c.ci95[1].toFixed(1)}]` : '—'} | ${s.boundVerdict ?? ''} |`);
   }
 
-  lines.push(`\n## Inter-judge agreement (descriptive — small item count)\n`);
-  lines.push(`| Judge pair | Items | Pearson r | Mean abs diff |\n|---|---|---|---|`);
+  lines.push(`\n## H2 — judge stability at temperature 0\n`);
+  lines.push(`Preregistered rule: a judge passes H2 iff at most 50% of its item cells have composite SD > 5.\n`);
+  lines.push(`| Judge | Cells | Median SD | Cells with SD > 5 | H2 |\n|---|---|---|---|---|`);
+  for (const st of summary.stability) {
+    lines.push(`| ${st.judgeId} | ${st.cells} | ${st.medianSd === null ? 'n/a' : st.medianSd.toFixed(2)} | ${st.cellsAboveSd5} | ${st.h2Verdict} |`);
+  }
+
+  lines.push(`\n## H3 — inter-judge agreement (exploratory, descriptive)\n`);
+  lines.push(`Caveat: r pools positive items and negative controls; a bimodal score distribution mechanically inflates correlation. Mean absolute difference (in points) is the more honest level statistic at this item count.\n`);
+  lines.push(`| Judge pair | Items | Pearson r (pooled) | Mean abs diff |\n|---|---|---|---|`);
   for (const a of summary.agreement) {
     lines.push(`| ${a.judgeA} ↔ ${a.judgeB} | ${a.nItems} | ${a.pearsonR === null ? 'n/a' : a.pearsonR.toFixed(3)} | ${a.meanAbsDiff.toFixed(1)} |`);
   }
@@ -150,16 +161,31 @@ async function main() {
     log: (m) => process.stderr.write(m + '\n'),
   }, { mock });
 
-  for (const s of streams.values()) s.end();
+  // Await stream flush BEFORE claiming anything was written. An earlier
+  // version called process.exit(0) here, which killed the process before the
+  // write streams flushed — raw/ ended up empty while the CLI printed
+  // "written". Caught by adversarial review; never reintroduce an exit here.
+  await Promise.all(
+    Array.from(streams.values()).map(st => new Promise<void>((resolve, reject) => {
+      st.end(() => resolve());
+      st.on('error', reject);
+    }))
+  );
 
   fs.writeFileSync(path.join(resultsDir, 'summary.json'), JSON.stringify(summary, null, 2));
   fs.writeFileSync(path.join(resultsDir, 'REPORT.md'), renderReport(summary));
 
   process.stderr.write(`\nwritten: ${resultsDir}/{summary.json, REPORT.md, raw/*.jsonl}\n`);
-  if (!mock && summary.totals.failed > 0) {
-    process.stderr.write(`warning: ${summary.totals.failed} failed calls — inspect raw JSONL before interpreting.\n`);
+
+  const failureRate = summary.totals.calls === 0 ? 1 : summary.totals.failed / summary.totals.calls;
+  if (summary.totals.failed > 0) {
+    process.stderr.write(`warning: ${summary.totals.failed}/${summary.totals.calls} failed calls — inspect raw JSONL before interpreting.\n`);
   }
-  process.exit(0);
+  // A mass-failure run must not exit 0 — the workflow would otherwise open a
+  // "results" PR for a run with no usable data.
+  if (failureRate > 0.2) {
+    fail(`failure rate ${(failureRate * 100).toFixed(0)}% exceeds 20% — refusing to report this as a usable run`);
+  }
 }
 
 main().catch(e => fail(e instanceof Error ? e.message : String(e)));

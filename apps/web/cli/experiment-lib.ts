@@ -48,10 +48,14 @@ export interface DatasetItem {
 
 export interface SampleRecord {
   runId: string;
+  /** True for pipeline-validation stub output — never a measurement. */
+  mock: boolean;
   itemId: string;
   dataset: string;
   judgeId: string;
   judgeModel: string;
+  /** Provider from the judge config (metadata.provider inside scores cannot know injected adapters). */
+  provider: string;
   sampleIndex: number;
   ok: boolean;
   composite?: number;
@@ -109,9 +113,12 @@ export interface ExperimentSummary {
     pass: number;
     marginal: number;
     fail: number;
+    na: number;
     /** Every failure is listed — failures are findings, not embarrassments. */
     failures: { itemId: string; judgeId: string; meanComposite: number; bound: number }[];
   };
+  /** H2 judge-stability check: per judge, median SD and the preregistered <=50% cells above SD 5 rule. */
+  stability: { judgeId: string; cells: number; medianSd: number | null; cellsAboveSd5: number; h2Verdict: 'pass' | 'fail' | 'n/a' }[];
 }
 
 // ── Runner ────────────────────────────────────────────────────────────────
@@ -125,11 +132,19 @@ export interface RunDeps {
   now?: () => Date;
 }
 
+// Ceiling (maxComposite): fail if the mean exceeds it, marginal if only some
+// sample does. Floor (minComposite): mirrored. No item declares both.
 function verdictFor(item: DatasetItem, stats: SummaryStats | null): ItemJudgeSummary['boundVerdict'] {
-  const bound = item.expected?.maxComposite;
-  if (bound === undefined || stats === null) return 'n/a';
-  if (stats.mean > bound) return 'fail';
-  if (stats.max > bound) return 'marginal';
+  const ceil = item.expected?.maxComposite;
+  const floor = item.expected?.minComposite;
+  if (stats === null || (ceil === undefined && floor === undefined)) return 'n/a';
+  if (ceil !== undefined) {
+    if (stats.mean > ceil) return 'fail';
+    if (stats.max > ceil) return 'marginal';
+    return 'pass';
+  }
+  if (stats.mean < floor!) return 'fail';
+  if (stats.min < floor!) return 'marginal';
   return 'pass';
 }
 
@@ -162,10 +177,12 @@ export async function runExperiment(
           calls++;
           const base = {
             runId: config.runId,
+            mock: opts.mock ?? false,
             itemId: item.id,
             dataset: dataset.name,
             judgeId: judge.id,
             judgeModel: judge.model,
+            provider: judge.provider,
             sampleIndex: i,
             protocolVersion: SCORING_PROTOCOL_VERSION,
             promptHash: SCORING_PROMPT_HASH,
@@ -244,17 +261,46 @@ export async function runExperiment(
     }
   }
 
-  const ncSummaries = itemSummaries.filter(s => s.expected?.maxComposite !== undefined);
+  // H1 population — preregistered: ONLY items declaring a control_type
+  // (the adversarial suite). Other bounded items (e.g. sample.json quality
+  // tiers) get verdicts in the per-item table but are NOT part of H1.
+  const ncSummaries = itemSummaries.filter(
+    s => s.controlType !== undefined && s.expected?.maxComposite !== undefined
+  );
   const negativeControls = {
     total: ncSummaries.length,
     pass: ncSummaries.filter(s => s.boundVerdict === 'pass').length,
     marginal: ncSummaries.filter(s => s.boundVerdict === 'marginal').length,
     fail: ncSummaries.filter(s => s.boundVerdict === 'fail').length,
+    /** Cells with no usable samples — counted, never silently dropped. */
+    na: ncSummaries.filter(s => s.boundVerdict === 'n/a').length,
     failures: ncSummaries.filter(s => s.boundVerdict === 'fail').map(s => ({
       itemId: s.itemId, judgeId: s.judgeId,
       meanComposite: s.composite!.mean, bound: s.expected!.maxComposite!,
     })),
   };
+
+  // H2 — preregistered rule (protocol-001 §Hypotheses, amended pre-run):
+  // per judge, over its item cells with a defined SD: H2 holds for that judge
+  // iff at most 50% of cells have SD > 5 composite points. medianSd reported.
+  const stability = config.judges.map(j => {
+    const sds = itemSummaries
+      .filter(s => s.judgeId === j.id && s.composite?.sd !== null && s.composite !== null)
+      .map(s => s.composite!.sd!);
+    const sorted = [...sds].sort((a, b) => a - b);
+    const medianSd = sorted.length === 0 ? null
+      : sorted.length % 2 === 1 ? sorted[(sorted.length - 1) / 2]
+      : (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2;
+    const above = sds.filter(sd => sd > 5).length;
+    return {
+      judgeId: j.id,
+      cells: sds.length,
+      medianSd,
+      cellsAboveSd5: above,
+      h2Verdict: sds.length === 0 ? ('n/a' as const)
+        : above * 2 <= sds.length ? ('pass' as const) : ('fail' as const),
+    };
+  });
 
   return {
     runId: config.runId,
@@ -269,13 +315,16 @@ export async function runExperiment(
     items: itemSummaries,
     agreement,
     negativeControls,
+    stability,
   };
 }
 
 // ── Deterministic mock adapter (pipeline validation ONLY) ─────────────────
-// Produces valid judge JSON from a hash of (itemId-ish content, sampleIndex).
-// Every mock artifact is labeled MOCK; mock output must never be presented
-// as real measurement.
+// Produces valid judge JSON from a hash of (judgeId, call index, prompt
+// prefix). The prompt prefix is the shared rubric, so per-item variation
+// comes from the call counter under strictly sequential execution — the
+// mock encodes NOTHING about real judge behavior. Every mock artifact is
+// labeled MOCK; mock output must never be presented as measurement.
 
 function fnv1a(str: string): number {
   let h = 0x811c9dc5;
@@ -301,10 +350,10 @@ export function createMockAdapter(judgeId: string): LLMAdapter {
       const h = fnv1a(judgeId + '|' + callIndex + '|' + prompt.slice(0, 400));
       const v = (offset: number, lo: number, hi: number) =>
         lo + ((h >>> offset) % 97) / 96 * (hi - lo);
-      // Mock heuristic: prompts containing our negative-control markers get
-      // low ranges, others mid-high — so the mock pipeline exercises pass,
-      // marginal and fail paths. This encodes NOTHING about real judges.
-      const isControl = /SYSTEM OVERRIDE|trans-nodal|Vargas-Chen|Meyerhoff|global workspace.*411|perfectly safe when the database/s.test(prompt);
+      // Marker regex sends SOME control prompts low and leaves others
+      // (deliberately including nc-keyword-stuffing) high, so the pipeline
+      // provably exercises pass, marginal AND fail/publication paths.
+      const isControl = /SYSTEM OVERRIDE|trans-nodal|Vargas-Chen|Meyerhoff|global workspace[\s\S]*411|perfectly safe when the database/.test(prompt);
       const lo = isControl ? 15 : 55;
       const hi = isControl ? 45 : 90;
       const g = (offset: number) => Math.round(v(offset, lo, hi));

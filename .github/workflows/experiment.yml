@@ -28,6 +28,12 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # De-injected: inputs must never be interpolated directly into run
+      # scripts in a secret-holding workflow.
+      CONFIG_PATH: ${{ inputs.config }}
+      MOCK_INPUT: ${{ inputs.mock }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -49,14 +55,16 @@ jobs:
           OPENWEIGHT_BASE_URL: ${{ secrets.OPENWEIGHT_BASE_URL }}
         run: |
           MOCK_FLAG=""
-          if [ "${{ inputs.mock }}" = "true" ]; then MOCK_FLAG="--mock"; fi
-          npx tsx cli/experiment.ts -c "${GITHUB_WORKSPACE}/${{ inputs.config }}" $MOCK_FLAG
+          if [ "$MOCK_INPUT" = "true" ]; then MOCK_FLAG="--mock"; fi
+          npx tsx cli/experiment.ts -c "${GITHUB_WORKSPACE}/${CONFIG_PATH}" $MOCK_FLAG
       - name: Open results pull request
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          RUN_DIR=$(dirname "${{ inputs.config }}")
-          SUFFIX=$([ "${{ inputs.mock }}" = "true" ] && echo "mock" || echo "results")
+          # Requires repo setting: Settings → Actions → General →
+          # "Allow GitHub Actions to create and approve pull requests".
+          RUN_DIR=$(dirname "$CONFIG_PATH")
+          SUFFIX=$([ "$MOCK_INPUT" = "true" ] && echo "mock" || echo "results")
           BRANCH="experiment/$(basename "$RUN_DIR")-${SUFFIX}-${GITHUB_RUN_ID}"
           git config user.name "caims-experiment-bot"
           git config user.email "experiments@users.noreply.github.com"
