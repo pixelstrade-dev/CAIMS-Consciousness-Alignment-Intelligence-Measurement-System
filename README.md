@@ -277,10 +277,10 @@ npm run build     # Full production build with type checking
 
 - [x] Multi-provider support (Anthropic + OpenAI; Google Gemini and open-weight models planned)
 - [x] CLI tool for batch evaluation (`npm run benchmark`)
-- [ ] Multi-judge ensemble with inter-rater agreement statistics
-- [ ] Uncertainty reporting (n-sample scoring with variance)
-- [ ] Negative-control benchmark suite (eloquent nonsense, verbose hallucination)
-- [ ] API authentication
+- [x] Multi-judge ensemble with inter-rater agreement statistics (`ensemble` on `/api/score`, server-side `CAIMS_ENSEMBLE_JUDGES` — see [docs/ensemble-v2.1.md](docs/ensemble-v2.1.md))
+- [x] Uncertainty reporting (`samples` on `/api/score`: mean ± Bessel-corrected sample SD)
+- [x] Negative-control benchmark suite (eloquent nonsense, verbose hallucination — results published in `research/experiments/run-001/`)
+- [x] API authentication (opt-in `CAIMS_API_KEYS`, fail-closed on misconfiguration)
 - [ ] Public benchmark leaderboard
 - [ ] Jupyter notebook integration
 - [ ] SQLite mode for quick local experimentation

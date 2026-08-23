@@ -10,14 +10,14 @@ Status legend: 🟢 shipped · 🟡 in progress · ⚪ planned · 🔬 research
 - 🟢 Negative-control benchmark suite (falsification-first)
 - 🟢 EmQ emotional-tone proxy (experimental, honestly framed)
 - 🟢 CI: lockfile enforcement, npm audit gate, CodeQL, Dependabot
-- 🟡 Published negative-control run results (pass/fail per control, with judge/model/protocol metadata)
-- ⚪ API-key authentication (blocker for any public deployment)
+- 🟢 Published negative-control run results (Run 001: 12 cells, 6 pass / 2 marginal / 4 fail — failures published in `research/experiments/run-001/`)
+- 🟢 API-key authentication (opt-in via `CAIMS_API_KEYS`; fail-closed on misconfiguration)
 - ⚪ Initial Prisma migration + provenance columns (queryable protocol version)
 
 ## v2.1 — Measurement rigor
 
-- ⚪ N-sample scoring with variance reporting (score ± spread instead of naked point estimates)
-- ⚪ Multi-judge ensemble experiment: inter-rater agreement across Anthropic / OpenAI / open-weight judges, provider-bias analysis
+- 🟢 N-sample scoring with variance reporting in the production API (`samples` on `/api/score`: mean ± Bessel-corrected sample SD — see `docs/ensemble-v2.1.md`)
+- 🟡 Multi-judge ensemble: production endpoint shipped (`ensemble` on `/api/score`, server-side `CAIMS_ENSEMBLE_JUDGES`, per-judge results + inter-judge spread); the open-weight-judge agreement *experiment* (Run 002, provider-bias analysis) still pending
 - ⚪ Deterministic evaluators where code beats a judge: contradiction detection (SQ), planted-fact recall (CFI)
 - 🟡 `packages/core` extraction: published npm package generated from the app
   sources with a CI anti-drift + orphan gate (step 1 — shipped); workspace
@@ -27,7 +27,7 @@ Status legend: 🟢 shipped · 🟡 in progress · ⚪ planned · 🔬 research
 
 ## v2.2 — Ecosystem
 
-- ⚪ Python SDK (`pip install caims`) — the research community's entry path
+- 🟡 Python SDK — code + tests shipped in `sdks/python/`; PyPI publication pending the owner's token
 - ⚪ Metric plugin interface: implement a custom KPI without forking the core
 - ⚪ Reproducible Jupyter notebooks (first evaluation, model comparison, judge agreement)
 - ⚪ Public leaderboard with uncertainty-aware ranking (no ordering when intervals overlap)
