@@ -15,16 +15,30 @@ Usage::
 
 from __future__ import annotations
 
+import http.client
 import json
 import time
 import urllib.error
 import urllib.request
 from typing import Any, Dict, List, Optional, Sequence, Union
 
+from ._version import __version__
 from .exceptions import CaimsAPIError, CaimsConnectionError
 from .models import Message, ScoreResult
 
 _RETRYABLE_STATUS = {429, 500, 502, 503, 529}
+
+
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    # urllib's default handler rewrites POST->GET on 301/302/303, silently
+    # dropping the JSON body. We refuse redirects instead: a 3xx surfaces as
+    # an HTTPError and becomes a clear CaimsAPIError telling the user to fix
+    # their base_url (e.g. use https:// directly).
+    def redirect_request(self, req, fp, code, msg, headers, newurl):  # noqa: N802
+        return None
+
+
+_OPENER = urllib.request.build_opener(_NoRedirect())
 
 
 class CaimsClient:
@@ -46,19 +60,19 @@ class CaimsClient:
         *,
         timeout: float = 60.0,
         max_retries: int = 2,
-        user_agent: str = "caims-python/2.0.0a1",
+        user_agent: Optional[str] = None,
     ):
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
         self.max_retries = max_retries
-        self.user_agent = user_agent
+        self.user_agent = user_agent or f"caims-python/{__version__}"
 
     # ── public API ────────────────────────────────────────────────────────
 
     def health(self) -> Dict[str, Any]:
         """GET /api/health — returns the server's health payload."""
         envelope = self._request("GET", "/api/health")
-        return envelope.get("data", {})
+        return envelope.get("data") or {}
 
     def score(
         self,
@@ -85,7 +99,14 @@ class CaimsClient:
             payload["history"] = msgs
 
         envelope = self._request("POST", "/api/score", payload)
-        return ScoreResult.from_api(envelope["data"])
+        try:
+            return ScoreResult.from_api(envelope["data"])
+        except (KeyError, TypeError, ValueError) as e:
+            # A malformed success payload must never escape as a raw
+            # KeyError — everything the client raises is a CaimsError.
+            raise CaimsAPIError(
+                "INVALID_RESPONSE", f"success envelope missing expected fields: {e!r}", 200
+            ) from e
 
     # ── plumbing ──────────────────────────────────────────────────────────
 
@@ -102,22 +123,39 @@ class CaimsClient:
         for attempt in range(self.max_retries + 1):
             req = urllib.request.Request(url, data=data, headers=headers, method=method)
             try:
-                with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+                with _OPENER.open(req, timeout=self.timeout) as resp:
                     return self._parse(resp.read(), resp.status)
             except urllib.error.HTTPError as e:
                 raw = e.read()
+                if 300 <= e.code < 400:
+                    raise CaimsAPIError(
+                        "REDIRECTED",
+                        f"server redirected to {e.headers.get('Location')!r}; "
+                        "point base_url at the final address (e.g. use https:// directly)",
+                        e.code,
+                    ) from e
                 if e.code in _RETRYABLE_STATUS and attempt < self.max_retries:
                     last_exc = e
-                    time.sleep(min(2**attempt, 8))
+                    time.sleep(self._retry_delay(attempt, e.headers.get("Retry-After")))
                     continue
                 self._raise_api_error(raw, e.code)
-            except (urllib.error.URLError, TimeoutError, OSError) as e:
+            except (urllib.error.URLError, TimeoutError, OSError, http.client.HTTPException) as e:
                 if attempt < self.max_retries:
                     last_exc = e
                     time.sleep(min(2**attempt, 8))
                     continue
                 raise CaimsConnectionError(f"cannot reach {url}: {e}") from e
         raise CaimsConnectionError(f"cannot reach {url}: {last_exc}")
+
+    @staticmethod
+    def _retry_delay(attempt: int, retry_after: Optional[str]) -> float:
+        # Honor the server's Retry-After when present (capped), else backoff.
+        if retry_after:
+            try:
+                return min(max(float(retry_after), 0.0), 30.0)
+            except ValueError:
+                pass
+        return float(min(2**attempt, 8))
 
     @staticmethod
     def _parse(raw: bytes, status: int) -> Dict[str, Any]:

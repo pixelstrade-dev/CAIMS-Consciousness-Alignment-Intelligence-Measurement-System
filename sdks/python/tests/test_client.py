@@ -101,3 +101,84 @@ def test_connection_error_when_server_absent():
     client = CaimsClient("http://127.0.0.1:59999", timeout=0.5, max_retries=0)
     with pytest.raises(CaimsConnectionError):
         client.health()
+
+
+def _spawn(handler_cls):
+    httpd = HTTPServer(("127.0.0.1", 0), handler_cls)
+    threading.Thread(target=httpd.serve_forever, daemon=True).start()
+    return httpd
+
+
+def test_malformed_success_payload_raises_caims_error_not_keyerror():
+    """Orchestrator finding: 200 success envelope missing 'scores' must
+    surface as CaimsAPIError, never a raw KeyError."""
+    class MalformedHandler(_Handler):
+        def do_POST(self):
+            self._send(200, {"success": True, "data": {"interpretation": {}}})
+
+    httpd = _spawn(MalformedHandler)
+    try:
+        client = CaimsClient(f"http://127.0.0.1:{httpd.server_port}")
+        with pytest.raises(CaimsAPIError) as exc:
+            client.score(question="q", response="r")
+        assert exc.value.code == "INVALID_RESPONSE"
+    finally:
+        httpd.shutdown()
+
+
+def test_success_false_with_http_200_raises():
+    class WeirdHandler(_Handler):
+        def do_POST(self):
+            self._send(200, {"success": False, "error": {"code": "WEIRD", "message": "no"}})
+
+    httpd = _spawn(WeirdHandler)
+    try:
+        client = CaimsClient(f"http://127.0.0.1:{httpd.server_port}")
+        with pytest.raises(CaimsAPIError) as exc:
+            client.score(question="q", response="r")
+        assert exc.value.code == "WEIRD"
+        assert exc.value.status == 200
+    finally:
+        httpd.shutdown()
+
+
+def test_redirect_is_refused_with_clear_error():
+    """Orchestrator finding: default urllib rewrote POST->GET on 302,
+    silently dropping the body. Redirects must be refused loudly."""
+    class RedirectHandler(_Handler):
+        def do_POST(self):
+            self.send_response(302)
+            self.send_header("Location", "http://example.invalid/api/score")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+
+    httpd = _spawn(RedirectHandler)
+    try:
+        client = CaimsClient(f"http://127.0.0.1:{httpd.server_port}")
+        with pytest.raises(CaimsAPIError) as exc:
+            client.score(question="q", response="r")
+        assert exc.value.code == "REDIRECTED"
+        assert exc.value.status == 302
+    finally:
+        httpd.shutdown()
+
+
+def test_health_null_data_returns_empty_dict():
+    class NullDataHandler(_Handler):
+        def do_GET(self):
+            self._send(200, {"success": True, "data": None})
+
+    httpd = _spawn(NullDataHandler)
+    try:
+        client = CaimsClient(f"http://127.0.0.1:{httpd.server_port}")
+        assert client.health() == {}
+    finally:
+        httpd.shutdown()
+
+
+def test_version_consistency_package_metadata():
+    import importlib.metadata
+
+    import caims
+
+    assert caims.__version__ == importlib.metadata.version("caims")

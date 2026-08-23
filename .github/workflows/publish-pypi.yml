@@ -36,6 +36,8 @@ jobs:
         id: guard
         run: |
           V=$(python -c "import tomllib;print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          # Note: fails OPEN on network error (CODE=000 -> proceed). Bounded
+          # risk: PyPI rejects duplicate files, worst case is a red workflow.
           CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://pypi.org/pypi/caims/$V/json")
           if [ "$CODE" = "200" ]; then
             echo "caims $V already on PyPI — skipping."

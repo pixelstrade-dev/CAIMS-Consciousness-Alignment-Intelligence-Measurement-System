@@ -6,6 +6,7 @@ consciousness, sentience or subjective experience:
 https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System/blob/main/research/methodology/disclaimer.md
 """
 
+from ._version import __version__
 from .client import CaimsClient
 from .exceptions import CaimsAPIError, CaimsConnectionError, CaimsError
 from .models import (
@@ -16,8 +17,6 @@ from .models import (
     Provenance,
     ScoreResult,
 )
-
-__version__ = "2.0.0a1"
 
 __all__ = [
     "CaimsClient",
