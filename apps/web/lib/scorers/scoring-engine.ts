@@ -218,6 +218,10 @@ export async function scoreInteraction(params: {
   history: LLMMessage[];
   model?: string;
   emotionHistory?: DetectedEmotion[];
+  /** Inject a specific judge adapter (experiment runner); defaults to the env-configured one. */
+  adapter?: import('@/lib/adapters').LLMAdapter;
+  /** Set false to skip the EmQ emotion pass (e.g. controlled experiments). Default true. */
+  enableEmotions?: boolean;
 }): Promise<KPIScores | null> {
   const model = params.model || process.env.CAIMS_SCORING_MODEL || 'claude-sonnet-4-20250514';
   const startTime = Date.now();
@@ -225,7 +229,7 @@ export async function scoreInteraction(params: {
   try {
     const userPrompt = buildScoringPrompt(params);
 
-    const adapter = getAdapter();
+    const adapter = params.adapter || getAdapter();
     const judgeResponse = await adapter.judge(
       `${SCORING_SYSTEM_PROMPT}\n\n${userPrompt}`,
       { model, maxTokens: 2048 }
@@ -252,7 +256,7 @@ export async function scoreInteraction(params: {
     // Run emotion analysis (non-blocking — doesn't fail the main scoring)
     let emqScore: number | undefined;
     let emotionAnalysis: import('@/lib/emotions/types').EmotionScoringResult | undefined;
-    try {
+    if (params.enableEmotions !== false) try {
       const emotionResult = await scoreEmotion({
         response: params.response,
         question: params.question,

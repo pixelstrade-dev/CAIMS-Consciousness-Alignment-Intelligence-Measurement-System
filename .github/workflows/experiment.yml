@@ -1,0 +1,70 @@
+name: Experiment Run
+
+# Manually triggered scientific run. Requires these repository secrets
+# (Settings → Secrets and variables → Actions):
+#   ANTHROPIC_API_KEY   — Anthropic judge
+#   OPENAI_API_KEY      — OpenAI judge
+#   OPENWEIGHT_API_KEY  — open-weight judge (OpenAI-compatible endpoint)
+#   OPENWEIGHT_BASE_URL — e.g. https://api.together.xyz/v1
+# Results are pushed to a results branch and opened as a pull request so the
+# run lands in-repo through review, never silently.
+
+on:
+  workflow_dispatch:
+    inputs:
+      config:
+        description: "Path to experiment config"
+        required: true
+        default: "research/experiments/run-001/config.json"
+      mock:
+        description: "Run with the deterministic mock judge (pipeline validation only)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Install
+        working-directory: apps/web
+        run: |
+          npm ci
+          npx prisma generate
+      - name: Execute experiment
+        working-directory: apps/web
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENWEIGHT_API_KEY: ${{ secrets.OPENWEIGHT_API_KEY }}
+          OPENWEIGHT_BASE_URL: ${{ secrets.OPENWEIGHT_BASE_URL }}
+        run: |
+          MOCK_FLAG=""
+          if [ "${{ inputs.mock }}" = "true" ]; then MOCK_FLAG="--mock"; fi
+          npx tsx cli/experiment.ts -c "${GITHUB_WORKSPACE}/${{ inputs.config }}" $MOCK_FLAG
+      - name: Open results pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          RUN_DIR=$(dirname "${{ inputs.config }}")
+          SUFFIX=$([ "${{ inputs.mock }}" = "true" ] && echo "mock" || echo "results")
+          BRANCH="experiment/$(basename "$RUN_DIR")-${SUFFIX}-${GITHUB_RUN_ID}"
+          git config user.name "caims-experiment-bot"
+          git config user.email "experiments@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add "$RUN_DIR"
+          git commit -m "results($(basename "$RUN_DIR")): ${SUFFIX} from workflow run ${GITHUB_RUN_ID}"
+          git push -u origin "$BRANCH"
+          gh pr create \
+            --title "Experiment $(basename "$RUN_DIR") ${SUFFIX} (workflow ${GITHUB_RUN_ID})" \
+            --body "Automated experiment output. Protocol: research/experiments/protocol-001.md. Review REPORT.md and raw JSONL before merging. Mock runs are pipeline validation only and must never be cited as measurements." \
+            --base main --head "$BRANCH"
