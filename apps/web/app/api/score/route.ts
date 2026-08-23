@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { scoreInteraction } from '@/lib/scorers/scoring-engine';
 import { scoreEnsemble, getEnsembleConfig, defaultJudge, MAX_SAMPLES_PER_JUDGE } from '@/lib/scorers/ensemble';
 import { buildEvidenceCardFromSingle, buildEvidenceCardFromEnsemble } from '@/lib/scorers/evidence-card';
+import { verifyCitations } from '@/lib/verifiers/citations';
 import { interpretScore, checkContextAlert } from '@/lib/scorers/composite';
 import { checkRateLimit, getRateLimitHeaders, clientIp } from '@/lib/middleware/rate-limit';
 import { apiSuccess, apiError } from '@/lib/middleware/api-response';
@@ -35,6 +36,11 @@ const ScoreRequestSchema = z.object({
   // v2.1: samples per judge (mean ± sample SD, Run 001 statistics). Each
   // sample is one judge LLM call — capped to bound per-request spend.
   samples: z.number().int().min(1).max(MAX_SAMPLES_PER_JUDGE).optional().default(1),
+  // Phase A4: deterministic citation-existence verification (doi.org /
+  // arXiv / URL registries — no LLM involved). Opt-in: it makes outbound
+  // HTTP calls (up to 20, 5s timeout each, concurrency 4). Lifts the
+  // evidence level L2→L3 on the ensemble path when it RAN.
+  verifyCitations: z.boolean().optional().default(false),
 });
 
 export async function POST(req: NextRequest) {
@@ -110,9 +116,18 @@ export async function POST(req: NextRequest) {
         samples: parsed.samples,
       });
 
+      // Phase A4: deterministic citation verification (opt-in) — the only
+      // check that can lift the evidence level to L3.
+      const citationCheck = parsed.verifyCitations
+        ? await verifyCitations(parsed.response)
+        : null;
+
       return apiSuccess({
         // v3 primary result: the profile with computed evidence level.
-        evidenceCard: buildEvidenceCardFromEnsemble(result),
+        evidenceCard: buildEvidenceCardFromEnsemble(result, {
+          deterministicChecksRan: citationCheck !== null,
+        }),
+        ...(citationCheck ? { verification: { citations: citationCheck } } : {}),
         // Retained for compatibility (deprecated as the primary reading —
         // see the OpenAPI description and docs/evidence-card-v3.md).
         scores: {
@@ -149,10 +164,17 @@ export async function POST(req: NextRequest) {
 
     logger.info('Scoring completed', { processingTimeMs, composite: scores.composite });
 
+    // Phase A4: citation verification is available on the single path too —
+    // the results attach, but the level stays L1 (L3 requires multi-judge).
+    const citationCheck = parsed.verifyCitations
+      ? await verifyCitations(parsed.response)
+      : null;
+
     return apiSuccess({
       // v3 primary result: the profile with computed evidence level (L1
       // by construction on this single-judge single-call path).
       evidenceCard: buildEvidenceCardFromSingle(scores),
+      ...(citationCheck ? { verification: { citations: citationCheck } } : {}),
       scores: {
         cq: { score: scores.cqScore, details: scores.details.cq },
         aq: { score: scores.aqScore, details: scores.details.aq },

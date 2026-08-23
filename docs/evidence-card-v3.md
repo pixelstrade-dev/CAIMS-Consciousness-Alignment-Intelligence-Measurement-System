@@ -61,9 +61,12 @@ what may be claimed; the API's primary output must match that honesty.
 
 The level is computed, not declared: L2 requires the ensemble path with
 ≥ 2 successful judge **provider families** (two models of one family stay
-L1, with an explicit caveat); L3 additionally requires the deterministic
-verifier suite (Phase A4) to have run on the response — the hook exists
-(`deterministicChecksRan`) and stays false until A4 ships.
+L1, with an explicit caveat); L3 additionally requires deterministic
+verification to have RUN on the response — shipped in Phase A4:
+`verifyCitations: true` runs citation-existence checks (doi.org / arXiv /
+URL registries) and lifts L2→L3, with results attached as
+`data.verification.citations`. Single-judge responses keep L1 even with
+verification (the level ladder never skips the multi-judge requirement).
 
 Implementation decisions beyond the sketch: each profile entry carries a
 `basis` field (`single-call` / `samples-within-judge` / `across-judges`)

@@ -8,6 +8,21 @@ the meaning of scores even when the software API is unchanged.
 
 ## [Unreleased] — scoring protocol 3.0.0-alpha
 
+### Added — Deterministic citation verification (Phase A4 of the validity program)
+- `verifyCitations: true` on `POST /api/score` (opt-in): citation-like
+  strings in the response are extracted (DOI, arXiv id, URL, author-year)
+  and their EXISTENCE checked against public registries (doi.org handle
+  API, arXiv, HTTP status) — no LLM involved. Results attach as
+  `data.verification.citations` with per-citation status
+  (`verified` / `not_found` / `unverifiable` / `network_error` — a
+  network failure NEVER counts as verified or not_found) and totals.
+  On the ensemble path a run lifts the evidence level L2→L3. Honest
+  limits stated in the payload itself: existence ≠ the source supports
+  the claim; author-year strings without identifiers are unverifiable
+  by a deterministic checker (Crossref title matching is future work).
+  This is the structural answer to Run 001's headline failure: the veto
+  aggregation could not provide.
+
 ### Added — Evidence Card (Phase A3 of the validity program)
 - `POST /api/score` now returns `data.evidenceCard` on every path: a
   per-dimension profile (with sd/n and an explicit spread `basis`), a
