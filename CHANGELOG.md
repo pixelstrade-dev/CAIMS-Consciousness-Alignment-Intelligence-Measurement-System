@@ -14,9 +14,12 @@ the meaning of scores even when the software API is unchanged.
   and their EXISTENCE checked against public registries (doi.org handle
   API, arXiv, HTTP status) — no LLM involved. Results attach as
   `data.verification.citations` with per-citation status
-  (`verified` / `not_found` / `unverifiable` / `network_error` — a
-  network failure NEVER counts as verified or not_found) and totals.
-  On the ensemble path a run lifts the evidence level L2→L3. Honest
+  (`verified` / `not_found` / `unverifiable` / `network_error` /
+  `blocked` — a network failure or SSRF-blocked URL NEVER counts as
+  verified or not_found, and not_found requires a registry-confirmed
+  negative) and totals incl. truncation reporting. On the ensemble path
+  only an EFFECTIVE run (at least one registry-confirmed outcome, not
+  truncated) lifts the evidence level L2→L3. Honest
   limits stated in the payload itself: existence ≠ the source supports
   the claim; author-year strings without identifiers are unverifiable
   by a deterministic checker (Crossref title matching is future work).

@@ -122,7 +122,8 @@ export function extractCitations(text: string): ExtractedCitation[] {
 // body, so this remains a blind reachability oracle at worst.
 
 function isDeniedHost(hostname: string): boolean {
-  const h = hostname.toLowerCase().replace(/^\[|\]$/g, '');
+  // Trailing dot = FQDN form of the same name ('localhost.').
+  const h = hostname.toLowerCase().replace(/^\[|\]$/g, '').replace(/\.$/, '');
   if (h === 'localhost' || h.endsWith('.localhost') || h.endsWith('.local') || h.endsWith('.internal')) return true;
   // ANY IPv6 literal is denied outright: mapped/embedded IPv4 forms
   // (::ffff:7f00:1, NAT64 64:ff9b::, 6to4 2002::) reach internal ranges
