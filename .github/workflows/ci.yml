@@ -80,6 +80,24 @@ jobs:
       - run: npm test
       - run: npm run build
 
+  python-sdk:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Bounds + current: the classifiers in pyproject.toml claim 3.9-3.12,
+        # so CI proves the bounds instead of asserting them untested.
+        python-version: ["3.9", "3.11", "3.12"]
+    defaults:
+      run:
+        working-directory: sdks/python
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e ".[dev]"
+      - run: python -m pytest tests/ -q
+
   docker:
     runs-on: ubuntu-latest
     steps:

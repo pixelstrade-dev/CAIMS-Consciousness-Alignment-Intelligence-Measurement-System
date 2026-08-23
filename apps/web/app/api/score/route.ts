@@ -61,9 +61,22 @@ export async function POST(req: NextRequest) {
         eq: { score: scores.eqScore, details: scores.details.eq },
         sq: { score: scores.sqScore, details: scores.details.sq },
         composite: scores.composite,
+        ...(scores.emqScore !== undefined && scores.emotionAnalysis
+          ? {
+              emq: {
+                score: scores.emqScore,
+                details: scores.emotionAnalysis.details,
+                responseEmotion: scores.emotionAnalysis.responseEmotion,
+                conversationState: scores.emotionAnalysis.conversationState,
+              },
+            }
+          : {}),
       },
       interpretation: interpretScore(scores.composite),
       contextAlert: checkContextAlert(scores.cfiScore),
+      // Provenance envelope — protocol version, rubric hash, judge params.
+      // Scores from different protocolVersion values must never be compared.
+      metadata: scores.metadata,
       processingTimeMs,
     }, 200, getRateLimitHeaders(rateCheck));
   } catch (error) {
