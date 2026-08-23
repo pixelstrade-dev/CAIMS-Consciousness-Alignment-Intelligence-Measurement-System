@@ -59,4 +59,12 @@ describe('AnthropicAdapter', () => {
 
     expect(mockCreate.mock.calls[0][0]).not.toHaveProperty('temperature');
   });
+
+  it('keeps temperature for supported Anthropic models', async () => {
+    const adapter = new AnthropicAdapter();
+
+    await adapter.chat([{ role: 'user', content: 'test' }], { model: 'claude-sonnet-4-20250514', temperature: 0.3 });
+
+    expect(mockCreate.mock.calls[0][0].temperature).toBe(0.3);
+  });
 });
