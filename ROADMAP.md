@@ -23,6 +23,7 @@ Status legend: 🟢 shipped · 🟡 in progress · ⚪ planned · 🔬 research
   sources with a CI anti-drift + orphan gate (step 1 — shipped); workspace
   inversion incl. porting the OpenAI adapter HTTP tests into the package
   (step 2)
+- 🟢 Chance-corrected inter-rater reliability (Phase A5): Krippendorff alpha (interval) + ICC(2,1) in `lib/statistics/agreement.ts` (Shrout–Fleiss anchor test), emitted natively by the experiment runner (`interRater`) and post-hoc via `cli/agreement.ts`. Run 001 post-hoc: pooled 0.835/0.846 (bimodality-inflated) vs controls-only 0.230/0.341 — judges disagree precisely on adversarial content
 - 🔬 Discriminant-validity study: can CQ be separated from a plain "answer quality" rating?
 
 ## v2.2 — Ecosystem

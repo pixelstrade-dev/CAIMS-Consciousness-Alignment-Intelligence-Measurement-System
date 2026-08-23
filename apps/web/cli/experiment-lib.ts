@@ -12,6 +12,7 @@ import { scoreInteraction, SCORING_PROTOCOL_VERSION, SCORING_PROMPT_HASH } from 
 import { supportsTemperature } from '@/lib/adapters/anthropic';
 import type { LLMAdapter } from '@/lib/adapters';
 import { summarize, pearson, meanAbsDiff } from '@/lib/statistics/descriptive';
+import { interRaterAgreement, InterRaterAgreement } from '@/lib/statistics/agreement';
 import type { SummaryStats } from '@/lib/statistics/descriptive';
 
 // ── Config ────────────────────────────────────────────────────────────────
@@ -113,6 +114,11 @@ export interface ExperimentSummary {
   totals: { calls: number; ok: number; failed: number };
   items: ItemJudgeSummary[];
   agreement: JudgePairAgreement[];
+  /** Chance-corrected inter-rater reliability across ALL judges (Phase A5):
+      Krippendorff alpha (interval; items with >=2 judge means) and ICC(2,1)
+      (complete items only). DESCRIPTIVE at small rater counts — the note
+      inside says so. Meaningful from Run 002's >=3 judge families. */
+  interRater: InterRaterAgreement;
   negativeControls: {
     total: number;
     pass: number;
@@ -331,6 +337,19 @@ export async function runExperiment(
     };
   });
 
+  // Phase A5 — chance-corrected reliability across all judges: group each
+  // item's per-judge composite means; alpha tolerates missing judges, ICC
+  // uses complete items only (both facts reported in the result itself).
+  const meansByItem = new Map<string, number[]>();
+  for (const s of itemSummaries) {
+    if (s.composite !== null) {
+      const arr = meansByItem.get(s.itemId) ?? [];
+      arr.push(s.composite.mean);
+      meansByItem.set(s.itemId, arr);
+    }
+  }
+  const interRater = interRaterAgreement(Array.from(meansByItem.values()), config.judges.length);
+
   return {
     runId: config.runId,
     mock: opts.mock ?? false,
@@ -343,6 +362,7 @@ export async function runExperiment(
     totals: { calls, ok, failed },
     items: itemSummaries,
     agreement,
+    interRater,
     negativeControls,
     stability,
     skippedJudges: opts.skippedJudges ?? [],

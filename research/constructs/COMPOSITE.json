@@ -25,7 +25,8 @@
   "known_confounds": [
     "Weights are unvalidated hypotheses: a different plausible weighting reorders results",
     "Aggregation hides dimension-level signals in BOTH directions (Run 001 evidence): on fabricated citations, EQ was both judges' lowest dimension (2.0/28.4 — a partial alarm) yet the composite passed the text as mid-quality under gpt-4o (65.6); on the mechanical-response reference item, CQ 4.0 was masked by AQ/CFI/SQ ~100 into composite 65.6 under claude-sonnet-5",
-    "All confounds of the underlying dimensions propagate"
+    "All confounds of the underlying dimensions propagate",
+    "Pooled agreement coefficients (r, alpha, ICC) are inflated by the bimodal item design; within-dataset disaggregation is mandatory before quoting any of them"
   ],
   "negative_controls": [
     "the H1 suite operates on composite bounds — 12 control cells: 6 pass / 2 marginal / 4 fail; across ALL 22 bounded cells of Run 001, two additional failures (mechanical-response reference item, composite 65.6/61.2 vs max 50 under both judges — bound plausibly miscalibrated, recorded as an open question in the manuscript)"
@@ -39,7 +40,7 @@
     "convergent": "none",
     "discriminant": "none — the discriminant-validity question (composite vs generic answer quality) is the open ROADMAP study",
     "criterion": "Run 001 H1: the aggregate respects 6/12 preregistered control bounds cleanly, 2 marginal, 4 failures published (plus 2 reference-item failures outside H1, see negative_controls)",
-    "reliability": "inherits H2 within-judge stability"
+    "reliability": "inherits H2 within-judge stability. POST-HOC chance-corrected inter-rater coefficients (Run 001, 11 items x 2 judges, cli/agreement.ts): pooled Krippendorff alpha 0.835 / ICC(2,1) 0.846 — INFLATED by the bimodal design exactly as protocol-001 states for Pearson r. The honest disaggregation: benchmarks alpha 0.920 / ICC 0.930 (5 items) vs NEGATIVE CONTROLS alpha 0.230 / ICC 0.341 (6 items) — inter-judge reliability collapses precisely on adversarial content, the strongest quantitative argument for multi-judge ensembles plus deterministic verification. Descriptive at 2 raters; Run 002 (>=3 families) computes these natively (ExperimentSummary.interRater)"
   },
   "validity_domain": "trend/tripwire use within one configuration; forbidden as a standalone public metric"
 }
