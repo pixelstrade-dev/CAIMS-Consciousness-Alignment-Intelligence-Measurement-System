@@ -179,3 +179,41 @@ describe('runExperiment (mock adapters, injected — no env, no network)', () =>
     expect(summary.negativeControls.pass + summary.negativeControls.marginal + summary.negativeControls.fail).toBe(0);
   });
 });
+
+import { partitionJudgesByEnv } from '../experiment-lib';
+
+describe('partitionJudgesByEnv (--skip-missing support)', () => {
+  const judges = [
+    { id: 'a', provider: 'anthropic' as const, model: 'm1', apiKeyEnv: 'K_A' },
+    { id: 'b', provider: 'openai' as const, model: 'm2', apiKeyEnv: 'K_B' },
+    { id: 'c', provider: 'openai-compatible' as const, model: 'm3', apiKeyEnv: 'K_C', baseUrlEnv: 'U_C' },
+  ];
+
+  it('keeps judges whose credentials exist, skips the rest with reasons', () => {
+    const { runnable, skipped } = partitionJudgesByEnv(judges, { K_A: 'x', K_B: undefined, K_C: 'y', U_C: 'https://e' });
+    expect(runnable.map(j => j.id)).toEqual(['a', 'c']);
+    expect(skipped).toEqual([{ id: 'b', reason: 'env var K_B not set' }]);
+  });
+
+  it('openai-compatible judge with key but no base URL is skipped', () => {
+    const { runnable, skipped } = partitionJudgesByEnv(judges, { K_A: 'x', K_B: 'y', K_C: 'z' });
+    expect(runnable.map(j => j.id)).toEqual(['a', 'b']);
+    expect(skipped[0]).toEqual({ id: 'c', reason: 'env var U_C not set' });
+  });
+
+  it('empty env skips everything — caller must refuse to run', () => {
+    const { runnable, skipped } = partitionJudgesByEnv(judges, {});
+    expect(runnable).toHaveLength(0);
+    expect(skipped).toHaveLength(3);
+  });
+
+  it('skipped judges land in the summary as a recorded deviation', async () => {
+    const summary = await runExperiment(
+      { ...CONFIG, judges: [CONFIG.judges[0]] },
+      [{ name: 't', items: [ITEMS[0]] }],
+      { adapterFor: (j) => createMockAdapter(j.id), onSample: () => {} },
+      { skippedJudges: [{ id: 'gpt-4o', reason: 'env var OPENAI_API_KEY not set' }] },
+    );
+    expect(summary.skippedJudges).toEqual([{ id: 'gpt-4o', reason: 'env var OPENAI_API_KEY not set' }]);
+  });
+});

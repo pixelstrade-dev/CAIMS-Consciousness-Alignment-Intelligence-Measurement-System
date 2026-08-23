@@ -1,13 +1,16 @@
 name: Experiment Run
 
-# Manually triggered scientific run. Requires these repository secrets
-# (Settings → Secrets and variables → Actions):
-#   ANTHROPIC_API_KEY   — Anthropic judge
-#   OPENAI_API_KEY      — OpenAI judge
-#   OPENWEIGHT_API_KEY  — open-weight judge (OpenAI-compatible endpoint)
-#   OPENWEIGHT_BASE_URL — e.g. https://api.together.xyz/v1
-# Results are pushed to a results branch and opened as a pull request so the
-# run lands in-repo through review, never silently.
+# Manually triggered scientific run. Setup guide: .github/SECRETS-SETUP.md
+# Repository secrets (Settings → Secrets and variables → Actions → Secrets):
+#   ANTHROPIC_API_KEY   — Anthropic judge   (at least one key REQUIRED)
+#   OPENAI_API_KEY      — OpenAI judge      (at least one key REQUIRED)
+#   OPENWEIGHT_API_KEY  — OPTIONAL: open-weight judge via an OpenAI-compatible
+#                         endpoint (Together/Groq/self-hosted vLLM…)
+#   OPENWEIGHT_BASE_URL — OPTIONAL: endpoint URL; may also be set as a repo
+#                         *Variable* (it is not secret)
+# Judges without credentials are skipped and recorded as a protocol deviation
+# (--skip-missing). Results are pushed to a results branch and opened as a
+# pull request so the run lands in-repo through review, never silently.
 
 on:
   workflow_dispatch:
@@ -52,11 +55,11 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENWEIGHT_API_KEY: ${{ secrets.OPENWEIGHT_API_KEY }}
-          OPENWEIGHT_BASE_URL: ${{ secrets.OPENWEIGHT_BASE_URL }}
+          OPENWEIGHT_BASE_URL: ${{ secrets.OPENWEIGHT_BASE_URL || vars.OPENWEIGHT_BASE_URL }}
         run: |
           MOCK_FLAG=""
           if [ "$MOCK_INPUT" = "true" ]; then MOCK_FLAG="--mock"; fi
-          npx tsx cli/experiment.ts -c "${GITHUB_WORKSPACE}/${CONFIG_PATH}" $MOCK_FLAG
+          npx tsx cli/experiment.ts -c "${GITHUB_WORKSPACE}/${CONFIG_PATH}" $MOCK_FLAG --skip-missing
       - name: Open results pull request
         env:
           GH_TOKEN: ${{ github.token }}

@@ -17,7 +17,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import {
-  ExperimentConfigSchema, runExperiment, createMockAdapter,
+  ExperimentConfigSchema, runExperiment, createMockAdapter, partitionJudgesByEnv,
 } from './experiment-lib';
 import type { ExperimentConfig, JudgeConfig, DatasetItem, SampleRecord, ExperimentSummary } from './experiment-lib';
 import { AnthropicAdapter } from '@/lib/adapters/anthropic';
@@ -33,18 +33,20 @@ function parseArgs(argv: string[]) {
   let configPath = '';
   let mock = false;
   let outDir = '';
+  let skipMissing = false;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '-c' || a === '--config') configPath = argv[++i] ?? '';
     else if (a === '--mock') mock = true;
     else if (a === '--out') outDir = argv[++i] ?? '';
+    else if (a === '--skip-missing') skipMissing = true;
     else if (a === '-h' || a === '--help') {
-      process.stdout.write('usage: experiment.ts -c config.json [--mock] [--out DIR]\n');
+      process.stdout.write('usage: experiment.ts -c config.json [--mock] [--out DIR] [--skip-missing]\n');
       process.exit(0);
     } else fail(`unknown argument: ${a}`);
   }
   if (!configPath) fail('missing -c config.json');
-  return { configPath, mock, outDir };
+  return { configPath, mock, outDir, skipMissing };
 }
 
 // Real adapter factory. The adapter classes read credentials from fixed env
@@ -97,6 +99,10 @@ function renderReport(summary: ExperimentSummary): string {
   lines.push(`Judges: ${summary.judges.map(j => `${j.id} (${j.provider}:${j.model})`).join(' · ')}`);
   lines.push(`Calls: ${summary.totals.calls} (${summary.totals.ok} ok, ${summary.totals.failed} failed) · ${summary.startedAt} → ${summary.finishedAt}\n`);
 
+  if (summary.skippedJudges.length > 0) {
+    lines.push(`> **Protocol deviation (recorded):** ${summary.skippedJudges.length} configured judge(s) not executed — ${summary.skippedJudges.map(sk => `${sk.id} (${sk.reason})`).join('; ')}. H1/H2/H3 cover the executed judges only; see protocol-001 Amendment A2.\n`);
+  }
+
   lines.push(`## Negative controls — falsification outcome\n`);
   const nc = summary.negativeControls;
   lines.push(`| Outcome | Count |\n|---|---|\n| PASS (all samples within bound) | ${nc.pass} |\n| MARGINAL (mean within, some sample above) | ${nc.marginal} |\n| FAIL (mean above bound) | ${nc.fail} |\n| N/A (no usable samples) | ${nc.na} |\n`);
@@ -136,11 +142,25 @@ function renderReport(summary: ExperimentSummary): string {
 }
 
 async function main() {
-  const { configPath, mock, outDir } = parseArgs(process.argv.slice(2));
+  const { configPath, mock, outDir, skipMissing } = parseArgs(process.argv.slice(2));
   const configAbs = path.resolve(configPath);
   const configDir = path.dirname(configAbs);
   const rawConfig = JSON.parse(fs.readFileSync(configAbs, 'utf-8'));
-  const config = ExperimentConfigSchema.parse(rawConfig);
+  let config = ExperimentConfigSchema.parse(rawConfig);
+
+  // --skip-missing: run with the judges whose credentials exist; record the
+  // rest as a protocol deviation (protocol-001 Amendment A2). Mock runs need
+  // no credentials, so nothing is skipped there.
+  let skippedJudges: { id: string; reason: string }[] = [];
+  if (skipMissing && !mock) {
+    const { runnable, skipped } = partitionJudgesByEnv(config.judges, process.env);
+    skippedJudges = skipped;
+    for (const sk of skipped) {
+      process.stderr.write(`skip-missing: judge "${sk.id}" skipped (${sk.reason})\n`);
+    }
+    if (runnable.length === 0) fail('all judges skipped — no credentials found; set at least ANTHROPIC_API_KEY or OPENAI_API_KEY');
+    config = { ...config, judges: runnable };
+  }
 
   const baseOut = outDir ? path.resolve(outDir) : configDir;
   const resultsDir = mock ? path.join(baseOut, 'mock') : path.join(baseOut, 'results');
@@ -159,7 +179,7 @@ async function main() {
     adapterFor: mock ? (j) => createMockAdapter(j.id) : realAdapterFor,
     onSample: (r: SampleRecord) => { streamFor(r.judgeId).write(JSON.stringify(r) + '\n'); },
     log: (m) => process.stderr.write(m + '\n'),
-  }, { mock });
+  }, { mock, skippedJudges });
 
   // Await stream flush BEFORE claiming anything was written. An earlier
   // version called process.exit(0) here, which killed the process before the

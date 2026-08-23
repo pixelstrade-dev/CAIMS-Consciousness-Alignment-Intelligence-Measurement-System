@@ -4,6 +4,13 @@ Status: PREREGISTERED (this file is committed before the real run executes).
 Amendment A1 (2026-08-23, pre-execution, after adversarial review of the
 runner): H1 population defined precisely; H2 decision rule made computable;
 materials description corrected. No data had been collected.
+Amendment A2 (2026-08-23, pre-execution): the run MAY execute with a subset
+of the three configured judges when credentials for some are unavailable
+(minimum one; two or more preferred). Skipped judges are recorded in the
+summary and report as an explicit deviation; H1/H2/H3 are computed over the
+executed judges only, and the H1 cell count scales accordingly (6 items ×
+executed judges). The three-judge design remains the target; a subset run is
+a valid but weaker instance of the protocol, and is labeled as such.
 Scoring protocol: 2.0.0-alpha. Runner: `apps/web/cli/experiment.ts`.
 
 ## Design decision — why judges vary, not subject models
