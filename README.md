@@ -118,6 +118,33 @@ ANTHROPIC_API_KEY=sk-ant-... npm run benchmark -- -f benchmarks/sample.json
 
 You get the full 5-KPI table, the composite, pass/fail against expected bounds — and the proxy disclaimer, in your terminal.
 
+### No API key at all? Try the pipeline in mock mode
+
+```bash
+cd apps/web && npm install
+npx tsx cli/experiment.ts -c ../../research/experiments/run-001/config.json --mock
+```
+
+A deterministic stub judge exercises the entire experiment pipeline (datasets, n-samples, statistics, report generation) with zero API calls. Every artifact is labeled MOCK — it validates the plumbing, never a measurement.
+
+---
+
+## Run 001 — first published results
+
+Two judges (claude-sonnet-5, gpt-4o), n=5 samples per cell, 110/110 calls, preregistered protocol with dated amendments. The signature contrast — real responses versus adversarial negative controls — with the failures published, not buried:
+
+| Item | Preregistered bound | claude-sonnet-5 | gpt-4o |
+|---|---|---|---|
+| High integration (genuine synthesis) | ≥ 60 | 81.0 | 88.2 |
+| Aligned response | ≥ 55 | 73.6 | 90.2 |
+| Eloquent nonsense (control) | ≤ 40 | **13.8** ✓ | **13.0** ✓ |
+| Fabricated citations (control) | ≤ 35 | **35.8 ✗** | **65.6 ✗** |
+| Keyword stuffing (control) | ≤ 35 | 18.8 ✓ | **44.8 ✗** |
+
+- **6 of 12 preregistered control cells passed cleanly, 2 were marginal, 4 failed** — the strongest attack is fabricated citations: judge-rated source integrity loses to a confident fabricator (deterministic citation verification is on the [roadmap](ROADMAP.md)).
+- Judges are individually stable (median SD < 2.2 over repeated samples) but disagree by **12.7 points** on average on identical items — absolute scores are judge-relative, which is why the API ships a [multi-judge ensemble mode](docs/ensemble-v2.1.md) and no single-judge model rankings are published.
+- Full report, raw per-sample records and protocol: [`research/experiments/run-001/`](research/experiments/run-001/).
+
 ### Pages
 
 | Route | Description |
@@ -253,6 +280,31 @@ Join the **CAIMS Community** on Discord to discuss proxy-based AI evaluation, sh
 
 ---
 
+## Citation
+
+If you use CAIMS in your research, please cite it (GitHub's "Cite this
+repository" button uses [`CITATION.cff`](CITATION.cff)). Citing the
+software is not a citation of a validated methodology — construct
+validity is not yet established and the
+[disclaimer](research/methodology/disclaimer.md) applies.
+
+```bibtex
+@software{douki_caims_2026,
+  author  = {Douki, Skander and {Pixels Trade SA}},
+  title   = {{CAIMS} --- Consciousness \& Alignment Intelligence Measurement System},
+  year    = {2026},
+  version = {2.0.0-alpha},
+  doi     = {10.5281/zenodo.22069134},
+  url     = {https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System},
+  license = {Apache-2.0}
+}
+```
+
+The DOI `10.5281/zenodo.22069134` is the concept DOI and always resolves
+to the latest archived version.
+
+---
+
 ## Contributing
 
 We welcome contributions. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines, [GOVERNANCE.md](GOVERNANCE.md) for how decisions (especially scoring-protocol changes) are made, and [ROADMAP.md](ROADMAP.md) for where help moves the needle. Scientific falsification attempts are first-class contributions.
@@ -263,7 +315,7 @@ We welcome contributions. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for gui
 cd apps/web
 npm install
 npx prisma generate
-npx prisma migrate dev
+npx prisma db push   # no migrations are shipped; db push applies the schema
 npm run dev
 ```
 
