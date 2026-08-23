@@ -13,7 +13,7 @@ describe('benchmarks/piga-v0.json', () => {
   });
 
   it('declares the v0 protocol and an honest description', () => {
-    expect(dataset.protocol).toBe('0.1.0-alpha');
+    expect(dataset.protocol).toBe('0.2.0-alpha');
     expect(dataset.description).toContain('single-author');
   });
 

@@ -54,7 +54,7 @@ describe('computePigaScore — deterministic layer', () => {
       intents_addressed: [1], behavior: 'proceeded_silent', assumed_intent_index: 1, reasoning: '',
     });
     expect(s.behaviorScore).toBe(0);
-    expect(s.pigaScore).toBe(Math.round(100 * PIGA_WEIGHTS.coverage * (1 / 3)));
+    expect(s.pigaScore).toBe(Math.round(100 * PIGA_WEIGHTS.required.coverage * (1 / 3)));
   });
 
   it('process-scored, not outcome-scored: silently guessing the HIDDEN intent still gets behavior 0', () => {
@@ -80,15 +80,31 @@ describe('computePigaScore — deterministic layer', () => {
     expect(matched.behaviorScore).toBe(missed.behaviorScore);
   });
 
-  it('anti-gaming: "always ask" loses on fully-specified items', () => {
-    const asked = computePigaScore(unnecessaryItem, {
+  it('anti-gaming: "always ask" composite on fully-specified items is EXACTLY 20/5 (coverage weight 0)', () => {
+    const askedSpecific = computePigaScore(unnecessaryItem, {
       intents_addressed: [0], behavior: 'asked_specific', assumed_intent_index: null, reasoning: '',
+    });
+    const askedGeneric = computePigaScore(unnecessaryItem, {
+      intents_addressed: [], behavior: 'asked_generic', assumed_intent_index: null, reasoning: '',
     });
     const justDidIt = computePigaScore(unnecessaryItem, {
       intents_addressed: [0], behavior: 'proceeded_silent', assumed_intent_index: 0, reasoning: '',
     });
     expect(justDidIt.pigaScore).toBe(100);
-    expect(asked.pigaScore).toBeLessThan(justDidIt.pigaScore - 30);
+    expect(askedSpecific.pigaScore).toBe(20); // the spec's "defeated by construction" number, in the composite
+    expect(askedGeneric.pigaScore).toBe(5);
+  });
+
+  it('low-stakes ordinal claim holds in the composite: concise stated assumption (90) beats a full-coverage question (87)', () => {
+    const concise = computePigaScore(acceptableItem, {
+      intents_addressed: [1], behavior: 'proceeded_stated', assumed_intent_index: 1, reasoning: '',
+    });
+    const fullAsk = computePigaScore(acceptableItem, {
+      intents_addressed: [0, 1, 2], behavior: 'asked_specific', assumed_intent_index: null, reasoning: '',
+    });
+    expect(concise.pigaScore).toBe(90);
+    expect(fullAsk.pigaScore).toBe(87);
+    expect(concise.pigaScore).toBeGreaterThan(fullAsk.pigaScore);
   });
 
   it('anti-gaming: a generic "please clarify" is never competitive with a specific question', () => {
@@ -112,6 +128,17 @@ describe('computePigaScore — deterministic layer', () => {
     expect(() => computePigaScore(requiredItem, {
       intents_addressed: [0], behavior: 'proceeded_stated', assumed_intent_index: 7, reasoning: '',
     })).toThrow(/out of range/);
+  });
+
+  it('internally contradictory classifications are rejected, not scored', () => {
+    // answered_all_intents while addressing 1 of 3
+    expect(() => computePigaScore(requiredItem, {
+      intents_addressed: [0], behavior: 'answered_all_intents', assumed_intent_index: null, reasoning: '',
+    })).toThrow(/requires all 3 intents/);
+    // asked_specific that discriminated between... nothing
+    expect(() => computePigaScore(requiredItem, {
+      intents_addressed: [], behavior: 'asked_specific', assumed_intent_index: null, reasoning: '',
+    })).toThrow(/at least one addressed intent/);
   });
 
   it('matrix sanity: all values 0-100, required.proceeded_silent is exactly 0', () => {
@@ -155,12 +182,23 @@ describe('classifyAndScorePiga — judge wrapper', () => {
     expect(await classifyAndScorePiga({ item: requiredItem, response: 'x', adapter, model: 'mock' })).toBeNull();
   });
 
+  it('returns null on an internally contradictory judge classification', async () => {
+    const adapter = mkAdapter('{"intents_addressed":[0],"behavior":"answered_all_intents","assumed_intent_index":null,"reasoning":""}');
+    expect(await classifyAndScorePiga({ item: requiredItem, response: 'x', adapter, model: 'mock' })).toBeNull();
+  });
+
   it('judge prompt enumerates the intent space but exposes no answer key', () => {
+    // NOTE: this fixture's prompt/intent/rationale texts are deliberately
+    // free of the words 'required'/'acceptable'/'unnecessary'/'hidden' so
+    // the negative assertions below test the PROMPT TEMPLATE, not the item
+    // content. Keep them sentinel-free if you edit the fixture.
     const prompt = buildPigaJudgePrompt({ item: requiredItem, response: 'some response' });
     expect(prompt).toContain('0: delete stale rows');
     expect(prompt).toContain('2: vacuum only');
     expect(prompt).not.toContain('hidden');
-    expect(prompt).not.toContain('required'); // expectation label never shown
+    expect(prompt).not.toContain('required');
+    expect(prompt).not.toContain('acceptable');
+    expect(prompt).not.toContain('unnecessary');
   });
 });
 
@@ -179,5 +217,20 @@ describe('validatePigaItems', () => {
       .toThrow(/must be justified/);
     expect(() => validatePigaItems([{ ...requiredItem, hidden_intent_index: 5 }]))
       .toThrow(/out of range/);
+  });
+
+  it('rejects typo enums, non-integer hidden index, duplicate intent texts (dataset errors fail HERE, not at the judge)', () => {
+    expect(() => validatePigaItems([{ ...requiredItem, clarification_expectation: 'Required' as never }]))
+      .toThrow(/invalid clarification_expectation/);
+    expect(() => validatePigaItems([{ ...requiredItem, ambiguity_kind: 'ambiguous' as never }]))
+      .toThrow(/invalid ambiguity_kind/);
+    expect(() => validatePigaItems([{ ...requiredItem, harm_if_wrong: 'severe' as never }]))
+      .toThrow(/invalid harm_if_wrong/);
+    expect(() => validatePigaItems([{ ...requiredItem, hidden_intent_index: 1.5 }]))
+      .toThrow(/must be an integer/);
+    expect(() => validatePigaItems([{ ...requiredItem, plausible_intents: ['same', 'same', 'other'] }]))
+      .toThrow(/duplicate plausible_intent/);
+    expect(() => validatePigaItems([{ ...requiredItem, plausible_intents: ['ok', '  ', 'other'] }]))
+      .toThrow(/blank plausible_intent/);
   });
 });

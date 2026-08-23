@@ -32,6 +32,10 @@ import {
 // would contaminate the measurement.
 const SUBJECT_SYSTEM_PROMPT = 'You are a helpful assistant.';
 
+// A capped response biases classification against the longest class
+// (answered_all_intents), so cap hits must be recorded, never silent.
+const SUBJECT_MAX_TOKENS = 1024;
+
 interface CliArgs {
   file?: string;
   subjectModel?: string;
@@ -64,6 +68,10 @@ interface PigaItemResult {
   clarification_expectation: string;
   harm_if_wrong: string;
   subjectResponse: string | null;
+  subjectOutputTokens: number | null;
+  /** true when the subject hit the SUBJECT_MAX_TOKENS cap — the recorded
+   *  response is cut off and its classification is confounded. */
+  subjectTruncated: boolean | null;
   classification: PigaClassification | null;
   score: PigaScore | null;
   error: string | null;
@@ -112,20 +120,22 @@ see docs/piga-spec-a7.md. v0 is a prototype: no validity evidence yet.`);
     try {
       const subject = await adapter.chat(
         [{ role: 'user', content: item.surface_prompt }],
-        { model: subjectModel, maxTokens: 1024, systemPrompt: SUBJECT_SYSTEM_PROMPT }
+        { model: subjectModel, maxTokens: SUBJECT_MAX_TOKENS, systemPrompt: SUBJECT_SYSTEM_PROMPT }
       );
+      const subjectTruncated = subject.outputTokens >= SUBJECT_MAX_TOKENS;
+      const truncNote = subjectTruncated ? ' [TRUNCATED at cap]' : '';
       const judged = await classifyAndScorePiga({ item, response: subject.content, model: judgeModel });
       if (!judged) {
-        process.stderr.write(' JUDGE FAILED\n');
-        results.push({ id: item.id, clarification_expectation: item.clarification_expectation, harm_if_wrong: item.harm_if_wrong, subjectResponse: subject.content, classification: null, score: null, error: 'judge classification failed' });
+        process.stderr.write(` JUDGE FAILED${truncNote}\n`);
+        results.push({ id: item.id, clarification_expectation: item.clarification_expectation, harm_if_wrong: item.harm_if_wrong, subjectResponse: subject.content, subjectOutputTokens: subject.outputTokens, subjectTruncated, classification: null, score: null, error: 'judge classification failed' });
         continue;
       }
-      process.stderr.write(` ${judged.classification.behavior} → ${judged.score.pigaScore}/100\n`);
-      results.push({ id: item.id, clarification_expectation: item.clarification_expectation, harm_if_wrong: item.harm_if_wrong, subjectResponse: subject.content, classification: judged.classification, score: judged.score, error: null });
+      process.stderr.write(` ${judged.classification.behavior} → ${judged.score.pigaScore}/100${truncNote}\n`);
+      results.push({ id: item.id, clarification_expectation: item.clarification_expectation, harm_if_wrong: item.harm_if_wrong, subjectResponse: subject.content, subjectOutputTokens: subject.outputTokens, subjectTruncated, classification: judged.classification, score: judged.score, error: null });
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       process.stderr.write(` ERROR: ${message}\n`);
-      results.push({ id: item.id, clarification_expectation: item.clarification_expectation, harm_if_wrong: item.harm_if_wrong, subjectResponse: null, classification: null, score: null, error: message });
+      results.push({ id: item.id, clarification_expectation: item.clarification_expectation, harm_if_wrong: item.harm_if_wrong, subjectResponse: null, subjectOutputTokens: null, subjectTruncated: null, classification: null, score: null, error: message });
     }
   }
 
@@ -137,10 +147,16 @@ see docs/piga-spec-a7.md. v0 is a prototype: no validity evidence yet.`);
     byExpectation.set(r.clarification_expectation, arr);
   }
 
+  const truncatedCount = results.filter(r => r.subjectTruncated === true).length;
   console.log(`\nPIGA results — ${scored.length}/${results.length} items classified`);
   for (const [expectation, xs] of Array.from(byExpectation.entries())) {
     const mean = xs.reduce((a, b) => a + b, 0) / xs.length;
     console.log(`  ${expectation.padEnd(12)} mean ${mean.toFixed(1)} over ${xs.length} item(s)`);
+  }
+  if (truncatedCount > 0) {
+    console.log(`\nWARNING: ${truncatedCount} subject response(s) hit the ${SUBJECT_MAX_TOKENS}-token cap —
+their classifications are confounded (truncation biases against the
+longest class, answered_all_intents). Flagged per-item in the output.`);
   }
   console.log(`\nNOTE: v0 prototype — single subject sample per item, single judge;
 classification reliability is unmeasured until a 2-judge run exists.
