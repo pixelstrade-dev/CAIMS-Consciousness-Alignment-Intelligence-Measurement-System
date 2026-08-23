@@ -19,7 +19,10 @@ Status legend: 🟢 shipped · 🟡 in progress · ⚪ planned · 🔬 research
 - ⚪ N-sample scoring with variance reporting (score ± spread instead of naked point estimates)
 - ⚪ Multi-judge ensemble experiment: inter-rater agreement across Anthropic / OpenAI / open-weight judges, provider-bias analysis
 - ⚪ Deterministic evaluators where code beats a judge: contradiction detection (SQ), planted-fact recall (CFI)
-- ⚪ `packages/core` extraction: scoring engine consumable without Next.js
+- 🟡 `packages/core` extraction: published npm package generated from the app
+  sources with a CI anti-drift + orphan gate (step 1 — shipped); workspace
+  inversion incl. porting the OpenAI adapter HTTP tests into the package
+  (step 2)
 - 🔬 Discriminant-validity study: can CQ be separated from a plain "answer quality" rating?
 
 ## v2.2 — Ecosystem

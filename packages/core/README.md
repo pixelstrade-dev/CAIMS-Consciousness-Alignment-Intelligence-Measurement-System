@@ -71,11 +71,18 @@ summarize([60, 62, 64, 66, 68]);
 
 ## Relationship to the main repository
 
-These sources are generated from the reference implementation in
+The generated modules are produced from the reference implementation in
 [`apps/web/lib`](https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System/tree/main/apps/web/lib)
-by `scripts/sync-core.mjs`; CI fails on any drift, so the package is always
-byte-identical to the audited application code. Workspace inversion (the app
-consuming this package) is scheduled on the
+by `scripts/sync-core.mjs`. CI enforces that every generated module is
+byte-identical to its audited application source **and** that no
+unaccounted file exists under `src/` (orphan sweep); the one handwritten
+file is `src/index.ts`, the public-API boundary, reviewed in-repo like any
+other code.
+
+Known test-scope note (pass 1): `scoreInteraction` is covered in-package by
+an injection-based suite; the OpenAI adapter's HTTP behavior is covered by
+the application suite only (its tests use app-level mocks). Full inversion
+— the app consuming this package, one test suite — is scheduled on the
 [roadmap](https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System/blob/main/ROADMAP.md).
 
 ## License

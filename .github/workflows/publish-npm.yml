@@ -36,9 +36,25 @@ jobs:
           fi
       - run: node ../../scripts/sync-core.mjs --check
       - run: npm ci
-      - run: npm run typecheck
-      - run: npm test
-      - run: npm run build
-      - run: npm publish --access public --provenance
+      # Skip cleanly when this version is already on the registry — app-level
+      # releases that do not bump packages/core must not turn red on a
+      # duplicate-version publish error.
+      - name: Version guard
+        id: guard
+        run: |
+          V=$(node -p "require('./package.json').version")
+          if npm view "@caims/core@$V" version >/dev/null 2>&1; then
+            echo "@caims/core@$V already published — skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+      # typecheck + test + build run via prepublishOnly inside npm publish —
+      # not duplicated here. Note: --provenance requires this repository to
+      # be PUBLIC at publish time and repository.url to match the workflow
+      # repo; if the repo goes private, drop the flag.
+      - name: Publish
+        if: steps.guard.outputs.skip != 'true'
+        run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

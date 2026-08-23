@@ -6,7 +6,9 @@
 // A score is never a measurement of consciousness, sentience or subjective
 // experience. See the repository's research/methodology/disclaimer.md.
 
-export const CAIMS_CORE_VERSION = '2.0.0-alpha.1';
+// The package version lives in package.json only (no duplicated constant to
+// drift). The scoring PROTOCOL version is a different concept — see
+// SCORING_PROTOCOL_VERSION below: it fingerprints the rubric semantics.
 
 // ── Scoring engine ────────────────────────────────────────────────────────
 export {
