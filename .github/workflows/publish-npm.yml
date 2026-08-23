@@ -1,0 +1,60 @@
+name: Publish npm
+
+# Publishes @caims/core when a GitHub release is published.
+# Requires the repository secret NPM_TOKEN (npmjs.com automation token,
+# owner action — see docs/releases/). The job fails fast with a clear
+# message when the secret is absent instead of a cryptic 401.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish-core:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/core
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+      - name: Check secret
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NPM_TOKEN" ]; then
+            echo "::error::NPM_TOKEN secret is not set — create an automation token on npmjs.com and add it in Settings → Secrets → Actions."
+            exit 1
+          fi
+      - run: node ../../scripts/sync-core.mjs --check
+      - run: npm ci
+      # Skip cleanly when this version is already on the registry — app-level
+      # releases that do not bump packages/core must not turn red on a
+      # duplicate-version publish error.
+      - name: Version guard
+        id: guard
+        run: |
+          V=$(node -p "require('./package.json').version")
+          if npm view "@caims/core@$V" version >/dev/null 2>&1; then
+            echo "@caims/core@$V already published — skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+      # typecheck + test + build run via prepublishOnly inside npm publish —
+      # not duplicated here. Note: --provenance requires this repository to
+      # be PUBLIC at publish time and repository.url to match the workflow
+      # repo; if the repo goes private, drop the flag.
+      - name: Publish
+        if: steps.guard.outputs.skip != 'true'
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
