@@ -8,6 +8,18 @@ the meaning of scores even when the software API is unchanged.
 
 ## [Unreleased] — scoring protocol 3.0.0-alpha
 
+### Added — Corpus sizing by power analysis (Phase A6 of the validity program)
+- `lib/statistics/simulation.ts` (seeded mulberry32 + Box–Muller +
+  bound-detection power + bootstrap CI half-widths; analytic anchor test
+  Φ(√5)≈0.987) and `cli/power-analysis.ts`, parameterized from Run 001's
+  committed summary. Findings: n=5 samples/cell suffices for ≥5-point
+  bound violations even at adversarial-worst SD 7.6; ~100 all-judge
+  items pin the inter-judge difference to ±1.7 pts; adversarial strata
+  dominate α precision cost. Derived corpus v1 target: ~200–300 items
+  (25–30% adversarial), replacing the round-number 2 000–5 000 (re-sized
+  after Run 002). See docs/power-analysis-a6.md — reproducible
+  bit-for-bit (fixed seed).
+
 ### Added — Inter-rater reliability coefficients (Phase A5 of the validity program)
 - `lib/statistics/agreement.ts`: Krippendorff's alpha (interval, missing-
   tolerant) and ICC(2,1) (Shrout & Fleiss two-way random, absolute

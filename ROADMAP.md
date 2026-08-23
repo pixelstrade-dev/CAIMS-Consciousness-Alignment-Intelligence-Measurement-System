@@ -24,6 +24,7 @@ Status legend: 🟢 shipped · 🟡 in progress · ⚪ planned · 🔬 research
   inversion incl. porting the OpenAI adapter HTTP tests into the package
   (step 2)
 - 🟢 Chance-corrected inter-rater reliability (Phase A5): Krippendorff alpha (interval) + ICC(2,1) in `lib/statistics/agreement.ts` (Shrout–Fleiss anchor test), emitted natively by the experiment runner (`interRater`) and post-hoc via `cli/agreement.ts`. Run 001 post-hoc: pooled 0.835/0.846 (bimodality-inflated); disaggregated coefficients carry their own range-restriction/outlier confounds — the honest raw statistic is mean |inter-judge difference| 14.9 pts on controls vs 10.1 on benchmarks (judges disagree more on adversarial content; ~1.5x)
+- 🟢 Corpus sizing by power analysis (Phase A6): seeded simulations from Run 001's real parameters (`cli/power-analysis.ts`, `docs/power-analysis-a6.md`). Derived corpus v1 target: ~200–300 items, 25–30% adversarial controls (the stratum that dominates precision cost), n=5, ≥3 judge families; the 2 000–5 000 full-benchmark scale is re-sized after Run 002's 3-rater data
 - 🔬 Discriminant-validity study: can CQ be separated from a plain "answer quality" rating?
 
 ## v2.2 — Ecosystem
