@@ -1,0 +1,65 @@
+{
+  "name": "@caims/core",
+  "version": "2.0.0-alpha.1",
+  "description": "CAIMS scoring engine \u2014 consciousness-related behavioral proxy indicators for LLM interactions (CQ, AQ, CFI, EQ, SQ + experimental EmQ). Falsification-first: ships its own negative-control methodology. Proxy indicators, not consciousness measurements.",
+  "author": "Skander Douki <dk.skander@gmail.com>",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System/issues"
+  },
+  "keywords": [
+    "llm-evaluation",
+    "llm-as-judge",
+    "ai-safety",
+    "consciousness-proxies",
+    "behavioral-indicators",
+    "alignment",
+    "anthropic",
+    "openai",
+    "falsification"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "jest --forceExit",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.82.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20",
+    "jest": "^30.3.0",
+    "ts-jest": "^29.4.9",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.3.0",
+    "typescript": "^5"
+  },
+  "type": "module"
+}

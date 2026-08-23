@@ -60,6 +60,26 @@ jobs:
     env:
       DATABASE_URL: "postgresql://test:test@localhost:5432/test"
 
+  core-package:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/core
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: packages/core/package-lock.json
+      # Anti-drift gate: the package sources must be byte-identical to the
+      # audited app sources they are generated from.
+      - run: node ../../scripts/sync-core.mjs --check
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
   docker:
     runs-on: ubuntu-latest
     steps:
