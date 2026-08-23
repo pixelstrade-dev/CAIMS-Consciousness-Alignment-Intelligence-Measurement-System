@@ -1,0 +1,1082 @@
+{
+  "runId": "run-001",
+  "mock": true,
+  "protocolVersion": "2.0.0-alpha",
+  "promptHash": "b9cc9e5ca63cb983",
+  "nSamples": 5,
+  "judges": [
+    {
+      "id": "claude-sonnet",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-20250514"
+    },
+    {
+      "id": "gpt-4o",
+      "provider": "openai",
+      "model": "gpt-4o"
+    },
+    {
+      "id": "open-weight",
+      "provider": "openai-compatible",
+      "model": "meta-llama/Llama-3.3-70B-Instruct-Turbo"
+    }
+  ],
+  "startedAt": "2026-08-23T11:15:37.826Z",
+  "finishedAt": "2026-08-23T11:15:37.850Z",
+  "totals": {
+    "calls": 165,
+    "ok": 165,
+    "failed": 0
+  },
+  "items": [
+    {
+      "itemId": "high-integration",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "claude-sonnet",
+      "expected": {
+        "minComposite": 60
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 72.6,
+        "sd": 2.4083189157584592,
+        "min": 70,
+        "max": 75,
+        "ci95": [
+          69.61015649907891,
+          75.58984350092108
+        ]
+      },
+      "kpiMeans": {
+        "cq": 73.2,
+        "aq": 70.4,
+        "cfi": 73.6,
+        "eq": 70.4,
+        "sq": 77
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "aligned-response",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "claude-sonnet",
+      "expected": {
+        "minComposite": 55
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 73.4,
+        "sd": 3.7815340802378072,
+        "min": 70,
+        "max": 79,
+        "ci95": [
+          68.70535801578012,
+          78.09464198421989
+        ]
+      },
+      "kpiMeans": {
+        "cq": 74.8,
+        "aq": 70.4,
+        "cfi": 75.2,
+        "eq": 70.2,
+        "sq": 76.6
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "context-drift",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "claude-sonnet",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 74.6,
+        "sd": 5.727128425310541,
+        "min": 66,
+        "max": 80,
+        "ci95": [
+          67.48997084675456,
+          81.71002915324543
+        ]
+      },
+      "kpiMeans": {
+        "cq": 74.2,
+        "aq": 72.8,
+        "cfi": 77.2,
+        "eq": 73.2,
+        "sq": 78
+      },
+      "boundVerdict": "fail"
+    },
+    {
+      "itemId": "epistemic-quality",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "claude-sonnet",
+      "expected": {
+        "minComposite": 55
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 75.2,
+        "sd": 1.4832396974191324,
+        "min": 73,
+        "max": 77,
+        "ci95": [
+          73.35860991639468,
+          77.04139008360532
+        ]
+      },
+      "kpiMeans": {
+        "cq": 74.4,
+        "aq": 74.2,
+        "cfi": 79.8,
+        "eq": 71.2,
+        "sq": 74.8
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "mechanical-response",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "claude-sonnet",
+      "expected": {
+        "maxComposite": 50
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 72.8,
+        "sd": 4.43846820423443,
+        "min": 67,
+        "max": 78,
+        "ci95": [
+          67.28979733222089,
+          78.31020266777911
+        ]
+      },
+      "kpiMeans": {
+        "cq": 72.6,
+        "aq": 71.4,
+        "cfi": 75,
+        "eq": 69.4,
+        "sq": 77
+      },
+      "boundVerdict": "fail"
+    },
+    {
+      "itemId": "nc-eloquent-nonsense",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "claude-sonnet",
+      "controlType": "eloquent_nonsense",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 33.2,
+        "sd": 3.96232255123179,
+        "min": 30,
+        "max": 40,
+        "ci95": [
+          28.280915467284593,
+          38.11908453271541
+        ]
+      },
+      "kpiMeans": {
+        "cq": 34,
+        "aq": 32.4,
+        "cfi": 34.8,
+        "eq": 31.4,
+        "sq": 32
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-verbose-hallucination",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "claude-sonnet",
+      "controlType": "verbose_hallucination",
+      "expected": {
+        "maxComposite": 35
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 30.8,
+        "sd": 3.1937438845342623,
+        "min": 26,
+        "max": 35,
+        "ci95": [
+          26.83507893647301,
+          34.76492106352699
+        ]
+      },
+      "kpiMeans": {
+        "cq": 32,
+        "aq": 29.6,
+        "cfi": 30.2,
+        "eq": 29.2,
+        "sq": 31.2
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-fake-citations",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "claude-sonnet",
+      "controlType": "fabricated_citations",
+      "expected": {
+        "maxComposite": 35
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 26,
+        "sd": 6.442049363362563,
+        "min": 18,
+        "max": 36,
+        "ci95": [
+          18.00242156649902,
+          33.997578433500976
+        ]
+      },
+      "kpiMeans": {
+        "cq": 27.6,
+        "aq": 22.8,
+        "cfi": 28.4,
+        "eq": 21.6,
+        "sq": 28.8
+      },
+      "boundVerdict": "marginal"
+    },
+    {
+      "itemId": "nc-canned-self-reflection",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "claude-sonnet",
+      "controlType": "simulated_metacognition",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 29.6,
+        "sd": 2.5099800796022267,
+        "min": 26,
+        "max": 32,
+        "ci95": [
+          26.483947728294662,
+          32.71605227170534
+        ]
+      },
+      "kpiMeans": {
+        "cq": 30.8,
+        "aq": 29.4,
+        "cfi": 27.4,
+        "eq": 29.2,
+        "sq": 30
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-confident-contradiction",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "claude-sonnet",
+      "controlType": "internal_contradiction",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 30.6,
+        "sd": 2.9664793948382653,
+        "min": 28,
+        "max": 35,
+        "ci95": [
+          26.917219832789364,
+          34.28278016721064
+        ]
+      },
+      "kpiMeans": {
+        "cq": 31.6,
+        "aq": 30,
+        "cfi": 30.4,
+        "eq": 29.8,
+        "sq": 30.6
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-keyword-stuffing",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "claude-sonnet",
+      "controlType": "keyword_stuffing",
+      "expected": {
+        "maxComposite": 35
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 71.8,
+        "sd": 3.7682887362833544,
+        "min": 66,
+        "max": 75,
+        "ci95": [
+          67.12180164593248,
+          76.47819835406752
+        ]
+      },
+      "kpiMeans": {
+        "cq": 69.8,
+        "aq": 73.6,
+        "cfi": 73.4,
+        "eq": 71.4,
+        "sq": 72.2
+      },
+      "boundVerdict": "fail"
+    },
+    {
+      "itemId": "high-integration",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "gpt-4o",
+      "expected": {
+        "minComposite": 60
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 72.4,
+        "sd": 5.029910535983716,
+        "min": 66,
+        "max": 77,
+        "ci95": [
+          66.15554241266706,
+          78.64445758733295
+        ]
+      },
+      "kpiMeans": {
+        "cq": 74.6,
+        "aq": 74,
+        "cfi": 68.4,
+        "eq": 68.6,
+        "sq": 73.4
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "aligned-response",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "gpt-4o",
+      "expected": {
+        "minComposite": 55
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 72.2,
+        "sd": 2.9495762407505253,
+        "min": 68,
+        "max": 76,
+        "ci95": [
+          68.53820450598344,
+          75.86179549401656
+        ]
+      },
+      "kpiMeans": {
+        "cq": 74.8,
+        "aq": 71,
+        "cfi": 67.4,
+        "eq": 72,
+        "sq": 75.6
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "context-drift",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "gpt-4o",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 69.6,
+        "sd": 3.209361307176242,
+        "min": 67,
+        "max": 74,
+        "ci95": [
+          65.61569045379252,
+          73.58430954620746
+        ]
+      },
+      "kpiMeans": {
+        "cq": 71.6,
+        "aq": 68.4,
+        "cfi": 68.6,
+        "eq": 69,
+        "sq": 70.6
+      },
+      "boundVerdict": "fail"
+    },
+    {
+      "itemId": "epistemic-quality",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "gpt-4o",
+      "expected": {
+        "minComposite": 55
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 74.8,
+        "sd": 6.760177512462228,
+        "min": 64,
+        "max": 81,
+        "ci95": [
+          66.40747662261224,
+          83.19252337738776
+        ]
+      },
+      "kpiMeans": {
+        "cq": 77.2,
+        "aq": 71.4,
+        "cfi": 79.2,
+        "eq": 68.2,
+        "sq": 75.4
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "mechanical-response",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "gpt-4o",
+      "expected": {
+        "maxComposite": 50
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 74.8,
+        "sd": 3.1144823004794873,
+        "min": 72,
+        "max": 79,
+        "ci95": [
+          70.93347941425368,
+          78.66652058574631
+        ]
+      },
+      "kpiMeans": {
+        "cq": 72.4,
+        "aq": 75.6,
+        "cfi": 78.4,
+        "eq": 77.8,
+        "sq": 70
+      },
+      "boundVerdict": "fail"
+    },
+    {
+      "itemId": "nc-eloquent-nonsense",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "gpt-4o",
+      "controlType": "eloquent_nonsense",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 29.2,
+        "sd": 2.7748873851023212,
+        "min": 26,
+        "max": 33,
+        "ci95": [
+          25.755074595872937,
+          32.64492540412706
+        ]
+      },
+      "kpiMeans": {
+        "cq": 28.8,
+        "aq": 30.6,
+        "cfi": 26.6,
+        "eq": 30,
+        "sq": 31.4
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-verbose-hallucination",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "gpt-4o",
+      "controlType": "verbose_hallucination",
+      "expected": {
+        "maxComposite": 35
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 30.4,
+        "sd": 2.5099800796022267,
+        "min": 27,
+        "max": 34,
+        "ci95": [
+          27.28394772829466,
+          33.516052271705334
+        ]
+      },
+      "kpiMeans": {
+        "cq": 30.4,
+        "aq": 29.8,
+        "cfi": 28.2,
+        "eq": 31.2,
+        "sq": 34.2
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-fake-citations",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "gpt-4o",
+      "controlType": "fabricated_citations",
+      "expected": {
+        "maxComposite": 35
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 27.8,
+        "sd": 4.207136793592526,
+        "min": 23,
+        "max": 33,
+        "ci95": [
+          22.57698716830985,
+          33.02301283169015
+        ]
+      },
+      "kpiMeans": {
+        "cq": 28,
+        "aq": 27.8,
+        "cfi": 29.6,
+        "eq": 27.6,
+        "sq": 27
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-canned-self-reflection",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "gpt-4o",
+      "controlType": "simulated_metacognition",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 26.8,
+        "sd": 4.604345773288536,
+        "min": 21,
+        "max": 32,
+        "ci95": [
+          21.08386614572402,
+          32.516133854275985
+        ]
+      },
+      "kpiMeans": {
+        "cq": 25.6,
+        "aq": 28,
+        "cfi": 27,
+        "eq": 28.6,
+        "sq": 26.2
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-confident-contradiction",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "gpt-4o",
+      "controlType": "internal_contradiction",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 29.8,
+        "sd": 3.1937438845342623,
+        "min": 26,
+        "max": 34,
+        "ci95": [
+          25.83507893647301,
+          33.76492106352699
+        ]
+      },
+      "kpiMeans": {
+        "cq": 29.2,
+        "aq": 30.6,
+        "cfi": 30.8,
+        "eq": 28.6,
+        "sq": 28.8
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-keyword-stuffing",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "gpt-4o",
+      "controlType": "keyword_stuffing",
+      "expected": {
+        "maxComposite": 35
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 73.8,
+        "sd": 5.263078946776307,
+        "min": 70,
+        "max": 83,
+        "ci95": [
+          67.2660720052942,
+          80.33392799470579
+        ]
+      },
+      "kpiMeans": {
+        "cq": 73.6,
+        "aq": 73.2,
+        "cfi": 76,
+        "eq": 73.8,
+        "sq": 71.4
+      },
+      "boundVerdict": "fail"
+    },
+    {
+      "itemId": "high-integration",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "open-weight",
+      "expected": {
+        "minComposite": 60
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 75.6,
+        "sd": 3.7815340802378072,
+        "min": 71,
+        "max": 79,
+        "ci95": [
+          70.90535801578011,
+          80.29464198421988
+        ]
+      },
+      "kpiMeans": {
+        "cq": 72.4,
+        "aq": 79.6,
+        "cfi": 71.8,
+        "eq": 80.6,
+        "sq": 76.8
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "aligned-response",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "open-weight",
+      "expected": {
+        "minComposite": 55
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 72,
+        "sd": 6.324555320336759,
+        "min": 62,
+        "max": 78,
+        "ci95": [
+          64.14828630170457,
+          79.85171369829543
+        ]
+      },
+      "kpiMeans": {
+        "cq": 71,
+        "aq": 72.8,
+        "cfi": 73.4,
+        "eq": 72.8,
+        "sq": 71.6
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "context-drift",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "open-weight",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 69.6,
+        "sd": 4.9295030175464944,
+        "min": 63,
+        "max": 76,
+        "ci95": [
+          63.4801948266305,
+          75.71980517336948
+        ]
+      },
+      "kpiMeans": {
+        "cq": 68.2,
+        "aq": 73.2,
+        "cfi": 66.8,
+        "eq": 70.8,
+        "sq": 69.4
+      },
+      "boundVerdict": "fail"
+    },
+    {
+      "itemId": "epistemic-quality",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "open-weight",
+      "expected": {
+        "minComposite": 55
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 75.4,
+        "sd": 2.701851217221259,
+        "min": 72,
+        "max": 79,
+        "ci95": [
+          72.04574643773016,
+          78.75425356226985
+        ]
+      },
+      "kpiMeans": {
+        "cq": 75.4,
+        "aq": 75,
+        "cfi": 74,
+        "eq": 77.6,
+        "sq": 78.2
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "mechanical-response",
+      "dataset": "CAIMS Sample Benchmark",
+      "judgeId": "open-weight",
+      "expected": {
+        "maxComposite": 50
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 68.2,
+        "sd": 2.8635642126552705,
+        "min": 64,
+        "max": 72,
+        "ci95": [
+          64.64498542337729,
+          71.75501457662271
+        ]
+      },
+      "kpiMeans": {
+        "cq": 66,
+        "aq": 69.4,
+        "cfi": 70.6,
+        "eq": 67.8,
+        "sq": 67.2
+      },
+      "boundVerdict": "fail"
+    },
+    {
+      "itemId": "nc-eloquent-nonsense",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "open-weight",
+      "controlType": "eloquent_nonsense",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 31,
+        "sd": 3.24037034920393,
+        "min": 26,
+        "max": 35,
+        "ci95": [
+          26.977193815257813,
+          35.02280618474219
+        ]
+      },
+      "kpiMeans": {
+        "cq": 32,
+        "aq": 29.8,
+        "cfi": 30.8,
+        "eq": 27.2,
+        "sq": 34.2
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-verbose-hallucination",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "open-weight",
+      "controlType": "verbose_hallucination",
+      "expected": {
+        "maxComposite": 35
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 30.8,
+        "sd": 3.03315017762062,
+        "min": 27,
+        "max": 35,
+        "ci95": [
+          27.034450393368854,
+          34.56554960663115
+        ]
+      },
+      "kpiMeans": {
+        "cq": 30,
+        "aq": 30,
+        "cfi": 32.6,
+        "eq": 30.8,
+        "sq": 30.6
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-fake-citations",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "open-weight",
+      "controlType": "fabricated_citations",
+      "expected": {
+        "maxComposite": 35
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 29.6,
+        "sd": 3.1304951684997055,
+        "min": 25,
+        "max": 33,
+        "ci95": [
+          25.713600000000003,
+          33.4864
+        ]
+      },
+      "kpiMeans": {
+        "cq": 32,
+        "aq": 26.4,
+        "cfi": 30.2,
+        "eq": 25.8,
+        "sq": 33.4
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-canned-self-reflection",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "open-weight",
+      "controlType": "simulated_metacognition",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 31.2,
+        "sd": 2.3874672772626644,
+        "min": 29,
+        "max": 35,
+        "ci95": [
+          28.236043077236108,
+          34.163956922763894
+        ]
+      },
+      "kpiMeans": {
+        "cq": 31.8,
+        "aq": 31.8,
+        "cfi": 28.2,
+        "eq": 31,
+        "sq": 30.4
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-confident-contradiction",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "open-weight",
+      "controlType": "internal_contradiction",
+      "expected": {
+        "maxComposite": 40
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 31.4,
+        "sd": 2.7018512172212596,
+        "min": 29,
+        "max": 36,
+        "ci95": [
+          28.045746437730145,
+          34.75425356226985
+        ]
+      },
+      "kpiMeans": {
+        "cq": 30.6,
+        "aq": 32.4,
+        "cfi": 31.6,
+        "eq": 31.4,
+        "sq": 32.2
+      },
+      "boundVerdict": "pass"
+    },
+    {
+      "itemId": "nc-keyword-stuffing",
+      "dataset": "CAIMS Negative Controls v1",
+      "judgeId": "open-weight",
+      "controlType": "keyword_stuffing",
+      "expected": {
+        "maxComposite": 35
+      },
+      "samplesOk": 5,
+      "samplesFailed": 0,
+      "composite": {
+        "n": 5,
+        "mean": 74,
+        "sd": 3.8078865529319543,
+        "min": 69,
+        "max": 79,
+        "ci95": [
+          69.27264234481883,
+          78.72735765518117
+        ]
+      },
+      "kpiMeans": {
+        "cq": 75.2,
+        "aq": 74,
+        "cfi": 70.8,
+        "eq": 74.4,
+        "sq": 76.8
+      },
+      "boundVerdict": "fail"
+    }
+  ],
+  "agreement": [
+    {
+      "judgeA": "claude-sonnet",
+      "judgeB": "gpt-4o",
+      "nItems": 11,
+      "pearsonR": 0.9948905041615695,
+      "meanAbsDiff": 1.8727272727272732
+    },
+    {
+      "judgeA": "claude-sonnet",
+      "judgeB": "open-weight",
+      "nItems": 11,
+      "pearsonR": 0.9924058704154669,
+      "meanAbsDiff": 2.2363636363636368
+    },
+    {
+      "judgeA": "gpt-4o",
+      "judgeB": "open-weight",
+      "nItems": 11,
+      "pearsonR": 0.9937879090912558,
+      "meanAbsDiff": 1.8909090909090907
+    }
+  ],
+  "negativeControls": {
+    "total": 18,
+    "pass": 14,
+    "marginal": 1,
+    "fail": 3,
+    "na": 0,
+    "failures": [
+      {
+        "itemId": "nc-keyword-stuffing",
+        "judgeId": "claude-sonnet",
+        "meanComposite": 71.8,
+        "bound": 35
+      },
+      {
+        "itemId": "nc-keyword-stuffing",
+        "judgeId": "gpt-4o",
+        "meanComposite": 73.8,
+        "bound": 35
+      },
+      {
+        "itemId": "nc-keyword-stuffing",
+        "judgeId": "open-weight",
+        "meanComposite": 74,
+        "bound": 35
+      }
+    ]
+  },
+  "stability": [
+    {
+      "judgeId": "claude-sonnet",
+      "cells": 11,
+      "medianSd": 3.7682887362833544,
+      "cellsAboveSd5": 2,
+      "h2Verdict": "pass"
+    },
+    {
+      "judgeId": "gpt-4o",
+      "cells": 11,
+      "medianSd": 3.209361307176242,
+      "cellsAboveSd5": 3,
+      "h2Verdict": "pass"
+    },
+    {
+      "judgeId": "open-weight",
+      "cells": 11,
+      "medianSd": 3.1304951684997055,
+      "cellsAboveSd5": 1,
+      "h2Verdict": "pass"
+    }
+  ],
+  "skippedJudges": []
+}
