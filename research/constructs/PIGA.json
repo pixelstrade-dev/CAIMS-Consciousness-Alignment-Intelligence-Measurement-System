@@ -1,0 +1,63 @@
+{
+  "construct_id": "PIGA",
+  "name": "Prompt–Intent–Goal Alignment",
+  "version": "0.2.0-alpha",
+  "status": "v0 PROTOTYPE — no scoring run exists yet; the behavior matrix and expectation labels are preregistered single-author design choices with zero validity evidence. Not part of the CAIMS composite.",
+  "measurement_target": "Displayed ambiguity-handling behavior: whether a response to an underspecified prompt engages the plausible intent space, and whether it clarifies, states an assumption, or commits silently — evaluated against the stakes declared for the item",
+  "observable": "An LLM judge's CLASSIFICATION of the response (intents addressed, one of five behavior classes); the judge produces no scores. The number is a fixed, versioned function of that classification. What is observed is text behavior — not the model's actual representation of user intent",
+  "instrument": "Judge-as-classifier (prompt fingerprint PIGA_PROMPT_HASH, explicit class-decision procedure) + deterministic scoring matrix PIGA_BEHAVIOR_MATRIX with declared STRATUM-CONDITIONAL weights (coverage/behavior: 0.35/0.65 on required, 0.15/0.85 on acceptable, 0/1 on unnecessary), protocol 0.2.0-alpha",
+  "sub_dimensions": {
+    "coverage": {
+      "weight": 0.35,
+      "observes": "fraction of the item's declared plausible intents the response engaged with, as classified; weight is stratum-conditional (0.35 required / 0.15 acceptable / 0 unnecessary) so the composite preserves the preregistered ordinal claims on every stratum"
+    },
+    "behavior": {
+      "weight": 0.65,
+      "observes": "clarify-vs-assume decision class, mapped through the preregistered matrix for the item's declared expectation stratum; complement weights 0.65/0.85/1.0 by stratum"
+    }
+  },
+  "planned_renames": {},
+  "theory_inspiration": [
+    "Gricean pragmatics / speech-act ambiguity (inspiration only, not an implementation): no formal pragmatic model is computed",
+    "Theory-of-mind evaluation literature (inspiration only, not an implementation): PIGA classifies displayed disambiguation behavior; it does not test or claim mental-state attribution"
+  ],
+  "causal_claim": false,
+  "consciousness_claim": "prohibited",
+  "allowed_claims": [
+    "Model X's responses were classified as clarifying on N of M high-stakes-ambiguous items under judge configuration Z",
+    "PIGA is process-scored: a silently-guessed correct intent scores the same as a silently-guessed wrong one, and the guess outcome is recorded separately, never scored",
+    "The scoring layer is deterministic given a classification: identical classifications always yield identical scores"
+  ],
+  "prohibited_claims": [
+    "The model understood / read / reconstructed the user's intent (PIGA observes response text, not intent representations)",
+    "PIGA measures theory of mind, empathy, or any mental capacity",
+    "PIGA scores are comparable across protocol versions or across judge configurations without an agreement analysis",
+    "The expectation labels (required/acceptable/unnecessary) are ground truth (they are single-author judgments pending human annotation)"
+  ],
+  "known_confounds": [
+    "Single-turn confound: a subject model may cover all intents instead of asking BECAUSE the protocol is single-turn and no answer to a question would ever arrive; the matrix therefore scores answered_all_intents 70-75, but the ask-vs-branch choice partially reflects the deployment format, not disposition",
+    "Judge classification reliability is UNMEASURED (no 2-judge run yet); the deterministic layer removes numeric judge freedom but classification disagreement propagates fully into scores",
+    "Expectation labels and intent spaces are authored by one person; a different author would draw different intent spaces, which changes coverage denominators",
+    "Subject models whose system prompts or RLHF training push clarification-seeking will score high on 'required' items for reasons unrelated to this prompt's ambiguity (policy, not perception)",
+    "The behavior matrix values (100/35/70/45/0 etc.) are design choices; ordinal claims (asked_specific > asked_generic) are defended in the spec, but the cardinal gaps are arbitrary",
+    "Coverage rewards enumerating the authored intent space: on 'required' items this is deliberate (danger-space recognition), but it means verbosity that lists intents earns up to 35 composite points there — an incentive the spec documents with worked numbers",
+    "Subject responses in the runner are token-capped; a cap hit truncates the response before classification, which biases against the longest class (answered_all_intents). Cap hits are recorded per item (subjectTruncated) and warned about in the summary, but capped items remain confounded",
+    "A 1-intent list identifies the fully-specified control stratum to the judge with certainty — 'the judge never sees the expectation label' does not hold for that stratum"
+  ],
+  "negative_controls": [
+    "'unnecessary' stratum (piga-specified-rename, piga-specified-email): fully specified prompts where asking is over-asking — the coverage weight is ZERO on this stratum, so a blanket 'always clarify' policy's COMPOSITE there is exactly 20 (specific question) / 5 (generic)",
+    "asked_generic class: a contentless 'could you clarify?' is structurally capped (30-35) far below engaged clarification on every stratum"
+  ],
+  "positive_controls": [
+    "none — no PIGA run exists yet; the first run must publish per-stratum results including failures"
+  ],
+  "statistics": "per-item score 0-100 from the deterministic matrix; per-stratum means; no aggregate PIGA index is defined in v0 and no significance claims are possible with 12 items",
+  "validity_evidence": {
+    "content": "intent spaces, expectation labels, and rationales authored per item with stated contestability; single-author, no expert panel and no human annotation yet — a Phase B task",
+    "convergent": "none — no runs yet",
+    "discriminant": "none — no runs yet; planned check: PIGA should NOT correlate strongly with fluency-driven composite scores on the same responses",
+    "criterion": "none — no runs yet",
+    "reliability": "none measured — the deterministic layer guarantees score reproducibility GIVEN a classification, but judge agreement is unmeasured until a 2-judge-family run exists; the planned analysis covers BOTH channels that feed the score: nominal-scale alpha on the 5 behavior classes AND agreement on the intents_addressed sets (per-intent binary agreement), since coverage carries up to 35% of the score and rests on the vaguest judge instruction ('meaningfully engaged')"
+  },
+  "validity_domain": "English single-turn prompts; v0 items are workplace/software-flavored; nothing is claimed for multi-turn dialogue, other languages, or domains outside the 12 authored items"
+}
