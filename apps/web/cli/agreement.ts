@@ -59,7 +59,7 @@ for (const ds of datasets) {
   // Raw mean absolute pairwise difference — the coefficient-free statistic
   // that survives range-restriction and outlier effects.
   const diffs: number[] = [];
-  for (const ratings of byItem.values()) {
+  for (const ratings of Array.from(byItem.values())) {
     for (let x = 0; x < ratings.length; x++) {
       for (let y = x + 1; y < ratings.length; y++) diffs.push(Math.abs(ratings[x] - ratings[y]));
     }
