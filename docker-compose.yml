@@ -16,6 +16,10 @@ services:
       # REQUIRED for any public deployment — without it the API would run
       # open. Set-but-empty now FAILS CLOSED (503) instead of opening.
       - CAIMS_API_KEYS=${CAIMS_API_KEYS:-}
+      # Bare passthrough on purpose: only set in the container when defined
+      # on the host — unset must mean "ensemble not configured" (400), not
+      # "misconfigured" (503, which an empty string would trigger).
+      - CAIMS_ENSEMBLE_JUDGES
     depends_on:
       postgres:
         condition: service_healthy
