@@ -81,8 +81,20 @@ function registryRef(): string {
 export interface DeterministicChecksSummary {
   /** True only when the run actually established facts (see verificationEffective). */
   effective: boolean;
+  /** References positively confirmed to exist in a public registry. */
+  verified: number;
   notFound: number;
   truncated: boolean;
+}
+
+// L3 is a badge readers treat as "facts were checked and held up", so it
+// must be EARNED, never inherited from an empty check (external audit
+// finding): the lift requires at least one positively verified reference
+// AND zero non-existent ones. A citation-free response, an all-network-error
+// run, or a text carrying a fabricated reference all stay at L2 with the
+// reason in the caveats.
+export function deterministicLiftEarned(det: DeterministicChecksSummary | undefined): boolean {
+  return !!det && det.effective && det.verified > 0 && det.notFound === 0;
 }
 
 function verificationCaveats(det: DeterministicChecksSummary | undefined): string[] {
@@ -90,7 +102,7 @@ function verificationCaveats(det: DeterministicChecksSummary | undefined): strin
   const out: string[] = [];
   if (det.notFound > 0) {
     out.push(
-      `deterministic citation verification found ${det.notFound} NON-EXISTENT reference(s) — see verification.citations before trusting this profile`
+      `deterministic citation verification found ${det.notFound} NON-EXISTENT reference(s) — see verification.citations before trusting this profile; the evidence level was NOT lifted`
     );
   }
   if (det.truncated) {
@@ -98,6 +110,9 @@ function verificationCaveats(det: DeterministicChecksSummary | undefined): strin
   }
   if (!det.effective) {
     out.push('deterministic checks ran but established nothing (network errors or truncation) — the evidence level was NOT lifted');
+  }
+  if (det.effective && det.verified === 0 && det.notFound === 0) {
+    out.push('verification ran but positively verified no reference (none present, or none carried a checkable identifier) — the evidence level was NOT lifted');
   }
   return out;
 }
@@ -143,9 +158,10 @@ export function buildEvidenceCardFromSingle(
  *
  * Level is computed: L2 requires ≥2 DISTINCT PROVIDER FAMILIES among the ok
  * judges (two models of one family do not make an ensemble of families);
- * the L2→L3 lift requires a deterministic-verification run that was
- * EFFECTIVE (established facts: not truncated, not all-network-error) —
- * a run that verified nothing must not upgrade the label.
+ * the L2→L3 lift must be EARNED (deterministicLiftEarned): an effective
+ * verification run with ≥1 positively verified reference and 0 fabricated
+ * ones. A run that verified nothing — or that FOUND a fabrication — must
+ * not upgrade the label.
  */
 export function buildEvidenceCardFromEnsemble(
   result: EnsembleScores,
@@ -183,7 +199,7 @@ export function buildEvidenceCardFromEnsemble(
 
   const distinctProviders = new Set(judges.map(j => j.provider)).size;
   let level: EvidenceLevel = distinctProviders >= 2 ? 'L2' : 'L1';
-  if (level === 'L2' && opts.deterministicChecks?.effective) level = 'L3';
+  if (level === 'L2' && deterministicLiftEarned(opts.deterministicChecks)) level = 'L3';
 
   const caveats: string[] = [...STANDING_CAVEATS, ...verificationCaveats(opts.deterministicChecks)];
   if (result.failedJudges.length > 0) {
