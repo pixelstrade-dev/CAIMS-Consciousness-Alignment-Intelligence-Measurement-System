@@ -14,7 +14,7 @@ pdflatex main.tex && pdflatex main.tex   # twice for references
 # or: tectonic main.tex
 ```
 
-Standard `article` class + `booktabs`/`hyperref` only — any TeX Live or
+Standard `article` class + geometry/booktabs/url/hyperref/amsmath (all in any base TeX distribution) — any TeX Live or
 Overleaf (paste `main.tex` into a new Overleaf project) will build it.
 
 ## Before submission — verification gates (do not skip)
