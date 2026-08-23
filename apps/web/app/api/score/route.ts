@@ -64,6 +64,9 @@ export async function POST(req: NextRequest) {
       },
       interpretation: interpretScore(scores.composite),
       contextAlert: checkContextAlert(scores.cfiScore),
+      // Provenance envelope — protocol version, rubric hash, judge params.
+      // Scores from different protocolVersion values must never be compared.
+      metadata: scores.metadata,
       processingTimeMs,
     }, 200, getRateLimitHeaders(rateCheck));
   } catch (error) {

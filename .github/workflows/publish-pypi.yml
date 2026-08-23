@@ -1,0 +1,59 @@
+name: Publish PyPI
+
+# Publishes the `caims` Python client when a GitHub release is published.
+# Requires the repository secret PYPI_TOKEN (an API token from pypi.org,
+# owner action). Version guard: an app release that does not bump the SDK
+# version skips cleanly instead of failing on a duplicate upload.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  publish-sdk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: sdks/python
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check secret
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          if [ -z "$PYPI_TOKEN" ]; then
+            echo "::error::PYPI_TOKEN secret is not set — create an API token on pypi.org and add it in Settings → Secrets → Actions."
+            exit 1
+          fi
+      - name: Version guard
+        id: guard
+        run: |
+          V=$(python -c "import tomllib;print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://pypi.org/pypi/caims/$V/json")
+          if [ "$CODE" = "200" ]; then
+            echo "caims $V already on PyPI — skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Test
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          pip install -e ".[dev]"
+          python -m pytest tests/ -q
+      - name: Build & publish
+        if: steps.guard.outputs.skip != 'true'
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          pip install build twine
+          python -m build
+          python -m twine upload dist/*

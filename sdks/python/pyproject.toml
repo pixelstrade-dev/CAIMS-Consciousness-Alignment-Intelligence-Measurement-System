@@ -1,0 +1,50 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "caims"
+version = "2.0.0a1"
+description = "Python client for CAIMS — score consciousness-related behavioral proxy indicators in LLM interactions (CQ, AQ, CFI, EQ, SQ). Proxy indicators, not consciousness measurements."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+authors = [
+  { name = "Skander Douki", email = "dk.skander@gmail.com" },
+  { name = "Pixels Trade SA" },
+]
+keywords = [
+  "llm-evaluation",
+  "llm-as-judge",
+  "ai-safety",
+  "consciousness-proxies",
+  "behavioral-indicators",
+  "alignment",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+# Zero runtime dependencies — stdlib only. Deliberate: researchers get a
+# client with no supply-chain surface and no version conflicts.
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.urls]
+Homepage = "https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System"
+Repository = "https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System"
+Issues = "https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System/issues"
+Documentation = "https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System/tree/main/sdks/python"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/caims"]
