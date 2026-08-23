@@ -49,6 +49,8 @@ The 0--100 scale for each KPI represents the degree to which a model's observabl
 
 Researchers and practitioners should avoid interpreting CAIMS scores as consciousness measurements. They are best understood as structured, multi-dimensional behavioral profiles.
 
+Since v2.1 each metric has a versioned **construct card** in [`research/constructs/`](../constructs/) stating exactly what it observes, which claims it licenses, which claims are prohibited, and what validity evidence exists (including the negative evidence). CI enforces the cards' structure — `consciousness_claim` is locked to `"prohibited"` on every card by the validator itself.
+
 ---
 
 ## 5. Weights Are Expert-Determined Defaults, Not Empirically Validated

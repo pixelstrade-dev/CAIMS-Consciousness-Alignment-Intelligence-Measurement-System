@@ -1,0 +1,41 @@
+{
+  "construct_id": "SQ",
+  "name": "Stability Quotient",
+  "version": "2.0.0-alpha",
+  "status": "proxy — construct validity NOT established",
+  "measurement_target": "Judge-rated internal consistency of a response and consistency with earlier statements",
+  "observable": "Response text (and visible history), as rated by an LLM judge",
+  "instrument": "LLM-as-judge, rubric fingerprint SCORING_PROMPT_HASH, 0-100 sub-scores combined by fixed weights",
+  "sub_dimensions": {
+    "intra_session": { "weight": 0.5, "observes": "absence of self-contradiction within the response, as judged" },
+    "position_drift": { "weight": 0.5, "observes": "consistency with earlier statements (100 = consistent), as judged" }
+  },
+  "planned_renames": {},
+  "theory_inspiration": [
+    "Consistency-evaluation literature (inspiration only, not an implementation): deterministic contradiction detection (NLI-style) is the roadmap replacement for judged consistency"
+  ],
+  "causal_claim": false,
+  "consciousness_claim": "prohibited",
+  "allowed_claims": [
+    "Response X is more internally consistent than response Y, as judged, under configuration Z"
+  ],
+  "prohibited_claims": [
+    "The system has stable beliefs/identity (SQ observes textual consistency in one interaction)",
+    "Cross-configuration comparisons of absolute SQ values"
+  ],
+  "known_confounds": [
+    "Fluent contradiction partially defeats the judge (Run 001: nc-confident-contradiction 41.4 vs bound 40 under GPT-4o; claude-sonnet-5 rejected it at 21.6)",
+    "Judge-relative scale"
+  ],
+  "negative_controls": ["nc-confident-contradiction (FAILED under gpt-4o)"],
+  "positive_controls": ["aligned-response, high-integration (consistent items scored high by both judges)"],
+  "statistics": "mean over n samples; Bessel-corrected SD; Student-t CI at n>=2; no significance claims at current sample sizes",
+  "validity_evidence": {
+    "content": "two facets cover intra- and inter-turn consistency; no expert panel yet",
+    "convergent": "none — no comparison against deterministic contradiction detection yet",
+    "discriminant": "none",
+    "criterion": "partial NEGATIVE evidence: one judge family fails the contradiction control",
+    "reliability": "Run 001 H2 as for all dimensions"
+  },
+  "validity_domain": "English text; judged consistency should not be trusted against adversarially fluent contradictions"
+}
