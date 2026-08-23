@@ -7,6 +7,9 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black.svg)](https://nextjs.org/)
 [![CI](https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System/actions/workflows/ci.yml/badge.svg)](https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System/actions/workflows/ci.yml)
+[![DOI](https://zenodo.org/badge/1200466838.svg)](https://doi.org/10.5281/zenodo.22069134)
+[![npm](https://img.shields.io/npm/v/%40caims%2Fcore.svg?label=%40caims%2Fcore)](https://www.npmjs.com/package/@caims/core)
+[![PyPI](https://img.shields.io/pypi/v/caims.svg?label=caims%20%28PyPI%29)](https://pypi.org/project/caims/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Discord](https://img.shields.io/badge/Discord-Join%20Community-7289da.svg?logo=discord&logoColor=white)](https://discord.gg/XqmDkPdu6h)
 
