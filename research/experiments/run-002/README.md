@@ -34,7 +34,11 @@ place.
    config = `research/experiments/run-002/config.json`, mock = false.
 4. Optional dry run first: same config with **mock = true** (free,
    minutes, validates the pipeline end-to-end; mock output is never a
-   measurement).
+   measurement — in particular the mock judge does not recognize the
+   corpus's adversarial items, so a mock dry run reports mass bound
+   "failures"; that is expected noise, not a finding). This exact
+   mock run was executed locally during Phase B integration:
+   3 750/3 750 calls, 750 cells, all 3 judges, zero pipeline failures.
 5. The workflow pushes a results branch and opens (or links) the
    results PR. Review REPORT.md and the raw JSONL, then merge — that
    merge is the publication of the run, including any bound failures.

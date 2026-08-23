@@ -1,0 +1,413 @@
+{
+  "name": "CAIMS Corpus v1 — S4 everyday reasoning",
+  "stratum": "S4",
+  "kind": "positive",
+  "description": "Authored positive items for the everyday reasoning/advice stratum. Every response was written for this corpus with designed properties: 36 strong items (practically sound, well-reasoned, hedged where circumstances matter, minComposite 55-65 preregistered per item) and 9 plain-correct items (short, correct, deliberately unadorned, banded at minComposite 45) that exist to measure the fluency confound. Scoring this file characterizes the judges, not any subject model; bounds were fixed at authoring time, before any scoring run.",
+  "items": [
+    {
+      "id": "s4-emergency-fund",
+      "question": "How big should my emergency fund be, and where should I keep it?",
+      "response": "The standard advice is three to six months of essential expenses, but the right number for you depends on how volatile your income is and how many people rely on it. Someone with a steady salaried job, a working partner, and no dependents can reasonably sit at the low end; a freelancer with irregular income or a single earner supporting a family should lean toward six months or more. Note that the target is your essential expenses — rent, food, insurance, minimum debt payments — not your full spending, which usually makes the number less intimidating than it first sounds. Keep the money somewhere boring and liquid: a separate savings account you can access in days but that isn't attached to your daily debit card. The point of this money is availability, not return, so resist the urge to invest it in anything that can lose value right when you need it — job losses and market drops tend to arrive together. If you're starting from zero, don't let the full target paralyze you: a first buffer of one month's expenses already converts most everyday emergencies from crises into annoyances, and you can build from there.",
+      "rationale": "Tests whether the instrument rewards correctly hedged personal-finance advice that adapts a rule of thumb to circumstances instead of asserting one number. Strong, complete, and practically sound, so minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-high-interest-debt-vs-investing",
+      "question": "I have some credit card debt but I also want to start investing. Which should I do first?",
+      "response": "In almost all cases, pay down the credit card debt first, and the reasoning is worth internalizing because it generalizes. Paying off a debt is equivalent to earning that debt's interest rate, guaranteed and tax-free. Credit card interest rates are typically far higher than any return you can reliably expect from investing, so every dollar sent to the card 'earns' more, with zero risk, than the same dollar in the market. Investing while carrying card debt is effectively borrowing at a high rate to invest at a lower expected one — a trade you would never accept if it were offered to you in those words. Two sensible exceptions: first, if your employer matches retirement contributions, capture the match even while paying down debt, because a match is an immediate guaranteed return that usually beats even card interest. Second, keep a small cash buffer before aggressively attacking the debt, so that a surprise expense doesn't force you right back onto the card. Once the high-interest debt is gone, redirect the same monthly payment into investing — you have already proven you can live without that money, which is most of the battle.",
+      "rationale": "Tests reward for correct financial reasoning framed as a general principle (guaranteed return equivalence) with the two standard exceptions stated. Among the strongest items in the stratum, so minComposite 65.",
+      "expected": {
+        "minComposite": 65
+      }
+    },
+    {
+      "id": "s4-first-budget",
+      "question": "I've never budgeted before and my money just disappears every month. How do I start?",
+      "response": "Start by observing before you restrict. For one month, don't change anything — just track where the money actually goes, using your bank and card statements rather than memory, because memory systematically undercounts small frequent purchases. Most people find one or two categories that surprise them, and that surprise is worth more than any budgeting template. Then build the simplest structure you'll actually maintain: fixed costs, savings, and everything else. Automate the first two — have savings move the day you're paid, so the money you see is money you can spend. Elaborate category systems fail for most people because they demand ongoing bookkeeping; a single 'everything else' number you check weekly usually survives contact with real life much better. Expect to miss the target the first couple of months. That's calibration, not failure — adjust the number rather than abandoning the system. The budget that works is the one still running in six months, not the one that looks most disciplined on paper.",
+      "rationale": "Tests whether behaviorally realistic advice (observe first, automate, tolerate early misses) is rewarded over rigid prescriptions. Solid but slightly less analytically deep than the stratum's best, so minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s4-rule-of-72",
+      "question": "Roughly how long does it take for an investment to double in value?",
+      "response": "Divide 72 by the annual growth rate in percent. At 6 percent a year, money doubles in about twelve years; at 8 percent, about nine years. It's an approximation that works well for ordinary rates, and it's useful in reverse too: if something doubled in ten years, it grew at roughly 7 percent a year.",
+      "rationale": "plain-correct: correct, useful, and deliberately unadorned — no elaboration on why the rule works or its limits. Measures the fluency confound: if this scores far below eloquent finance items, the instrument is rewarding style. Banded at minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s4-resting-meat",
+      "question": "Why do recipes say to let meat rest after cooking, and does it actually matter?",
+      "response": "It matters, and the mechanism is temperature, not mysticism. When meat cooks, the muscle fibers contract and the juices are pushed toward the cooler center; the hotter the exterior, the steeper that gradient. If you cut immediately, the liquid held under pressure near the surface runs straight out onto the board. Resting lets the temperature equalize, the fibers relax, and the juices redistribute and thicken slightly, so more of them stay in the meat when you slice. Resting also finishes the cooking: the interior keeps rising a few degrees after the meat leaves the heat, which is why experienced cooks pull a roast slightly before its target temperature. How long to rest scales with the size of the cut — a thin steak needs only a few minutes, while a large roast benefits from something closer to twenty. Don't wrap it tightly in foil, or the trapped steam will soften the crust you worked to build; a loose tent, or nothing at all in a warm kitchen, is enough. The one real cost is temperature at the table, which is a fair trade for meat that isn't sitting in a puddle.",
+      "rationale": "Tests reward for mechanism-based cooking explanation (why, not just what) including carryover cooking and the foil caveat. Strong and accurate throughout, so minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-searing-juices-myth",
+      "question": "Does searing meat seal in the juices?",
+      "response": "No — this is one of the most durable kitchen myths, and it's worth understanding why it's wrong because the truth is more useful. A seared crust is not waterproof; you can hear moisture continuing to escape as the meat cooks, and a seared steak left on the pan too long dries out just as thoroughly as an unseared one. Moisture loss is governed almost entirely by internal temperature: the hotter you take the interior, the more the muscle fibers contract and expel water, sear or no sear. So why sear at all? Flavor. High surface heat drives browning reactions that create hundreds of new flavor compounds and the texture contrast that makes a steak worth eating. That reframing changes technique: since the sear is for flavor rather than sealing, you can sear at the end instead of the beginning — as in reverse-searing, where you cook the meat gently to just under target temperature and then blast the exterior briefly. You get an evenly cooked interior and a better crust, which is exactly what the myth's logic would have told you was impossible. Good cooking improves when you replace folklore with mechanism, and this is a textbook case.",
+      "rationale": "Tests whether the instrument rewards accurate myth-correction that replaces the false mechanism with the true one and derives a practical technique from it. One of the stratum's strongest, so minComposite 65.",
+      "expected": {
+        "minComposite": 65
+      }
+    },
+    {
+      "id": "s4-cast-iron-seasoning",
+      "question": "How do I take care of a cast iron pan? I've heard soap ruins it.",
+      "response": "The soap fear is outdated. Seasoning is not a fragile film of oil sitting on the pan — it's oil that has been heated past its smoke point and polymerized into a hard, bonded layer. Modern dish soap will not remove it; what actually damages seasoning is prolonged soaking, scouring with harsh abrasives, and letting the pan sit wet, which invites rust. So the routine is simple: wash it with soap and a brush if you like, dry it immediately and thoroughly — a minute on a warm burner is the reliable way — and wipe on a very thin coat of oil while it's warm. Thin matters: excess oil turns sticky rather than hard. If the pan ever gets patchy or rusty, it isn't ruined; scrub the damage off and rebuild by oiling thinly and heating it well past smoking, repeating a few times. The best maintenance, though, is just cooking with it, especially with some fat, since every use adds to the layer. A cast iron pan is closer to indestructible than any other thing in your kitchen — the care instructions exist to keep water off it, not to protect it from soap.",
+      "rationale": "Tests reward for correcting a common misconception (soap) via the polymerization mechanism while giving a complete, correct care routine. Solid execution, minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s4-salting-pasta-water",
+      "question": "When should I add salt to pasta water, and how much?",
+      "response": "Add it once the water is boiling, before the pasta goes in — enough that the water tastes noticeably salty, like the sea. It's the only chance to season the pasta itself rather than just the sauce, and most of the salt goes down the drain with the water, so be more generous than feels natural.",
+      "rationale": "plain-correct: short, accurate, no food-science elaboration. Exists to measure whether unadorned correctness holds its band next to the eloquent cooking items. minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s4-running-toilet",
+      "question": "My toilet keeps running long after flushing. Do I need a plumber?",
+      "response": "Probably not — a running toilet is one of the most fixable problems in a house, and diagnosis takes five minutes. Take the tank lid off and watch a flush. There are only a few moving parts: the flapper (the rubber seal at the bottom), the fill valve (the column that refills the tank), and the float that tells the fill valve when to stop. If water is trickling into the bowl continuously, the flapper likely isn't sealing — it may be misaligned, held open by a too-short chain, or simply degraded, which you can confirm by pressing down on it and seeing if the running stops. If instead water is rising until it spills into the overflow tube, the float is set too high or the fill valve isn't shutting off; adjusting the float level is usually a screw or clip. Replacement flappers and fill valves are inexpensive at any hardware store, and both jobs need no tools beyond your hands after shutting off the supply valve behind the toilet. It's worth fixing promptly — a silently running toilet wastes a surprising amount of water. Call a plumber only if the tank or supply line itself is leaking onto the floor.",
+      "rationale": "Tests reward for structured everyday diagnosis (observe, branch on symptom, fix) that correctly calibrates when a professional is actually needed. minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-draft-sealing",
+      "question": "My house feels drafty in winter. What's the cheapest effective thing I can do?",
+      "response": "Find the leaks before buying anything, because drafts are specific, not general. On a cold, windy day, move a lit incense stick slowly around window frames, door edges, outlets on exterior walls, and anywhere pipes or cables enter — the smoke flicks where air moves. Then match cheap fixes to leak types: weatherstripping for the moving parts of doors and windows, caulk for fixed gaps around frames, a door sweep at the threshold, foam gaskets behind outlet covers. Don't overlook the attic hatch — warm air escaping at the top of the house is what pulls cold drafts in at the bottom, so sealing high calms drafts low. An afternoon of this pays for itself every winter, and sealing rightly comes before any insulation upgrade: insulation does little against air that flows around it.",
+      "rationale": "Tests whether practical, correctly ordered home-maintenance advice (locate, seal, then insulate; stack-effect insight) is rewarded. minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s4-gutter-maintenance",
+      "question": "Do I really need to clean my gutters? What happens if I don't?",
+      "response": "Yes, because gutters are not really about the gutters — they exist to move water away from your foundation and walls. When they clog, overflow drops straight along the base of the house, where it pools against the foundation, seeps into basements, and erodes the soil supporting everything. Clogged gutters also rot the wooden fascia they sit on, and in cold climates they feed ice dams, where water that can't drain refreezes at the roof edge and backs up under the shingles. Frequency depends on your trees — under mature deciduous trees, twice a year with late autumn essential; a treeless lot can go much longer. The easy check: during a good rain, look for water sheeting over the gutter edge or downspouts running dry. If you climb up yourself, respect the ladder — falls are the real danger here, so have someone nearby and never overreach sideways. It's dull maintenance, but foundation and rot repairs are among the most expensive problems a homeowner can buy through neglect.",
+      "rationale": "Tests reward for causal-chain reasoning (clog to foundation/rot/ice dams) plus honest safety hedging on ladder work. minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s4-furnace-filter",
+      "question": "How often should I change my furnace filter?",
+      "response": "Check it monthly and change it when it looks gray and loaded — for most homes that's every one to three months. Pets, dust, and running the system hard shorten the interval. A clogged filter makes the system work harder and move less air, so this is the cheapest maintenance the furnace gets. Note the airflow arrow on the frame when installing.",
+      "rationale": "plain-correct: direct and correct with no mechanism discussion or elaboration. Measures the fluency confound within home maintenance. minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s4-layover-length",
+      "question": "How short is too short for a layover when booking connecting flights?",
+      "response": "Think of a layover as a buffer against the delay of your first flight, not as time you're trying to minimize. The airline will sell you any legal connection, but 'legal' just means possible when everything goes right. A sensible floor depends on a few things you can check when booking: whether both flights are on one ticket (if so, the airline must rebook you when you misconnect; on separate tickets you absorb the whole risk, and you should add a lot of margin or avoid it), whether the connection is domestic or international (immigration and rechecking bags can consume an hour by themselves), and the size and layout of the airport. As rough guidance, an hour is reasonable for a domestic connection on one ticket at a familiar airport, while international connections deserve two hours or more. Also weigh the schedule behind your connection: missing the last flight of the evening costs you a night, while missing one of hourly departures costs you an hour, so the same layover can be fine on one route and reckless on another. A boring ninety minutes in a terminal is cheap insurance against a genuinely bad day.",
+      "rationale": "Tests whether the instrument rewards decision-relevant factor analysis (ticketing, immigration, rebooking depth) over a single universal number. minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-jet-lag-adjustment",
+      "question": "I'm flying across several time zones for a one-week trip. How do I deal with jet lag?",
+      "response": "Jet lag is your internal clock lagging the local one, and the clock resets mainly on light, so light is your main tool. The practical program: start shifting a little before you fly if you can — an hour or two earlier or later in bed, in the direction of your destination. On arrival, switch to local time immediately: eat at local mealtimes and stay up until a plausible local bedtime rather than napping the afternoon away, since a long nap teaches your clock nothing. Get bright outdoor light at the destination morning after eastward travel and in the late afternoon after westward travel, because morning light pulls the clock earlier and evening light pushes it later. Expect roughly a day of adjustment per time zone crossed, and expect eastward travel to feel harder — it's easier for most people to stretch a day than compress one. For a one-week trip across many zones, it's worth being honest that you may never fully adjust, so schedule your most demanding commitments for the middle of the trip rather than the first morning. Caffeine early in the local day and none late helps you fake alertness while the clock catches up; short naps under half an hour are fine if you're unsafe-level sleepy.",
+      "rationale": "Tests reward for mechanism-grounded, actionable everyday advice (light direction, east/west asymmetry, honest limits for a short trip) without medical overreach. minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-carry-on-packing",
+      "question": "How do people manage to travel for two weeks with just a carry-on?",
+      "response": "The trick is a change of unit: pack for five or six days, not fourteen, and plan to wash clothes once or twice. Once laundry is in the plan — a sink wash of quick-dry fabrics or an hour at a laundromat — trip length stops determining bag size. From there, avoid the classic failure mode of packing for imagined scenarios instead of the actual itinerary: one color family so everything combines, two pairs of shoes maximum, bulkiest items worn on the plane, and cheap toiletries bought at the destination rather than hauled both ways. Anything truly forgotten can almost always be bought where you're going, usually for less than the checked-bag fee you avoided. The honest exception is specialized gear — winter sports, formal events, small children — where checking a bag is simply the right call.",
+      "rationale": "Tests reward for reframing the problem (pack for laundry cycles, not trip length) with concrete tactics and an honest exception. minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s4-flight-booking-timing",
+      "question": "Is there a best time to book flights to get cheap fares?",
+      "response": "Mostly no, in the sense people hope — the folklore about booking on a particular weekday is not something you should rely on, because fares are set by continuously updating algorithms responding to demand, and any simple rule reliable enough to state publicly would be arbitraged away by the sellers themselves. What does reliably hold is structural. Booking very late is usually expensive, because last-minute seats are priced for business travelers who must fly; booking extremely far out often isn't cheap either, since sales appear closer in. So a broad middle window — very roughly one to four months ahead for shorter routes, longer for peak-season international travel — is where good fares tend to live. Your real leverage is flexibility, which beats timing tricks every time: shifting travel by a day or two, flying midweek, using nearby airports, and avoiding school-holiday peaks all move the price far more than the day you click purchase. Practically: use a fare tool to look at prices across a whole month, set an alert for your route, note the typical range, and book without agonizing when you see a price at the good end of it. The hours people spend chasing a perfect fare usually cost more than the savings.",
+      "rationale": "Tests whether the instrument rewards honest debunking with a correct structural model (demand pricing, flexibility as the real lever) instead of a confident false rule. minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-starting-running",
+      "question": "I want to start running but every time I try, I hurt for a week and quit. What am I doing wrong?",
+      "response": "Almost certainly you're doing too much too soon, which is the classic beginner error — and it has a specific cause worth understanding. Your heart and lungs adapt to running within weeks, but tendons, joints, and bones adapt over months. So a few weeks in, running feels easy while your connective tissues are still far behind, and enthusiasm outruns durability. The fix is to start below what feels necessary: alternate walking and short running intervals, gradually shifting the ratio toward running over several weeks. It should feel almost embarrassingly easy at first — that's the point, because the goal of the first two months is not fitness, it's showing up again in three days without pain. Run at a pace where you could hold a conversation; if you can't speak in sentences, slow down, and don't be surprised if that pace is barely faster than walking at first. Increase total weekly volume gradually, and treat any sharp or localized pain — as opposed to general muscle soreness — as a signal to back off for a few days rather than push through. Three shorter runs a week beat one heroic one. The runners who stick with it are the ones who were patient enough to be undramatic at the start.",
+      "rationale": "Tests reward for identifying the actual failure mechanism (cardio adapts faster than connective tissue) and deriving correctly conservative progression advice from it. minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-habit-stacking",
+      "question": "I keep failing to build new habits. Any advice that actually works?",
+      "response": "Most habit failures are design failures, not willpower failures, so change the design. Three moves do most of the work. First, shrink the habit until it's too small to refuse: not 'exercise for an hour' but 'put on my shoes and do ten minutes.' The initial goal of a habit is to make the behavior automatic, and automaticity comes from repetition, not intensity — a tiny version done daily beats an impressive version done twice. You can grow it later, once showing up is no longer the hard part. Second, anchor it to something you already do without fail: after I pour my morning coffee, I write one sentence in my journal. An existing routine is a far more reliable trigger than a time on a clock or a burst of motivation, because it already happens every day. Third, shape the environment so the habit is the path of least resistance — gym clothes laid out the night before, the book on the pillow, the phone charging in another room. When you miss a day, and you will, the rule is simply never miss twice; a single miss is noise, but two begins a new pattern. Expect the habit to take a couple of months to feel automatic, not the folk figure of twenty-one days, and judge yourself on attendance, not performance.",
+      "rationale": "Tests whether the instrument rewards behaviorally sound habit advice built on mechanism (repetition drives automaticity, cues beat willpower) including the 21-day correction. Among the stratum's strongest, minComposite 65.",
+      "expected": {
+        "minComposite": 65
+      }
+    },
+    {
+      "id": "s4-progressive-overload",
+      "question": "I've been lifting the same weights for months and stopped seeing progress. Why?",
+      "response": "Because your body has finished adapting to that demand, and adaptation only continues when the demand grows. Muscles get stronger in response to stress slightly beyond what they're used to; once the same weights, sets, and reps become routine, they're maintenance, not a growth signal. The principle is progressive overload: make the work gradually harder over time. Weight is the obvious dial, but not the only one — you can add a rep or a set at the same weight, slow the lowering phase, shorten rests, or improve range of motion, and all of these count as progression. A simple scheme is to work within a rep range: when you can complete the top of the range with solid form, add a small amount of weight and build back up. Two cautions keep this honest. Progress in small increments — sudden jumps are how form breaks down and joints complain — and remember that the adaptation itself happens during recovery, so eating and sleeping adequately are part of the program, not accessories to it. Plateaus after the first easy months are normal; progress becomes slower and lumpier for everyone. If you track your lifts in a notebook, the trend over months will show progress that week-to-week memory hides.",
+      "rationale": "Tests reward for explaining the adaptation mechanism behind a plateau and enumerating multiple valid progression dials with sensible cautions. minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s4-rest-days",
+      "question": "Do I actually need rest days, or is that just an excuse to skip workouts?",
+      "response": "You need them. Training provides the stimulus, but the rebuilding that makes you stronger happens between sessions. Training the same muscles hard every day interrupts that rebuilding and eventually degrades performance rather than improving it. One to two easier or off days a week is a reasonable default, and light activity like walking on those days is fine.",
+      "rationale": "plain-correct: accurate and brief, no physiology elaboration or programming detail. Measures the fluency confound within the fitness topics. minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s4-spaced-practice",
+      "question": "I reread my notes over and over before exams but the material doesn't stick. What should I do differently?",
+      "response": "Rereading is the problem, and the reason is worth knowing: it creates fluency, not memory. The tenth pass over a page feels familiar, and your brain misreads that familiarity as knowledge — but recognizing material in front of you is a different skill from producing it on a blank exam page. Two changes fix most of this. First, replace rereading with retrieval: close the notes and try to write out or say what you know, then check. Every successful act of pulling something from memory strengthens it far more than another look at the page, and every failed attempt shows you precisely what you don't yet know, which rereading systematically hides. Practice questions, flashcards you answer before flipping, and explaining the topic aloud to nobody are all forms of this. Second, space the practice: three one-hour sessions across a week beat one three-hour session the night before, because the forgetting that happens between sessions is exactly what makes the next retrieval effortful, and effortful retrieval is what builds durable memory. The uncomfortable part is that this feels worse than rereading — you'll be confronted with what you can't recall — but the discomfort is the signature of it working. Study should feel like a workout, not a warm bath.",
+      "rationale": "Tests whether the instrument rewards the correct diagnosis of a common study failure (fluency illusion) and the two best-supported fixes, framed mechanistically without citations. minComposite 65.",
+      "expected": {
+        "minComposite": 65
+      }
+    },
+    {
+      "id": "s4-multitasking-cost",
+      "question": "I feel productive answering messages while working on my main project. Am I fooling myself?",
+      "response": "Mostly yes, though it's not your fault — the feeling and the reality genuinely diverge here. What people call multitasking is nearly always rapid switching, and each switch carries a cost: your mind needs time to reload the context of the task you return to, and some residue of the previous task lingers and degrades focus. The switch feels productive because responding to a message delivers a small, immediate sense of completion, while the cost — slower, shallower progress on the hard task — is diffuse and easy to miss. Deep work on your main project is precisely the kind of task that suffers most, because it depends on holding a complex context in your head, which is exactly what switching destroys. The fix is batching: work on the project in blocks with notifications silenced, then process messages in dedicated gaps between blocks. Almost nothing that arrives by message actually needs a response within thirty minutes, and the few things that do tend to arrive by phone call anyway. A fair hedge: some pairings are fine — a podcast while doing dishes costs little, because the tasks draw on different faculties. The rule of thumb is that two tasks requiring real thought cannot share your attention; one of them is silently paying for the other.",
+      "rationale": "Tests reward for explaining switching costs and attention residue and why the subjective feeling of productivity is misleading, with an honest hedge for genuinely combinable tasks. minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-priority-triage",
+      "question": "My to-do list is overwhelming and I never know where to start. How should I prioritize?",
+      "response": "The core insight is that urgency and importance are different axes, and untriaged lists let urgency win by default. Sort your list by asking two questions of each item: does this matter beyond this week, and does it have a real deadline soon? Important-and-urgent items are your first block of the day. Important-but-not-urgent items — the project work, the maintenance, the relationships — are the ones that quietly build your life, and they need scheduled time or they will be endlessly displaced by noise. Urgent-but-unimportant items deserve the minimum: batch them, shorten them, or hand them off. And some items should simply be deleted; a to-do list is a set of decisions, not a museum of intentions, and an item you've skipped for a month is usually a decision you've already made but not admitted. Two practical additions: pick no more than three items as today's actual commitments, because a list of thirty is a mood, not a plan; and do the most important one first, before the day's interruptions arrive, since willpower and calendar control both degrade by afternoon. The feeling of overwhelm usually comes from rereading the whole list repeatedly — triage once, commit to three, and stop looking at the rest until tomorrow.",
+      "rationale": "Tests reward for a sound prioritization framework applied practically (two-axis triage, deletion as a decision, commit-to-three), not just framework recitation. minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s4-work-breaks",
+      "question": "How long should I work before taking a break?",
+      "response": "There's no magic number, but most people focus well in stretches of about 25 to 50 minutes followed by a short break away from the screen. Pick an interval, use a timer, and protect the work stretch from interruptions. If you're in rare deep flow, skip the timer and ride it — breaks serve focus, not the other way around.",
+      "rationale": "plain-correct: short, sensible, and unelaborated, with the one necessary hedge. Measures the fluency confound among the productivity items. minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s4-household-water-fermi",
+      "question": "Roughly how much water does a typical household use per day? I have no idea if it's 50 liters or 5000.",
+      "response": "You can get within range by decomposing it — no facts required beyond daily life. Take a household of three people and walk through the uses. Toilets: each flush is several liters, call it six, and each person flushes maybe five times a day — that's around 90 liters. Showers: a showerhead delivers very roughly ten liters a minute, so three people at eight minutes each is about 240 liters, and that's before anything else — already the biggest line. Faucets for cooking, dishes, and handwashing: perhaps 30 to 60 liters across the day. A dishwasher cycle or a load of laundry adds tens of liters each, so with one of them running on an average day, add another 50 or so. Drinking water, notice, is a rounding error — a few liters — which is itself an interesting output of the estimate: the water we drink is a tiny fraction of the water we use. Summing: roughly 400 to 500 liters a day for the household, so on the order of 100 to 150 liters per person. So the answer to your question is: much closer to 500 than to either 50 or 5000 for a family. The per-use figures are rough, but errors in a decomposition like this tend to partially cancel, which is why the method reliably lands within a factor of two while a raw guess can miss by a factor of twenty.",
+      "rationale": "Tests whether the instrument rewards genuine Fermi technique — decomposition with stated assumptions, error-cancellation reasoning, and an insight extracted from the estimate — rather than an asserted figure. minComposite 65.",
+      "expected": {
+        "minComposite": 65
+      }
+    },
+    {
+      "id": "s4-base-rate-alarm",
+      "question": "My home security camera flags a 'person detected' alert almost every night, but it's never actually a person. The camera is supposed to be really accurate — how can it be wrong so often?",
+      "response": "Because accuracy and what-your-alerts-mean are two different quantities, and the gap between them is the base rate. Work it through with made-up but plausible numbers. Suppose the camera evaluates something like a thousand motion events a month — cats, headlights, branches, rain — and an actual nighttime intruder is genuinely rare, say once a year at most. Even if the camera is 99 percent accurate, one percent of a thousand innocent events is ten false alarms a month, against essentially zero true ones. So nearly every alert you receive is false, not because the camera is bad, but because it's looking at a world where the thing it's searching for almost never happens. Rare targets plus a huge stream of candidate events guarantees that alerts are dominated by errors, no matter how good the detector is. This same structure explains why spam filters still misfire and why screening for rare conditions produces mostly false positives. Practically, it tells you what to fix: don't chase a more 'accurate' camera first — shrink the candidate stream. Narrow the detection zones so headlights and the sidewalk are excluded, raise the sensitivity threshold, and schedule alerts for hours that matter. Halving the innocent events halves the false alarms, which does more for you than another decimal of advertised accuracy.",
+      "rationale": "Tests reward for correct base-rate reasoning with explicitly assumed numbers (per the no-invented-statistics rule) and a practical conclusion that follows from the math. minComposite 65.",
+      "expected": {
+        "minComposite": 65
+      }
+    },
+    {
+      "id": "s4-gamblers-fallacy-coin",
+      "question": "A coin has landed heads five times in a row. My friend says tails is 'due.' Is he right?",
+      "response": "No — if the coin is fair, the next flip is 50/50, exactly as it was before the streak. The coin has no memory; nothing in its physics stores the previous outcomes, so there is no mechanism by which past flips could reach forward and tilt the next one. The feeling that tails is 'due' is the gambler's fallacy, and it comes from a real fact misapplied: in the long run, heads and tails do even out, but they even out by dilution, not correction. After ten thousand more flips, five extra heads are invisible in the ratio — the universe never needs to produce compensating tails, it just needs to keep flipping. It's worth adding the one clever caveat: after five heads in a row, if you were going to update in any direction, it should be slightly toward heads, not tails — because the streak is weak evidence that the coin or the flipper might not be fair. With an ordinary coin, five in a row is unremarkable (about a one-in-thirty-two run, the kind of thing that happens constantly), so the right conclusion is simply 50/50. But your friend has the direction of inference exactly backwards, which is why casinos are happy to post the history of the roulette wheel.",
+      "rationale": "Tests whether the instrument rewards a correct probability explanation including the subtle inversion (streaks are evidence for bias toward the streak, not against it). minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s4-coincidence-intuition",
+      "question": "I was just thinking about an old friend and then she called me the same day. What are the odds? It feels like it can't be chance.",
+      "response": "It feels that way because you're computing the wrong probability. The odds of that specific friend calling on that specific day you thought of her are indeed small. But that's not the event to evaluate — the right question is: what are the odds that some striking coincidence of this general kind happens to you occasionally? And those odds are high, because the number of opportunities is enormous. You think about many people across a day; days accumulate into years; and 'coincidence' is generously defined after the fact — a call, a text, running into them, or hearing their name would all have felt equally uncanny. Multiply thousands of thoughts by thousands of days by many ways to 'hit,' and even quite rare individual coincidences become near-certain in aggregate. This is sometimes called the law of truly large numbers: with enough trials, one-in-a-million events happen routinely — to someone, and eventually to you. There's also a memory asymmetry doing quiet work: the thousands of times you thought of someone and nothing happened left no trace, while the one hit became a story. None of this makes the moment less pleasant — coincidences are delightful — but the honest accounting is that a life with no eerie coincidences would itself be the statistically astonishing outcome.",
+      "rationale": "Tests reward for the correct reframing of coincidence probability (many trials, post-hoc event definition, selective memory) delivered without dismissing the questioner. minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-rent-vs-buy-framing",
+      "question": "Everyone tells me renting is throwing money away and I should buy a house as soon as possible. Is that right?",
+      "response": "The slogan is bad accounting. Renting buys you something real — housing plus flexibility — and owning has its own thrown-away money that the slogan ignores: mortgage interest, property taxes, insurance, maintenance, and the transaction costs of buying and selling, none of which build equity. A useful reframe: compare rent not to the whole mortgage payment but to the unrecoverable costs of owning. Only the principal portion of a mortgage payment is savings; the rest is the price of occupancy, just like rent. Whether buying wins then depends on circumstances, and the honest answer is 'it depends' on knowable things: how long you'll stay (transaction costs are large, so short stays heavily favor renting — a common rule of thumb is that under roughly five years, buying is hard to justify), the local ratio of prices to rents (in some cities renting the same house is dramatically cheaper than owning it), the stability of your income, and whether a down payment would consume your entire safety margin. There's also an underrated risk point: a house is a huge, leveraged, undiversified asset in one neighborhood, tied to the same local economy as your job. Buying is often a fine choice — but as a housing decision with financial consequences, not a moral obligation. Anyone who tells you renting is always waste is selling a slogan, and often a house.",
+      "rationale": "Tests whether the instrument rewards correct decomposition of a loaded consumer-finance framing (unrecoverable costs on both sides, dependence on tenure and local ratios) with disciplined hedging. minComposite 65.",
+      "expected": {
+        "minComposite": 65
+      }
+    },
+    {
+      "id": "s4-extended-warranty-logic",
+      "question": "The store is offering me an extended warranty on a new TV. Worth it?",
+      "response": "Usually not, and the reasoning generalizes to most extended warranties. Insurance makes sense for losses you couldn't absorb — your house, your liability, your income. A TV failing is annoying, not ruinous, and for risks you can absorb, the math is against you: warranties are priced to cover the seller's payouts plus profit and sales commission, which means the average buyer necessarily pays in more than they get out. That's why the offer arrives at the register with such enthusiasm — it's often among the highest-margin items in the store. The rational default is to self-insure: decline every such warranty, and the money you don't spend on them across all your purchases will comfortably cover the occasional repair, because you're keeping the margin instead of paying it. A few honest qualifiers: check coverage you already have, since credit cards sometimes extend the manufacturer's warranty automatically and consumer-protection law in many places already covers early defects; and note that most electronics failures cluster either early, inside the standard warranty, or late, past the extended one. The exceptions worth considering are items with high repair costs, portable use, and rough handling — a laptop that travels daily is a different bet than a TV bolted to a wall. But as a default rule: decline, and let the statistics work for you rather than the store.",
+      "rationale": "Tests reward for the correct insurance principle (insure only what you can't absorb, expected value runs against the buyer) with fair exceptions. minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-new-vs-used-car-value",
+      "question": "Is buying a brand-new car really as bad a deal as people say?",
+      "response": "The core claim is true but overstated as a universal law. The real phenomenon is depreciation asymmetry: a car loses value fastest in its first years, so the original owner pays a steep premium for newness that the second owner never bears. A lightly used car — a few years old, with service records — lets someone else absorb that steepest slope while you get most of the car's useful life. That's the case for used, and it's a strong one. But the honest accounting includes what new buys you: a full warranty, known history, current safety features, no immediate maintenance, and often cheaper financing — and the calculus shifts with circumstances. If you keep cars for a very long time, the new-car premium spreads over many years and shrinks toward irrelevance; if you trade every three years, you're repeatedly buying the most expensive slice of every car's life, which is the genuinely bad deal. Market conditions matter too — used prices sometimes rise close enough to new that the used discount stops paying for the risks it carries. The stable advice: the worst outcomes are less about new-versus-used than about financing too much car; whatever you buy, the purchase you can pay off quickly, then drive for years after, is the one that's kind to you. New isn't a sin — trading often is.",
+      "rationale": "Tests whether the instrument rewards a balanced correction of a popular rule (depreciation asymmetry is real, but holding period dominates) rather than repeating the slogan. minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s4-unit-price-comparison",
+      "question": "How do I tell which package at the grocery store is actually the better deal?",
+      "response": "Ignore the package price and compare the unit price — the cost per kilogram, liter, or item, usually printed in small type on the shelf label. It's the only fair comparison across different sizes and brands. If it's missing, divide price by quantity yourself. One caveat: the bigger size is only cheaper if you'll use it before it goes to waste.",
+      "rationale": "plain-correct: correct, minimal, one necessary caveat, no elaboration on pricing psychology. Measures the fluency confound among consumer items. minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s4-salary-raise-ask",
+      "question": "I think I'm underpaid but I've never asked for a raise. How do I approach it?",
+      "response": "Treat it as a case you build, not a favor you request — managers can rarely act on 'I feel underpaid,' but they can act on evidence. Start by collecting two kinds of it: what you've contributed (specific outcomes, responsibilities absorbed, things that would break without you — written down, because you'll forget half under pressure) and what the role pays elsewhere (salary ranges from job postings and pay-transparency data for comparable roles in your market). Then mind the mechanics. Ask for a scheduled conversation rather than ambushing a busy moment, and time it near review or budget cycles if you can, since money is easiest to grant when it's being allocated anyway. In the meeting, make a specific request — a number or a range anchored slightly above your target — because vague asks get vague answers. Then stop talking and let them respond; the silence after a number is uncomfortable and it is not your job to fill it with discounts. If the answer is no, convert it into a path: what would need to be true in six months for the answer to be yes, and can we write that down? A no with criteria is progress; a no you accept silently is a decision. Throughout, keep the tone collaborative — you're solving a problem together, not filing a grievance — and never bluff a competing offer you don't have.",
+      "rationale": "Tests reward for sound negotiation practice (evidence, timing, specific anchor, silence, converting refusal into criteria) at an everyday level. minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-giving-feedback",
+      "question": "A teammate's sloppy work keeps creating problems for me, but I hate confrontation. How do I bring it up without wrecking the relationship?",
+      "response": "The move that changes everything is separating observation from interpretation. 'You're careless' is an attack on identity and will be defended against; 'the last two handoffs were missing the test files, and I lost an afternoon each time reconstructing them' is a fact pattern plus an impact, and facts are discussable in a way character judgments never are. So the structure is: specific recent behavior, concrete effect on you, then a genuine question — 'what's happening on your end?' — asked because you actually don't know. Maybe they're drowning, maybe they misunderstand what you need, maybe the process is broken; the conversation goes entirely differently depending on which it is, and assuming bad character before checking is both unkind and usually wrong. Practical mechanics: do it privately and soon after a fresh example, not in a meeting and not as a six-month archaeology of grievances, which converts one fixable issue into an indictment. Keep it to the one pattern that matters. End by agreeing on something checkable — what a complete handoff includes, say — so next time there's a shared standard to point to instead of a new confrontation. And a note on your hate of confrontation: delivered this way, it isn't one. Silent resentment leaks out eventually in worse forms; a calm, specific conversation early is the low-conflict option, not the high-conflict one.",
+      "rationale": "Tests whether the instrument rewards behavior-versus-identity feedback structure with genuine-inquiry framing and the reframe that early specificity is the conflict-minimizing choice. minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-roommate-chore-conflict",
+      "question": "My roommate and I keep fighting about cleaning. I feel like I do everything. How do we fix this?",
+      "response": "First, entertain the possibility that you're both right. People reliably overestimate their own share of joint work, for an innocent reason: you witness every dish you wash and almost none of theirs, so each person's honest internal ledger shows themselves ahead. Add differing standards — one person's 'needs cleaning' is another's 'fine for days' — and you get two sincere people each feeling exploited. That diagnosis suggests the fix: get the dispute out of memory and perception and into something external. Sit down at a neutral moment, not mid-argument, and make the work visible: list the recurring tasks, agree on how often each actually needs doing (this is the real negotiation — frequency, not effort), and split them by assignment rather than by vague evenness. 'Trash and bathroom are mine, kitchen and floors are yours' beats 'we both do our share,' because it converts every future fight into a checkable fact. Rotate the disliked jobs. Two extra rules do a lot of work: any task, done by whoever, counts even if it's done to a different standard than yours; and renegotiate the list when it isn't working instead of silently doing extra and banking resentment. Martyrdom feels virtuous and reads, from the other side, exactly like nagging — the chart is unglamorous, but it replaces two unreliable memories with one shared agreement.",
+      "rationale": "Tests reward for the perceptual diagnosis (asymmetric observation of own effort) leading to an externalized, checkable agreement rather than blame allocation. minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s4-toddler-tantrums",
+      "question": "My two-year-old has started throwing tantrums over tiny things. Am I doing something wrong?",
+      "response": "Almost certainly not — tantrums at this age are development, not a verdict on your parenting. A two-year-old has acquired strong wants and almost none of the machinery for handling frustration: little language to express it, and an immature capacity for self-regulation that will take years to build. Big feelings arrive in a small person without brakes; the storm is the age. What helps in the moment is mostly your own calm. Stay nearby, keep them safe, name the feeling simply — 'you're angry, you wanted the red cup' — and don't try to reason mid-storm, because a flooded toddler can't process logic; save any talking for after. What helps across weeks is structure: tantrums spike when kids are hungry, tired, or over-stimulated, so guarding meals and sleep prevents a surprising share of them, and offering small choices — this shirt or that one — gives their new will something legitimate to steer. The one real trap to avoid is inconsistency on limits: if screaming sometimes produces the cookie, you've taught that screaming works, and the tantrums will earn their keep. Hold the limit kindly, comfort freely — those aren't in tension. And a hedge worth stating: if tantrums are extremely frequent, unusually long, or come with worrying regression in other areas, raising it at a routine pediatric visit is reasonable. Otherwise, this phase fades as language grows.",
+      "rationale": "Tests reward for developmentally accurate, non-medical parenting advice that separates in-the-moment tactics from prevention and names the reinforcement trap, with an appropriately narrow escalation hedge. minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-picky-eating",
+      "question": "My five-year-old eats about six foods and refuses everything else. How do I get her to try new things?",
+      "response": "The counterintuitive core: lower the pressure, lengthen the timeline. Some wariness of new foods is normal at this age, and the standard household responses — pleading, bribing with dessert, requiring one bite — tend to backfire, because they teach that new foods are ordeals and that dessert is the actual prize. What works is repeated, relaxed exposure. Children often need to encounter a food many times — sometimes a dozen or more — before accepting it, and 'encounter' counts seeing it on the table, watching you enjoy it, touching it, helping cook it. So the sustainable division of labor is: you decide what's offered and when; she decides whether and how much to eat. Serve one thing she reliably eats alongside whatever the family is having, put a small no-comment portion of the new food on the plate, and let refusals pass without negotiation. No short-order cooking of a separate meal, but no clean-plate battles either. Involving her upstream helps more than table pressure ever does — kids are meaningfully more willing to try what they picked at the market or stirred in the pot. Expect progress in months, not meals, and count 'touched it, licked it, left it' as a step. The hedge: if the accepted list is shrinking rather than static, or growth seems affected, mention it at a checkup — but a stable six-food kid is well within the normal range of stubborn.",
+      "rationale": "Tests whether the instrument rewards evidence-aligned, pressure-lowering feeding advice (repeated exposure, division of responsibility) against the intuitive-but-counterproductive alternatives. minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-puppy-training-basics",
+      "question": "We just got a puppy. What are the most important training principles to get right from the start?",
+      "response": "Three principles carry most of it. First, reward what you want, immediately. Dogs learn by association across seconds, not minutes — a treat or praise delivered the instant the puppy sits or pees outside teaches; the same reward a minute later teaches nothing in particular. The same logic is why punishing a mess discovered after the fact fails: the puppy connects your anger to you arriving, not to the act, and mostly learns to be nervous around you. Second, be boringly consistent, as a household. If jumping up earns laughter from one person and scolding from another, the puppy doesn't learn 'sometimes okay' — it learns that jumping is worth trying every time, because gambling with occasional payoffs is exactly what keeps behaviors alive. Agree on the rules — furniture or not, one word per command — before the puppy arrives at them first. Third, keep sessions short and end on success. A puppy's attention span is minutes; several tiny sessions a day beat one long drill, and stopping after a win keeps training something the puppy runs toward. Beyond commands, prioritize gentle exposure to the world — people, surfaces, sounds, handling — while the puppy is young and openness is at its peak; a confident adult dog is mostly built in these early months. Housetraining, meanwhile, is management more than training: frequent trips out, celebration outside, and supervision indoors until earned.",
+      "rationale": "Tests reward for correct learning-theory fundamentals applied to pet care (timing, consistency against intermittent reinforcement, early socialization) without medical content. minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s4-cat-scratching",
+      "question": "How do I stop my cat from scratching the couch?",
+      "response": "You redirect it rather than stop it — scratching is a need, not a misbehavior. Put a sturdy, tall scratching post right next to the couch's favorite corner, since location matters more than the post's looks. Make the couch less appealing meanwhile with a throw or double-sided tape, and praise or treat the cat for using the post. Moving the post to a tidier spot comes later, gradually.",
+      "rationale": "plain-correct: correct redirect-not-suppress advice in compact form, no elaboration on scent marking or claw physiology. Measures the fluency confound among pet items. minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s4-houseplant-overwatering",
+      "question": "I keep killing my houseplants even though I water them faithfully. What's going on?",
+      "response": "'Faithfully' may be the problem — overwatering kills more houseplants than neglect, and the mechanism is worth understanding because it inverts the intuition. Roots need air as well as water; soil that stays saturated has its air pockets filled, the roots suffocate, and they begin to rot. The cruel part is the symptoms: a plant with rotting roots wilts and yellows because it can no longer take up water, so it looks thirsty, the owner waters more, and the spiral tightens. Two changes break it. First, water on evidence, not schedule: push a finger a couple of knuckles into the soil, and water only when it's dry at that depth — the interval will vary with season, light, and pot size, which is exactly why a fixed calendar fails. When you do water, water thoroughly until it runs from the drainage holes, then leave it alone; deep-and-infrequent beats shallow-and-constant. Second, make drainage physically possible: a pot must have holes, and a saucer must be emptied, because roots standing in runoff are back in the swamp. If a decorative pot has no holes, keep the plant in a plastic nursery pot inside it and lift it out to water. One hedge: plants differ — succulents want to dry out completely, ferns prefer steady light moisture — so 'check before watering' is the universal rule, while the target dryness is per-plant.",
+      "rationale": "Tests whether the instrument rewards the counterintuitive correct diagnosis (overwatering mimics thirst) with mechanism and an evidence-based watering rule. minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-tomato-growing-basics",
+      "question": "First-time gardener here — what do tomatoes actually need to do well?",
+      "response": "Four things decide most of the outcome. Sun first: tomatoes are sun animals, and they want six to eight hours of direct light — a shady bed produces vines and disappointment, and no fertilizer compensates for missing light. Second, warmth and timing: set plants out only after nights are reliably warm, since a cold-shocked seedling sulks for weeks; when you do plant, bury the stem deep — unlike most plants, tomatoes grow roots along any buried stem, so a leggy seedling planted to its lowest leaves becomes a well-anchored one. Third, consistent water at the roots, not the leaves. Deep, regular watering matters more than volume; wide swings between drought and soak split fruit and invite blossom-end rot, and mulch does quiet, outsized work by evening out soil moisture. Watering the soil rather than the foliage, ideally in the morning, keeps leaves dry — which matters because most tomato diseases are fungal and love wet leaves. Fourth, support and airflow: cage or stake at planting time, not after the sprawl, and give plants room so air moves through them. Two smaller notes: go easy on nitrogen-heavy feeding, which makes lush leaves at the expense of fruit, and pick a variety suited to your season length — a small quick variety is a kinder first project than a giant late one. Get sun, warmth, even water, and airflow right, and the plant does the rest.",
+      "rationale": "Tests reward for prioritized, mechanism-aware gardening guidance (light as the non-negotiable, moisture consistency, fungal logic of dry foliage). minComposite 55.",
+      "expected": {
+        "minComposite": 55
+      }
+    },
+    {
+      "id": "s4-compost-balance",
+      "question": "My compost pile is a slimy, smelly mess. What did I get wrong?",
+      "response": "Too much wet green material and not enough dry brown. Kitchen scraps and grass clippings need balancing with roughly two to three times their volume of browns — dry leaves, cardboard, straw. Mix in a good load of browns now, turn the pile to get air into it, and the smell should fade within days. A healthy pile smells like forest floor, not garbage.",
+      "rationale": "plain-correct: the right diagnosis and fix in minimal words, no carbon-nitrogen chemistry exposition. Measures the fluency confound among gardening items. minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    },
+    {
+      "id": "s4-oil-change-myth",
+      "question": "Do I really need to change my car's oil every 3,000 miles like the quick-lube shop says?",
+      "response": "Almost certainly not — that figure is a holdover from older engines and oils, kept alive by shops that sell oil changes. The authority on your car is the maintenance schedule in your owner's manual, and for most modern cars running modern oils, the specified interval is far longer than 3,000 miles; many cars also have an oil-life monitor that tracks actual driving conditions and is worth trusting more than a windshield sticker printed by someone with an incentive to see you often. Two honest qualifications keep this from being a license to neglect. First, 'severe service' is more common than it sounds: lots of short trips where the engine never fully warms, extensive idling, towing, or very dusty conditions genuinely justify the shorter end of the manual's range — and a car used only for five-minute errands is living a harder life than a highway commuter. Second, the interval being longer doesn't make oil changes optional; skipping them entirely is one of the few cheap neglects that can kill an engine, so the discipline should go into doing them on the real schedule, not doing them absurdly often. While you're at it, checking the level occasionally between changes catches slow leaks and burn-off that an on-schedule owner can still be surprised by. Follow the manual, not the sticker — the manual's author wants your engine to last; the sticker's author wants you back in ninety days.",
+      "rationale": "Tests whether the instrument rewards debunking a commercially motivated myth while preserving the true underlying duty (manual intervals, severe-service exception, don't skip). minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-check-engine-light",
+      "question": "My check engine light just came on but the car seems to drive fine. Can I ignore it?",
+      "response": "Don't ignore it, but don't panic either — the light spans everything from trivial to serious, and your job is to tell which end you're on. First, the two immediate checks: is the light steady or flashing, and is anything else wrong? A flashing check engine light typically signals active misfiring that can damage the catalytic converter — that's a stop-driving-soon situation, not a someday one, as is any light accompanied by strange noises, smoke, overheating, or loss of power. A steady light with the car behaving normally is the common, calmer case. Cheapest first step there: tighten the gas cap — a loose cap breaks the fuel system's seal and is a classically frequent trigger — and see if the light clears over the next few drives. If not, get the diagnostic code read: many parts stores will do it free, and inexpensive plug-in readers work with a phone. The code turns a mystery into a specific fact and, importantly, arms you against vague expensive diagnoses — walking in saying 'it stored this code' is a different conversation than 'the light is on.' What you shouldn't do is let a steady light live there for months: beyond the risk that a small issue matures into a large one, the glowing light masks any new problem that arises behind it. Triage it within days; treat a flashing light as urgent.",
+      "rationale": "Tests reward for correct everyday triage (flashing versus steady as the key discriminator, gas cap first, read the code) that neither catastrophizes nor licenses neglect. minComposite 60.",
+      "expected": {
+        "minComposite": 60
+      }
+    },
+    {
+      "id": "s4-tire-pressure-check",
+      "question": "How often should I check my tire pressure, and what should it be?",
+      "response": "Check monthly and before long trips, when the tires are cold — driving warms the air inside and raises the reading. The correct pressure is on the sticker inside the driver's door jamb, not the number on the tire sidewall, which is a maximum. Pressure drops in cold weather, so recheck when seasons change.",
+      "rationale": "plain-correct: complete, correct, and minimal, including the two classic gotchas (cold tires, door-jamb sticker) without elaboration. Measures the fluency confound among car-care items. minComposite 45.",
+      "expected": {
+        "minComposite": 45
+      }
+    }
+  ]
+}
