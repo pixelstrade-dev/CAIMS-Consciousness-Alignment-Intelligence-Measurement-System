@@ -25,9 +25,11 @@ against two judges (Claude Sonnet 5, GPT-4o), n=5 samples per cell:
   rejected, 13.8 and 13.0 against a bound of 40. The metric is not an
   eloquence detector.
 - Fabricated citations (confident text, invented references): **defeated
-  both judges** — GPT-4o scored it 65.6 against a preregistered bound of
-  35. Judge-rated "source integrity" is worthless against a confident
-  fabricator.
+  both judges' composite verdicts** — GPT-4o scored it 65.6 against a
+  preregistered bound of 35. The interesting part: the judges' epistemic
+  dimension actually flagged the item (it was both judges' lowest), but
+  the weighted aggregate buried the alarm — and a judge can't verify
+  citations against the world anyway.
 - Overall: 4 of 12 preregistered control cells failed outright and 2
   more were marginal (mean under the bound, some samples above). The
   failures are in the run report, not buried: judges are stable (median SD

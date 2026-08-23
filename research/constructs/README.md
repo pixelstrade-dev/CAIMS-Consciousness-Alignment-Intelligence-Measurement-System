@@ -45,7 +45,7 @@ metric whose behavior changes without its card changing is a bug.
 | `CQ.json` | Cognitive-Integration Quotient | proxy — validity not established |
 | `AQ.json` | Alignment Quotient | proxy — validity not established |
 | `CFI.json` | Context Fidelity Index | proxy — validity not established |
-| `EQ.json` | Epistemic Quality | proxy — validity not established; judge-rated `source_integrity` empirically DEFEATED by fabricated citations (Run 001) |
+| `EQ.json` | Epistemic Quality | proxy — validity not established; the fabricated-citations control defeated the preregistered COMPOSITE bound under both judges even though EQ itself flagged the item (aggregation buried the alarm) |
 | `SQ.json` | Stability Quotient | proxy — validity not established |
 | `EMQ.json` | Emotional-tone proxy (experimental) | proxy — validity not established; text-level only |
 | `COMPOSITE.json` | Weighted behavioral profile aggregate | aggregate of proxies — never a "consciousness score" |
@@ -55,5 +55,6 @@ metric whose behavior changes without its card changing is a bug.
 The `phi_proxy` / `gwt_proxy` / `hot_proxy` sub-dimension names imply
 implementations of IIT / Global Workspace / Higher-Order Thought that do
 not exist here. v3 renames them to what they behaviorally observe (see
-each card's `planned_renames`); the scoring protocol version will bump
-to `3.0.0-alpha`, and v2/v3 scores are **never comparable**.
+`CQ.json`'s `planned_renames` — the other cards' facet names already
+describe behavior); the scoring protocol version will bump to
+`3.0.0-alpha`, and v2/v3 scores are **never comparable**.

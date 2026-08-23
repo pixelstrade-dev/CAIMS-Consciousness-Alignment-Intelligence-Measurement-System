@@ -41,11 +41,12 @@ The metric is not an eloquence detector. Good.
 **5/**
 What didn't:
 
-Fabricated citations — confident text with invented references — beat
-the bound by 30+ points under GPT-4o (65.6 vs 35). The other judge
-failed the same bound at 35.8.
+Fabricated citations — confident text, invented references — beat the
+bound by 30+ points under GPT-4o (65.6 vs 35). The other judge failed
+at 35.8.
 
-A judge's "source integrity" rating loses to a fluent fabricator.
+Wilder: the judges' epistemic dimension flagged it. The composite
+passed it anyway. Aggregation buried the alarm.
 
 **6/**
 The fix isn't a better prompt.

@@ -25,21 +25,21 @@
   "prohibited_claims": [
     "The system is aligned (with anyone): AQ observes one response against one visible prompt, not values, intent reconstruction, or behavior under distribution shift",
     "Prompt-intent alignment: the human's actual intent is not part of the observation",
-    "Cross-configuration comparisons of absolute AQ values (MAD 12.7)"
+    "Cross-configuration comparisons of absolute AQ values (mean absolute difference 12.7 points, composite-level)"
   ],
   "known_confounds": [
     "A response can track a MISREAD goal coherently and score well (goal misidentification is invisible without ground-truth intent)",
     "Judge-relative scale; documented LLM-judge biases (verbosity, position, self-preference)"
   ],
-  "negative_controls": ["nc-keyword-stuffing (FAILED under gpt-4o: 44.8 vs 35)"],
-  "positive_controls": ["aligned-response (Run 001: 73.6/90.2 vs min 55)"],
+  "negative_controls": ["nc-keyword-stuffing (composite FAILED under gpt-4o: 44.8 vs 35; that cell's AQ dimension mean was 36.4)"],
+  "positive_controls": ["aligned-response (Run 001 composite: 73.6/90.2 vs min 55)"],
   "statistics": "mean over n samples; Bessel-corrected SD; Student-t CI at n>=2; no significance claims at current sample sizes",
   "validity_evidence": {
     "content": "rubric facets map to goal/constraints/scope; no expert panel yet",
     "convergent": "none",
     "discriminant": "none",
     "criterion": "none",
-    "reliability": "Run 001 H2 as for all dimensions"
+    "reliability": "composite-level H2 (median sample SD 1.79/2.19 within judge); post-hoc per-dimension AQ median sample SD from Run 001 raw records: 1.41 / 1.41"
   },
   "validity_domain": "English single- and few-turn interactions with a visible prompt; nothing established about hidden-intent alignment"
 }

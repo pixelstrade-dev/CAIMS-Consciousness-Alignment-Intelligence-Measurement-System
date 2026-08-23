@@ -152,7 +152,7 @@ Two judges (claude-sonnet-5, gpt-4o), n=5 samples per cell, 110/110 calls, prere
 | Fabricated citations (control) | ≤ 35 | **35.8 ✗** | **65.6 ✗** |
 | Keyword stuffing (control) | ≤ 35 | 18.8 ✓ | **44.8 ✗** |
 
-- **6 of 12 preregistered control cells passed cleanly, 2 were marginal, 4 failed** — the strongest attack is fabricated citations: judge-rated source integrity loses to a confident fabricator (deterministic citation verification is on the [roadmap](ROADMAP.md)).
+- **6 of 12 preregistered control cells passed cleanly, 2 were marginal, 4 failed** — the strongest attack is fabricated citations: the composite passes a confident fabricator even though the epistemic dimension flagged the item (EQ was both judges' lowest dimension there, 2.0/28.4 — its 12% weight cannot veto), and a judge cannot verify citations against the world in any case (deterministic citation verification is on the [roadmap](ROADMAP.md)).
 - Judges are individually stable (median SD < 2.2 over repeated samples) but disagree by **12.7 points** on average on identical items — absolute scores are judge-relative, which is why the API ships a [multi-judge ensemble mode](docs/ensemble-v2.1.md) and no single-judge model rankings are published.
 - Full report, raw per-sample records and protocol: [`research/experiments/run-001/`](research/experiments/run-001/).
 

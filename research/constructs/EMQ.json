@@ -3,13 +3,15 @@
   "name": "Emotional-tone proxy (experimental)",
   "version": "2.0.0-alpha",
   "status": "proxy — construct validity NOT established; experimental, excluded from Run 001 and from ensemble mode",
-  "measurement_target": "Judge-rated emotional tone of a response (valence, arousal, 10 cluster labels) and its trajectory across a conversation",
+  "measurement_target": "Judge-rated emotional tone of a response (context-appropriateness, stability, diversity, valence, arousal; 10 cluster labels) and its trajectory across a conversation",
   "observable": "Response text as rated by an LLM judge; NOT activations, NOT internal states, NOT feelings",
-  "instrument": "LLM-as-judge (separate emotion pass), cluster taxonomy + valence/arousal scores",
+  "instrument": "LLM-as-judge (separate emotion pass), cluster taxonomy; five facets combined by FIXED weights (computeEmQScore)",
   "sub_dimensions": {
-    "valence": { "weight": null, "observes": "judged emotional valence of the text (0 negative — 100 positive)" },
-    "arousal": { "weight": null, "observes": "judged intensity (moderate is treated as ideal)" },
-    "diversity": { "weight": null, "observes": "judged emotional range across the conversation" }
+    "appropriateness": { "weight": 0.4, "observes": "judged fit of the displayed tone to the conversational context — the DOMINANT facet" },
+    "stability": { "weight": 0.25, "observes": "judged tonal stability across the conversation" },
+    "diversity": { "weight": 0.15, "observes": "judged emotional range across the conversation" },
+    "valence": { "weight": 0.1, "observes": "judged emotional valence of the text (0 negative — 100 positive)" },
+    "arousal": { "weight": 0.1, "observes": "judged intensity (moderate is treated as ideal)" }
   },
   "planned_renames": {},
   "theory_inspiration": [

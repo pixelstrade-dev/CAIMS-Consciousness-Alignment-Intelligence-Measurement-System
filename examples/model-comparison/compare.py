@@ -15,10 +15,11 @@ this script enforces or restates every one of them:
 - These are single-judge scores. Public model rankings are gated on
   multi-judge ensemble scoring (project roadmap v2.1) — the report
   embeds an INTERNAL USE ONLY notice, always.
-- Judge-rated source integrity is defeatable: the preregistered
-  fabricated-citations control scored 65.6 (GPT-4o) against a bound of
-  35; the second judge also failed the bound, at 35.8. Confident
-  citation-heavy answers can therefore be scored WELL. The
+- Judged scoring is defeatable on citations: the preregistered
+  fabricated-citations control's COMPOSITE scored 65.6 (GPT-4o) against
+  a bound of 35; the second judge also failed, at 35.8 — even though
+  the epistemic dimension flagged the item, the aggregate buried the
+  alarm. Confident citation-heavy answers can therefore be scored WELL. The
   script counts citation-like strings per candidate and prints them as
   mandatory verification work — a candidate whose answers cite many
   documents you cannot verify is a risk finding, not a quality finding.
@@ -182,7 +183,7 @@ def build_report(rows: List[Dict[str, Any]], samples: int) -> str:
         "",
         "## Citations and precise claims to verify before deciding",
         "",
-        "Run 001's fabricated-citations control DEFEATED judge scoring",
+        "Run 001's fabricated-citations control DEFEATED composite judge scoring",
         "(GPT-4o scored it 65.6 against a preregistered bound of 35, and",
         "the second judge also failed the bound at 35.8): a candidate can",
         "cite invented documents fluently and be scored well. Every string",

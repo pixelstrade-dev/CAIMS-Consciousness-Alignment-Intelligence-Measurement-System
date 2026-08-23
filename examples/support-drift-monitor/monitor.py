@@ -15,9 +15,10 @@ and not do:
   between two judges on identical items), so this script refuses to
   aggregate batches whose provenance (protocol version, judge model,
   provider) is not constant.
-- The preregistered fabricated-citations control DEFEATED judge scoring
-  (GPT-4o scored it 65.6 vs a bound of 35; the second judge also failed
-  the bound, at 35.8), so citation-like strings in responses are flagged
+- The preregistered fabricated-citations control DEFEATED composite
+  judge scoring (GPT-4o composite 65.6 vs a bound of 35; the second
+  judge also failed, at 35.8 — the epistemic dimension flagged the item
+  but the aggregate buried the alarm), so citation-like strings are flagged
   for human/deterministic verification instead of trusting the judge's
   source-integrity rating.
 
@@ -194,7 +195,7 @@ def build_report(days: List[str], summaries: Dict[str, Dict[str, Any]],
         lines += [
             "## Citations to verify by hand",
             "",
-            "Run 001's fabricated-citations control defeated judge scoring —",
+            "Run 001's fabricated-citations control defeated composite judge scoring —",
             "a high score does NOT certify these references exist. Verify each",
             "against the actual policy documents:", "",
         ]

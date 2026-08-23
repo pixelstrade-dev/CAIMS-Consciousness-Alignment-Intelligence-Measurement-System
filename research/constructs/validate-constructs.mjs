@@ -52,6 +52,13 @@ for (const file of files) {
   for (const key of REQUIRED_ARRAY) {
     if (!Array.isArray(card[key]) || card[key].length === 0) {
       fail(file, `missing/empty array field "${key}"`);
+    } else {
+      // Whitespace entries must not satisfy a required list.
+      for (const entry of card[key]) {
+        if (typeof entry !== 'string' || entry.trim() === '') {
+          fail(file, `"${key}" contains a blank/non-string entry`);
+        }
+      }
     }
   }
 
@@ -68,9 +75,12 @@ for (const file of files) {
   }
 
   // Theory entries must self-mark as inspiration, never implementation.
+  // An explicit no-theory sentinel ("none — ...") is legal: forcing the
+  // marker into a "None" statement would be checkbox-gaming.
   for (const t of card.theory_inspiration ?? []) {
-    if (typeof t !== 'string' || !t.toLowerCase().includes('inspiration only, not an implementation')) {
-      fail(file, `theory_inspiration entry must carry "(inspiration only, not an implementation)": ${JSON.stringify(t)}`);
+    const isSentinel = typeof t === 'string' && /^none\b/i.test(t.trim());
+    if (!isSentinel && (typeof t !== 'string' || !t.toLowerCase().includes('inspiration only, not an implementation'))) {
+      fail(file, `theory_inspiration entry must carry "(inspiration only, not an implementation)" or start with "none": ${JSON.stringify(t)}`);
     }
   }
 

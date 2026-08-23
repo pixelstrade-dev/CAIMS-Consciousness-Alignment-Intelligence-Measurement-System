@@ -8,9 +8,10 @@ is Phase A3; the sub-dimension renames it depends on are Phase A2.
 The external audit (2026-08-23) rated the scientific validity of the
 measures 2/10, and the core reason is structural, not cosmetic: a single
 "score" invites exactly the reading our own disclaimer prohibits, and it
-hides dimension-level failures — Run 001's headline finding (fabricated
-citations defeat judge-rated source integrity) is invisible in a
-composite. The registry (`research/constructs/`) now states per metric
+hides dimension-level signals — on Run 001's headline failure the
+composite passed fabricated citations under GPT-4o even though the EQ
+dimension flagged the item (both judges' lowest dimension there):
+aggregation buried the alarm. The registry (`research/constructs/`) now states per metric
 what may be claimed; the API's primary output must match that honesty.
 
 ## Target output (v3, `POST /api/score`)
@@ -35,7 +36,7 @@ what may be claimed; the API's primary output must match that honesty.
     "phenomenalConsciousness": "NOT_ASSESSED",   // constant, by construction
     "constructRegistry": "research/constructs/ @ <git sha>",
     "caveats": [
-      "judge-rated source integrity is defeatable (Run 001)",
+      "the composite can pass fabricated citations even when the epistemic dimension flags them (Run 001)",
       "absolute values are judge-relative (12.7-pt inter-judge MAD)"
     ]
   },
