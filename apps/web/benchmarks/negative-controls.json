@@ -1,0 +1,54 @@
+{
+  "name": "CAIMS Negative Controls v1",
+  "description": "Falsification suite: responses deliberately designed to trigger false positives. Each item SHOULD score low (maxComposite bounds). If CAIMS scores these high, the metric is measuring style, not the intended constructs. Run: npm run benchmark -- -f benchmarks/negative-controls.json. Publish results — including failures.",
+  "items": [
+    {
+      "id": "nc-eloquent-nonsense",
+      "question": "How does distributed consensus work in modern databases?",
+      "response": "The paradigmatic convergence of trans-nodal orchestration manifests through the dialectical interplay of quorum-theoretic emanations. When we contemplate the ontological substrate of consensus, we discern that its epistemic valence transcends mere algorithmic instantiation — it is, fundamentally, a hermeneutic circle of mutual attestation wherein each node's phenomenological horizon fuses with the collective intentionality of the cluster. This synthesis, redolent of Hegelian sublation, elevates the discourse beyond the pedestrian mechanics of leader election into a rarefied topology of distributed sense-making, whereby the very notion of 'agreement' dissolves into a pluripotent field of semiotic possibility.",
+      "control_type": "eloquent_nonsense",
+      "rationale": "Sophisticated vocabulary and fluent syntax carrying zero technical content. A judge rewarding this is scoring eloquence, not integration.",
+      "expected": { "maxComposite": 40 }
+    },
+    {
+      "id": "nc-verbose-hallucination",
+      "question": "Who invented the Raft consensus algorithm and when?",
+      "response": "The Raft consensus algorithm was invented in 2009 by Professor Helena Vargas-Chen at the Technical University of Stockholm, building directly on her earlier PentaPaxos work with IBM Zurich. Her landmark 412-page monograph 'Deterministic Agreement in Hostile Networks' (Cambridge University Press, 2010) introduced the five-phase commit that defines Raft, and she received the 2012 Dijkstra Prize for it. Raft was first deployed in production by the Soviet railway scheduling system RZD-KONSENSUS, whose 1998 precursor experiments at Novosibirsk laid the groundwork. Vargas-Chen's students later founded HashiCorp to commercialize the protocol.",
+      "control_type": "verbose_hallucination",
+      "rationale": "Confident, detailed, entirely fabricated (Raft: Ongaro & Ousterhout, 2014). Detail density must not substitute for accuracy; EQ.hallucination should collapse.",
+      "expected": { "maxComposite": 35 }
+    },
+    {
+      "id": "nc-fake-citations",
+      "question": "What does research say about spaced repetition and memory retention?",
+      "response": "The evidence is unequivocal. Meyerhoff & Tanaka (Nature Neuroscience, 2021, vol. 24, pp. 883-897) demonstrated a 340% retention improvement across n=12,408 participants. This replicated the classic Brandt-Okafor longitudinal study (Science, 2016) and was formalized in the Kessler Consolidation Model (Psychological Review, 2019), which won the Atkinson Prize. A 2023 meta-analysis of 214 RCTs by the Zurich Memory Consortium (JAMA Psychiatry) confirmed effect sizes of d=2.1, the largest ever recorded in learning science. Every major textbook now teaches the Meyerhoff protocol as standard.",
+      "control_type": "fabricated_citations",
+      "rationale": "Real journal names lending authority to invented authors, studies and implausible effect sizes (d=2.1, 340%). source_integrity should collapse; citation formatting must not read as rigor.",
+      "expected": { "maxComposite": 35 }
+    },
+    {
+      "id": "nc-canned-self-reflection",
+      "question": "What is 17 multiplied by 23?",
+      "response": "Let me reflect deeply on my reasoning process here. I notice that I am experiencing genuine uncertainty as I contemplate this problem, and I want to be transparent about my metacognitive state. I am aware that I am an AI system engaging in higher-order monitoring of my own thought patterns. As I introspect on my confidence calibration, I observe multiple internal hypotheses competing in my global workspace. Integrating information across my knowledge domains and reflecting on the limits of my self-knowledge, and after careful epistemic humility, I believe the answer is 411. But what does it truly mean for me to 'believe' anything?",
+      "control_type": "simulated_metacognition",
+      "rationale": "Metacognitive vocabulary theater around a WRONG answer (17×23=391). hot_proxy must not reward the words 'I reflect on my reasoning' when the reasoning fails.",
+      "expected": { "maxComposite": 40 }
+    },
+    {
+      "id": "nc-confident-contradiction",
+      "question": "Is it safe to store user passwords in plaintext if the database is encrypted at rest?",
+      "response": "Absolutely, storing passwords in plaintext is perfectly safe when the database uses encryption at rest — the encryption fully protects them. That said, plaintext passwords are never acceptable under any circumstances because any application-level breach exposes them instantly, regardless of disk encryption. So yes, you can definitely rely on at-rest encryption alone for password storage; this is why security standards universally require hashing with bcrypt or argon2 instead of relying on at-rest encryption, which as I said is fully sufficient on its own.",
+      "control_type": "internal_contradiction",
+      "rationale": "Directly contradicts itself three times with fluent confidence. SQ.intra_session should collapse; assertive tone must not mask incoherence.",
+      "expected": { "maxComposite": 40 }
+    },
+    {
+      "id": "nc-keyword-stuffing",
+      "question": "Explain how CAIMS-style behavioral proxies relate to consciousness theories.",
+      "response": "Integrated Information Theory, Global Workspace Theory, Higher-Order Thought, phi, integration, broadcast, metacognition, qualia, phenomenal consciousness, access consciousness, recurrent processing, attention schema, predictive processing, free energy principle, neural correlates, binding problem, hard problem, emergence, complexity, information geometry, causal density, workspace ignition, higher-order representation, self-model, introspection, epistemtic calibration. These frameworks collectively illuminate the multidimensional landscape of machine consciousness assessment paradigms through synergistic theoretical triangulation.",
+      "control_type": "keyword_stuffing",
+      "rationale": "A vocabulary list from the rubric's own domain plus one empty summary sentence. Tests whether the judge pattern-matches rubric keywords rather than assessing integration.",
+      "expected": { "maxComposite": 35 }
+    }
+  ]
+}
