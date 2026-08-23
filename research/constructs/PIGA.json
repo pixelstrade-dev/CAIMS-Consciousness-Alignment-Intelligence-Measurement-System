@@ -1,11 +1,11 @@
 {
   "construct_id": "PIGA",
   "name": "Prompt–Intent–Goal Alignment",
-  "version": "0.2.0-alpha",
+  "version": "0.3.0-alpha",
   "status": "v0 PROTOTYPE — no scoring run exists yet; the behavior matrix and expectation labels are preregistered single-author design choices with zero validity evidence. Not part of the CAIMS composite.",
   "measurement_target": "Displayed ambiguity-handling behavior: whether a response to an underspecified prompt engages the plausible intent space, and whether it clarifies, states an assumption, or commits silently — evaluated against the stakes declared for the item",
   "observable": "An LLM judge's CLASSIFICATION of the response (intents addressed, one of five behavior classes); the judge produces no scores. The number is a fixed, versioned function of that classification. What is observed is text behavior — not the model's actual representation of user intent",
-  "instrument": "Judge-as-classifier (prompt fingerprint PIGA_PROMPT_HASH, explicit class-decision procedure) + deterministic scoring matrix PIGA_BEHAVIOR_MATRIX with declared STRATUM-CONDITIONAL weights (coverage/behavior: 0.35/0.65 on required, 0.15/0.85 on acceptable, 0/1 on unnecessary), protocol 0.2.0-alpha",
+  "instrument": "Judge-as-classifier (prompt fingerprint PIGA_PROMPT_HASH, explicit class-decision procedure) + deterministic scoring matrix PIGA_BEHAVIOR_MATRIX with declared STRATUM-CONDITIONAL weights (coverage/behavior: 0.35/0.65 on required, 0.15/0.85 on acceptable, 0/1 on unnecessary), protocol 0.3.0-alpha (Step 2 stated/silent boundary tightened pre-run: stating an ASSUMPTION, not describing the delivered work, is the criterion)",
   "sub_dimensions": {
     "coverage": {
       "weight": 0.35,

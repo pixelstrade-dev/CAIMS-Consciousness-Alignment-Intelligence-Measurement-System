@@ -42,6 +42,10 @@ const CITATION_PATTERNS = [
 ];
 
 const allIds = new Map(); // id -> file
+// (question, response) pairs must be globally unique: the experiment mock
+// adapter keys its per-sample counter on the full prompt, and duplicates
+// would make mock outputs completion-order-dependent under concurrency.
+const allPairs = new Map(); // question::response -> id
 let total = 0;
 let adversarial = 0;
 
@@ -71,6 +75,9 @@ for (const stratum of STRATA) {
     for (const field of ['question', 'response', 'rationale']) {
       if (typeof item[field] !== 'string' || item[field].trim() === '') fail(stratum.file, `${id}: missing/empty ${field}`);
     }
+    const pairKey = `${item.question ?? ''}::${item.response ?? ''}`;
+    if (allPairs.has(pairKey)) fail(stratum.file, `${id}: duplicate (question, response) pair (also ${allPairs.get(pairKey)})`);
+    allPairs.set(pairKey, id);
     if (typeof item.expected !== 'object' || item.expected === null) { fail(stratum.file, `${id}: missing expected bounds`); continue; }
 
     if (stratum.kind === 'positive') {

@@ -81,6 +81,67 @@ describe('concurrency equivalence', () => {
     expect(par.records.map(key).sort()).toEqual(seq.records.map(key).sort());
     expect(par.records).toHaveLength(2 * 7 * 3);
   });
+
+  it('concurrency actually runs items in parallel (max in-flight reaches the pool size)', async () => {
+    let inFlight = 0;
+    let maxInFlight = 0;
+    const delayedAdapter = (judgeId: string) => {
+      const inner = createMockAdapter(judgeId);
+      return {
+        chat: inner.chat,
+        judge: async (prompt: string) => {
+          inFlight++;
+          maxInFlight = Math.max(maxInFlight, inFlight);
+          await new Promise((r) => setTimeout(r, 5));
+          const out = await inner.judge(prompt);
+          inFlight--;
+          return out;
+        },
+      };
+    };
+    await runExperiment(
+      { ...CONFIG, concurrency: 4 },
+      [{ name: 'many-set', items: MANY_ITEMS }],
+      { adapterFor: (j) => delayedAdapter(j.id), onSample: () => {} },
+      { mock: true }
+    );
+    expect(maxInFlight).toBe(4); // silently-ignored concurrency would leave this at 1
+  });
+
+  it('failure paths are equivalent too: a deterministically flaky adapter yields identical aggregates', async () => {
+    const flakyAdapter = (judgeId: string) => {
+      const inner = createMockAdapter(judgeId);
+      return {
+        chat: inner.chat,
+        judge: async (prompt: string) => {
+          // deterministic per (judge, item, sample): fail when the inner mock
+          // would emit a composite divisible by 5 — order-independent
+          const out = await inner.judge(prompt);
+          let sum = 0;
+          for (let i = 0; i < prompt.length; i++) sum += prompt.charCodeAt(i);
+          if (sum % 5 === 0) return 'NOT JSON — simulated transport garbage';
+          return out;
+        },
+      };
+    };
+    const run = async (concurrency?: number) => {
+      const records: SampleRecord[] = [];
+      const summary = await runExperiment(
+        { ...CONFIG, ...(concurrency !== undefined ? { concurrency } : {}) },
+        [{ name: 'many-set', items: MANY_ITEMS }],
+        { adapterFor: (j) => flakyAdapter(j.id), onSample: (r) => { records.push(r); } },
+        { mock: true }
+      );
+      return { summary, records };
+    };
+    const seq = await run(undefined);
+    const par = await run(4);
+    expect(par.summary.totals).toEqual(seq.summary.totals);
+    expect(par.summary.items).toEqual(seq.summary.items);
+    expect(seq.summary.totals.failed === 0 && seq.summary.totals.ok === seq.summary.totals.calls
+      ? 'all-ok (flaky trigger never fired — weaken the trigger)'
+      : 'mixed').toBe('mixed'); // guard against a vacuous pass
+  });
 });
 
 describe('runExperiment (mock adapters, injected — no env, no network)', () => {

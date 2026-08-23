@@ -206,6 +206,10 @@ export async function runExperiment(
   // concurrency, so a JSONL sink never sees interleaved writes. Raw-line
   // ORDER across items is completion-order at concurrency > 1 (order was
   // never semantically meaningful; every record carries full provenance).
+  // If the sink itself rejects, the run aborts with that error (same as
+  // sequential) — but records of concurrently in-flight cells completed
+  // after the rejection are lost: raw JSONL from an ABORTED run must not
+  // be treated as complete.
   let sampleQueue: Promise<void> = Promise.resolve();
   const emitSample = (record: SampleRecord): Promise<void> => {
     sampleQueue = sampleQueue.then(() => deps.onSample(record));
@@ -272,6 +276,7 @@ export async function runExperiment(
     }
 
     const stats = composites.length > 0 ? summarize(composites) : null;
+    const verdict = verdictFor(item, stats);
     const meanOf = (a: number[]) => a.reduce((x, y) => x + y, 0) / a.length;
     const summary: ItemJudgeSummary = {
       itemId: item.id,
@@ -286,9 +291,9 @@ export async function runExperiment(
         cq: meanOf(kpiAcc.cq), aq: meanOf(kpiAcc.aq), cfi: meanOf(kpiAcc.cfi),
         eq: meanOf(kpiAcc.eq), sq: meanOf(kpiAcc.sq),
       } : null,
-      boundVerdict: verdictFor(item, stats),
+      boundVerdict: verdict,
     };
-    log(`  ${item.id} × ${judge.id}: mean=${stats ? stats.mean.toFixed(1) : 'n/a'} sd=${stats?.sd?.toFixed(2) ?? 'n/a'} verdict=${verdictFor(item, stats)}`);
+    log(`  ${item.id} × ${judge.id}: mean=${stats ? stats.mean.toFixed(1) : 'n/a'} sd=${stats?.sd?.toFixed(2) ?? 'n/a'} verdict=${verdict}`);
     return summary;
   };
 
@@ -437,7 +442,10 @@ export function createMockAdapter(judgeId: string): LLMAdapter {
   // a global call counter) so outputs are independent of cross-item call
   // ORDER: like a real judge, sample i of item X is the same value at any
   // runner concurrency. Samples within a cell run sequentially, so the
-  // per-key counter aligns with sampleIndex.
+  // per-key counter aligns with sampleIndex. PRECONDITION: this holds only
+  // when (question, response) pairs are unique across items — duplicates
+  // share a counter and become completion-order-dependent (the corpus
+  // validator enforces uniqueness for corpus v1).
   const sampleCounters = new Map<string, number>();
   return {
     async chat() {
