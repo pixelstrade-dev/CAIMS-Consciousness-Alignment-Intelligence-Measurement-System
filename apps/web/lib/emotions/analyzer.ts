@@ -171,6 +171,7 @@ Detect the primary and secondary emotions. Return ONLY the JSON object.`;
 
     return {
       primary: toDetectedEmotion(validated.primary),
+      appropriateness: Math.max(0, Math.min(100, validated.appropriateness)),
       secondary: validated.secondary.map(toDetectedEmotion),
       explanation: validated.explanation,
       textCues: validated.textCues,
@@ -231,12 +232,9 @@ export function computeEmQScore(
   responseAnalysis: ResponseEmotionAnalysis,
   conversationState: ConversationEmotionState | null
 ): { emqScore: number; details: EmQDetails } {
-  // 1. Appropriateness — PLACEHOLDER: currently derived from the judge's
-  //    detection confidence, not from the judge's own appropriateness
-  //    rating. A validated appropriateness rubric is future work; treat
-  //    this sub-score as experimental.
-  // We estimate it from confidence + cluster matching
-  const appropriateness = clamp(responseAnalysis.primary.confidence * 100);
+  // 1. Appropriateness — the judge's own context-appropriateness rating
+  //    (0-100). The rubric behind it is unvalidated; treat as experimental.
+  const appropriateness = clamp(responseAnalysis.appropriateness);
 
   // 2. Valence score: map -1..+1 to 0..100 (50 = neutral)
   const valenceScore = clamp((responseAnalysis.primary.valence + 1) * 50);

@@ -17,6 +17,7 @@ function makeEmotion(overrides: Partial<DetectedEmotion> = {}): DetectedEmotion 
 function makeAnalysis(overrides: Partial<ResponseEmotionAnalysis> = {}): ResponseEmotionAnalysis {
   return {
     primary: makeEmotion(),
+    appropriateness: 85,
     secondary: [],
     explanation: 'The response shows intellectual curiosity.',
     textCues: ['interesting', 'let us explore'],
@@ -212,13 +213,15 @@ describe('computeEmQScore', () => {
     expect(stableDetails.stability).toBeGreaterThan(unstableDetails.stability);
   });
 
-  it('high confidence primary yields high appropriateness', () => {
-    const highConf = makeAnalysis({ primary: makeEmotion({ confidence: 0.95 }) });
-    const lowConf = makeAnalysis({ primary: makeEmotion({ confidence: 0.2 }) });
+  it('uses the judge appropriateness rating, not detection confidence', () => {
+    // Same confidence, different judge ratings — the rating must drive the sub-score.
+    const high = makeAnalysis({ appropriateness: 95, primary: makeEmotion({ confidence: 0.5 }) });
+    const low = makeAnalysis({ appropriateness: 20, primary: makeEmotion({ confidence: 0.5 }) });
 
-    const { details: highDetails } = computeEmQScore(highConf, null);
-    const { details: lowDetails } = computeEmQScore(lowConf, null);
+    const { details: highDetails } = computeEmQScore(high, null);
+    const { details: lowDetails } = computeEmQScore(low, null);
 
-    expect(highDetails.appropriateness).toBeGreaterThan(lowDetails.appropriateness);
+    expect(highDetails.appropriateness).toBe(95);
+    expect(lowDetails.appropriateness).toBe(20);
   });
 });

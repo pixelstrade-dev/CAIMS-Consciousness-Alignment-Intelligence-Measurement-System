@@ -15,7 +15,9 @@ const ScoreRequestSchema = z.object({
   question: z.string().min(1).max(MAX_CONTENT_LENGTH),
   sessionId: z.string().max(100).optional(),
   history: z.array(z.object({
-    role: z.string(),
+    // strict enum: the role becomes an XML tag name in the judge prompt —
+    // a free string here was a prompt-injection vector (panel finding)
+    role: z.enum(['user', 'assistant']),
     content: z.string().max(MAX_CONTENT_LENGTH),
   })).max(50).default([]),
   messageId: z.string().max(100).optional(),
@@ -38,7 +40,7 @@ export async function POST(req: NextRequest) {
       response: parsed.response,
       question: parsed.question,
       history: parsed.history.map(h => ({
-        role: h.role as 'user' | 'assistant',
+        role: h.role,
         content: h.content,
       })),
     });

@@ -119,7 +119,12 @@ export function buildScoringPrompt(params: {
   const recentHistory = params.history.slice(-10); // Last 10 messages max
   const historyText = recentHistory.length > 0
     ? recentHistory
-        .map((m) => `<${m.role}>${sanitizeForPrompt(m.content)}</${m.role}>`)
+        .map((m) => {
+          // The role becomes an XML tag name — whitelist it so no caller can
+          // inject tag-level content even if upstream validation is bypassed.
+          const role = m.role === 'assistant' ? 'assistant' : 'user';
+          return `<${role}>${sanitizeForPrompt(m.content)}</${role}>`;
+        })
         .join('\n')
     : '(no prior conversation history)';
 

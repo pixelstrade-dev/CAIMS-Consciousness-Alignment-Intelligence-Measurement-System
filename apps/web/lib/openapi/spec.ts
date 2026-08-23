@@ -9,7 +9,7 @@ export const openApiSpec = {
   openapi: '3.1.0',
   info: {
     title: 'CAIMS API',
-    version: '1.0.0',
+    version: '2.0.0-alpha',
     description:
       'Consciousness & Alignment Intelligence Measurement System — API for scoring consciousness-related BEHAVIORAL PROXY indicators in LLM interactions across 5 KPIs (CQ, AQ, CFI, EQ, SQ) + EmQ (emotional-tone proxy), and running multi-agent debates. Scores are theory-inspired behavioral proxies, NOT measurements of consciousness, sentience or subjective experience — see the x-disclaimer field and research/methodology/disclaimer.md. Supports multiple LLM providers (Anthropic, OpenAI) via CAIMS_LLM_PROVIDER env var.',
     'x-disclaimer':
@@ -414,7 +414,7 @@ export const openApiSpec = {
             type: 'object',
             properties: {
               status: { type: 'string', enum: ['ok'] },
-              version: { type: 'string', example: '1.0.0' },
+              version: { type: 'string', example: '2.0.0-alpha' },
             },
           },
           meta: { $ref: '#/components/schemas/Meta' },

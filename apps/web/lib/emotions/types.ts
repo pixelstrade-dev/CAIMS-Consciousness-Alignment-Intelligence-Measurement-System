@@ -50,6 +50,8 @@ export interface DetectedEmotion {
 export interface ResponseEmotionAnalysis {
   /** Primary/dominant emotion in this response */
   primary: DetectedEmotion;
+  /** Judge-rated appropriateness of the emotional tone for the context (0-100) */
+  appropriateness: number;
   /** Secondary emotions present (max 2) */
   secondary: DetectedEmotion[];
   /** Human-readable explanation of WHY this emotion was detected */
