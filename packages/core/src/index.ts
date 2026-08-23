@@ -37,6 +37,18 @@ export type {
   EnsembleJudgeResult,
   EnsembleScores,
 } from './scorers/ensemble';
+export {
+  buildEvidenceCardFromSingle,
+  buildEvidenceCardFromEnsemble,
+  EVIDENCE_LEVEL_LABELS,
+  STANDING_CAVEATS,
+} from './scorers/evidence-card';
+export type {
+  EvidenceCard,
+  EvidenceLevel,
+  ProfileEntry,
+  SpreadBasis,
+} from './scorers/evidence-card';
 export { sanitizeForPrompt, INJECTION_GUARD } from './scorers/prompt-safety';
 export { DEFAULT_WEIGHTS } from './scorers/types';
 export type {
