@@ -49,6 +49,7 @@ metric whose behavior changes without its card changing is a bug.
 | `SQ.json` | Stability Quotient | proxy — validity not established |
 | `EMQ.json` | Emotional-tone proxy (experimental) | proxy — validity not established; text-level only |
 | `COMPOSITE.json` | Weighted behavioral profile aggregate | aggregate of proxies — never a "consciousness score" |
+| `PIGA.json` | Prompt–Intent–Goal Alignment (Phase A7) | v0 prototype — judge-as-classifier + deterministic scoring matrix; NOT in the composite; no runs, zero validity evidence yet |
 
 ## v3 renames (Phase A2 — EXECUTED)
 

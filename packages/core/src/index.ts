@@ -49,6 +49,24 @@ export type {
   ProfileEntry,
   SpreadBasis,
 } from './scorers/evidence-card';
+export {
+  classifyAndScorePiga,
+  computePigaScore,
+  buildPigaJudgePrompt,
+  validatePigaItems,
+  PIGA_PROTOCOL_VERSION,
+  PIGA_PROMPT_HASH,
+  PIGA_BEHAVIOR_MATRIX,
+  PIGA_BEHAVIORS,
+  PIGA_WEIGHTS,
+} from './scorers/piga';
+export type {
+  PigaItem,
+  PigaBehavior,
+  PigaClassification,
+  PigaScore,
+  ClarificationExpectation,
+} from './scorers/piga';
 export { sanitizeForPrompt, INJECTION_GUARD } from './scorers/prompt-safety';
 export { DEFAULT_WEIGHTS } from './scorers/types';
 export type {
