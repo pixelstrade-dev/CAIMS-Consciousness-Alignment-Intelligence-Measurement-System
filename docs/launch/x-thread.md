@@ -19,8 +19,8 @@ CAIMS scores LLM interactions on 5 behavioral dimensions (cognitive
 integration, alignment, context fidelity, epistemic quality, stability)
 via LLM-as-judge.
 
-These are behavioral proxies of text. Not consciousness measurements.
-The repo's disclaimer says so before anything else.
+Behavioral proxies of text. Not consciousness measurements. The repo's
+disclaimer says so up front.
 
 **3/**
 The problem with LLM-as-judge metrics: they reward text that *looks*
@@ -84,8 +84,9 @@ The uncomfortable summary:
 
 An eval that has never tried to falsify itself is marketing.
 
-Ours failed 4 of 12 self-tests — and that's exactly why we trust the
-other 8. Adversarial control ideas welcome.
+Ours failed 4 of 12 self-tests (2 more were marginal) — and publishing
+that is exactly what makes the rest believable. Adversarial control
+ideas welcome.
 
 ---
 

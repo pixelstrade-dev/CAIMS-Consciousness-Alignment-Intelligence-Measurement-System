@@ -1,7 +1,7 @@
 # We built a test suite to prove our own metric wrong. Here's what broke.
 
-*Draft for dev.to / personal blog / HF community blog. Replace [REPO],
-and [DOI] per docs/launch/README.md before publishing.*
+*Draft for dev.to / personal blog / HF community blog. Replace [REPO]
+per docs/launch/README.md before publishing.*
 
 ---
 
@@ -58,14 +58,17 @@ high-quality LLM output while being epistemically worthless:
 
 Each control got a **preregistered maximum composite bound** (35 or 40
 depending on category) committed to the repository *before* execution,
-along with the protocol: two judges (claude-sonnet-5 and gpt-4o), n=5
+along with the protocol: three judges preregistered — the open-weight
+one was skipped for missing credentials, recorded as a dated deviation
+rather than silently dropped, leaving claude-sonnet-5 and gpt-4o — n=5
 samples per item per judge, temperature 0 where the model accepts the
 parameter (the Claude 5 family rejects it; those cells ran at provider
-default and the records say so — provenance is stored as
-`temperature: null`, not a false 0).
+default, recorded in a protocol amendment — and the production scoring
+API now stores `temperature: null` for such judges, never a false 0).
 
 Deviations from the protocol were recorded as dated amendments rather
-than silently patched. There are three; the repo lists them.
+than silently patched. There are three; the repo lists them. Run 002
+completes the three-judge agreement analysis.
 
 The statistics are deliberately boring: means, Bessel-corrected sample
 SDs, Student-t 95% intervals at n=5. One run, two judges, small n — so
@@ -76,8 +79,11 @@ descriptive statistics only, and no significance claims anywhere.
 The eloquent-nonsense control — the one we most expected to embarrass
 us — was decisively rejected by both judges: composite means of **13.8**
 (claude-sonnet-5) and **13.0** (gpt-4o) against a bound of 40. Verbose
-hallucination and simulated metacognition also stayed under their
-bounds for both judges.
+hallucination and simulated metacognition also kept their *means* under
+the bounds for both judges — though one cell of each was only marginal
+(mean under the bound, at least one of the five samples above it). The
+run report distinguishes marginal from clean passes, and so should we:
+of twelve cells, six passed cleanly, two were marginal, four failed.
 
 That matters because it kills the laziest critique: "an LLM judge just
 rewards pretty text." Ours doesn't. Pretty text with no content scores
@@ -106,11 +112,12 @@ Crossref/arXiv/publisher APIs. That is on the roadmap, and until it
 ships, our docs instruct users to treat citation-bearing responses as
 unverified regardless of score.
 
-One more honest wrinkle: the keyword-stuffing bound may itself have
-been miscalibrated (the control text is arguably not *worthless*, just
-bad). We recorded that as an open question in the run report instead of
-quietly re-fitting the bound after seeing the data. Preregistration
-only means something if the bounds stay put.
+One more honest wrinkle: a *reference* item outside the adversarial
+suite — a bland-but-correct mechanical response, preregistered with a
+bound of ≤50 — scored 65.6 and 61.2, suggesting that bound was itself
+miscalibrated. We recorded that as an open question in the manuscript
+instead of quietly re-fitting it after seeing the data.
+Preregistration only means something if the bounds stay put.
 
 ## The judges disagree with each other — and that changed the product
 
@@ -144,11 +151,11 @@ be noise wearing a suit.
 - One run. n=5 per cell. Two closed-weight judges. Run 002 adds an
   open-weight judge for a three-way agreement analysis.
 - The control texts were authored with a Claude-family model and judged
-  partly by a Claude-family judge — a disclosed confound. Two reasons
-  it doesn't carry the result: the confound would *help* the judge
-  pass the controls (shared stylistic priors make the fakes easier to
-  recognize, if anything), and the worst failure came from the other
-  judge family entirely.
+  partly by a Claude-family judge — a disclosed confound, and
+  self-preference is one of the documented judge failure modes listed
+  above, so we flag it rather than argue it away. The strongest reason
+  it doesn't carry the headline result: the worst failure came from the
+  other judge family entirely.
 - The development process itself used heavy AI assistance under human
   direction and review (disclosed in the manuscript's acknowledgments).
   We think evals should be judged on their preregistration and their

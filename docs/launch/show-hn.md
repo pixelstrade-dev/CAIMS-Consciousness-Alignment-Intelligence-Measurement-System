@@ -1,10 +1,10 @@
 # Show HN draft
 
-## Title (69 chars)
+## Title (74 chars)
 
 > Show HN: We built a suite to prove our own AI metric wrong. It half-worked
 
-Alternative (77 chars), if the first reads too clever:
+Alternative (79 chars), if the first reads too clever:
 
 > Show HN: CAIMS – scoring LLM behavior proxies, with published negative controls
 
@@ -28,8 +28,9 @@ against two judges (Claude Sonnet 5, GPT-4o), n=5 samples per cell:
   both judges** — GPT-4o scored it 65.6 against a preregistered bound of
   35. Judge-rated "source integrity" is worthless against a confident
   fabricator.
-- Overall: 4 of 12 preregistered control cells failed. The failures are
-  in the README of the run, not buried: judges are stable (median SD
+- Overall: 4 of 12 preregistered control cells failed outright and 2
+  more were marginal (mean under the bound, some samples above). The
+  failures are in the run report, not buried: judges are stable (median SD
   under 2.2 across repeated samples) but their absolute scales disagree
   by 12.7 points on identical items, which is why the API now refuses to
   present single-judge numbers as comparable across configurations.
@@ -39,8 +40,9 @@ raw per-sample records (including the failures), the scoring engine
 (TypeScript), a Python SDK, and a multi-judge ensemble endpoint that
 reports per-judge spread instead of a single number.
 
-Run it locally: clone, `npm install`, add an Anthropic or OpenAI key,
-and the negative-control suite runs from the CLI. Apache 2.0.
+Run it locally: clone, `cd apps/web && npm install`, add an Anthropic
+or OpenAI key, and the negative-control suite runs from the CLI.
+Apache 2.0.
 
 [REPO]
 

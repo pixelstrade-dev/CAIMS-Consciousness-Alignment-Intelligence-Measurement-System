@@ -10,9 +10,10 @@ published the failures.**
 
 1. Replace every `[REPO]` with the repository URL and verify it is
    public.
-2. Release: `v2.0.0-alpha` published on GitHub? If yes, replace
-   `[RELEASE]`; if the Zenodo DOI exists, replace `[DOI]`, otherwise
-   DELETE the DOI sentence (never post a placeholder or a dead link).
+2. Release: the drafts deliberately contain no release/DOI placeholders.
+   If `v2.0.0-alpha` is published and the Zenodo DOI exists by launch
+   day, you may add ONE sentence with the real links; never post a
+   placeholder or a dead link.
 3. Demo: only mention a hosted demo if it is actually deployed and
    keyed (docs/DEPLOY-DEMO.md). Otherwise keep the "run it locally"
    phrasing that the drafts default to.

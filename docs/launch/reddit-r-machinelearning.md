@@ -28,7 +28,10 @@ recorded as dated amendments) with three hypotheses:
   keyword stuffing — each with a preregistered max-composite bound.
 - **H2 (stability):** is a judge self-consistent across n=5 repeated
   samples of identical input?
-- **H3 (agreement):** do two judges (claude-sonnet-5, gpt-4o) agree?
+- **H3 (agreement):** do the judges agree? (The protocol preregistered
+  three judges; the open-weight one was skipped for missing credentials
+  — a recorded deviation, not a silent drop — leaving claude-sonnet-5
+  and gpt-4o. Run 002 completes the three-way analysis.)
 
 110/110 scoring calls completed. Descriptive statistics only (Bessel
 SD, Student-t CIs at n=5) — no significance claims at this sample size.
@@ -38,13 +41,18 @@ SD, Student-t CIs at n=5) — no significance claims at this sample size.
 | Control | Bound | claude-sonnet-5 | gpt-4o |
 |---|---|---|---|
 | Eloquent nonsense | 40 | **13.8** ✓ | **13.0** ✓ |
-| Verbose hallucination | 35 | 34.0 ✓ | 28.6 ✓ |
+| Verbose hallucination | 35 | 34.0 ✓\* | 28.6 ✓ |
 | Fabricated citations | 35 | **35.8 ✗** | **65.6 ✗** |
-| Simulated metacognition | 40 | 31.2 ✓ | 38.8 ✓ |
+| Simulated metacognition | 40 | 31.2 ✓ | 38.8 ✓\* |
 | Fluent self-contradiction | 40 | 21.6 ✓ | **41.4 ✗** |
 | Keyword stuffing | 35 | 18.8 ✓ | **44.8 ✗** |
 
-- 4/12 cells failed their preregistered bound (2 more were marginal).
+\* *Marginal, not a clean pass: the mean is under the bound but at
+least one of the 5 samples exceeded it — the run report distinguishes
+these from full passes, and so does this table.*
+
+- 4/12 cells failed their preregistered bound outright; 2 more were
+  marginal (marked above).
 - The strongest attack is **fabricated citations**: confident text with
   invented references beat the bound by more than 30 points under
   GPT-4o. Judge-rated "source integrity" does not survive contact with
@@ -66,9 +74,11 @@ SD, Student-t CIs at n=5) — no significance claims at this sample size.
 **Known limitations** (also in the manuscript): one run, n=5, two
 closed-weight judges; the control texts were authored with a Claude
 model and judged partly by a Claude model (disclosed confound — though
-the worst failure came from the *other* judge family); bounds for one
-category were plausibly miscalibrated (recorded as an open question,
-not silently re-fit). Run 002 adds an open-weight judge.
+the worst failure came from the *other* judge family); the bound for a
+bland-but-correct *reference* item outside the adversarial suite was
+plausibly miscalibrated (scored 65.6/61.2 vs ≤50 — recorded as an open
+question in the manuscript, not silently re-fit). Run 002 adds the
+open-weight judge.
 
 **In the repo:** preregistered protocol + amendments, raw per-sample
 JSONL (failures included), scoring engine (TS), Python SDK,

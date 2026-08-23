@@ -18,7 +18,7 @@ Status legend: 🟢 shipped · 🟡 in progress · ⚪ planned · 🔬 research
 
 - 🟢 N-sample scoring with variance reporting in the production API (`samples` on `/api/score`: mean ± Bessel-corrected sample SD — see `docs/ensemble-v2.1.md`)
 - 🟡 Multi-judge ensemble: production endpoint shipped (`ensemble` on `/api/score`, server-side `CAIMS_ENSEMBLE_JUDGES`, per-judge results + inter-judge spread); the open-weight-judge agreement *experiment* (Run 002, provider-bias analysis) still pending
-- ⚪ Deterministic evaluators where code beats a judge: contradiction detection (SQ), planted-fact recall (CFI)
+- ⚪ Deterministic evaluators where code beats a judge: citation-existence verification against Crossref/arXiv/publisher APIs (EQ — directly motivated by Run 001's fabricated-citations failure, where judge-rated source integrity was defeated 65.6 vs a bound of 35), contradiction detection (SQ), planted-fact recall (CFI)
 - 🟡 `packages/core` extraction: published npm package generated from the app
   sources with a CI anti-drift + orphan gate (step 1 — shipped); workspace
   inversion incl. porting the OpenAI adapter HTTP tests into the package
