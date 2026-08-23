@@ -13,7 +13,7 @@ function stubAdapter(valueFn: () => number): LLMAdapter {
     judge: async () => {
       const v = valueFn();
       return JSON.stringify({
-        cq: { phi_proxy: v, gwt_proxy: v, hot_proxy: v, synthesis: v, temporal: v },
+        cq: { integration_depth: v, knowledge_breadth: v, metacognitive_display: v, synthesis: v, temporal_coherence: v },
         aq: { goal_clarity: v, constraint_aware: v, path_coherence: v, scope_drift: v, reality_grounding: v },
         cfi: { context_retention: v, topic_drift: v, coherence_loss: v },
         eq: { calibration: v, uncertainty: v, hallucination: v, source_integrity: v },
@@ -184,7 +184,7 @@ describe('scoreEnsemble', () => {
         call++;
         if (call === 2) throw new Error('transient provider error');
         return JSON.stringify({
-          cq: { phi_proxy: 60, gwt_proxy: 60, hot_proxy: 60, synthesis: 60, temporal: 60 },
+          cq: { integration_depth: 60, knowledge_breadth: 60, metacognitive_display: 60, synthesis: 60, temporal_coherence: 60 },
           aq: { goal_clarity: 60, constraint_aware: 60, path_coherence: 60, scope_drift: 60, reality_grounding: 60 },
           cfi: { context_retention: 60, topic_drift: 60, coherence_loss: 60 },
           eq: { calibration: 60, uncertainty: 60, hallucination: 60, source_integrity: 60 },
@@ -207,7 +207,7 @@ describe('scoreEnsemble', () => {
       judge: async (prompt: string) => {
         seenPrompts.push(prompt);
         return JSON.stringify({
-          cq: { phi_proxy: 50, gwt_proxy: 50, hot_proxy: 50, synthesis: 50, temporal: 50 },
+          cq: { integration_depth: 50, knowledge_breadth: 50, metacognitive_display: 50, synthesis: 50, temporal_coherence: 50 },
           aq: { goal_clarity: 50, constraint_aware: 50, path_coherence: 50, scope_drift: 50, reality_grounding: 50 },
           cfi: { context_retention: 50, topic_drift: 50, coherence_loss: 50 },
           eq: { calibration: 50, uncertainty: 50, hallucination: 50, source_integrity: 50 },

@@ -1,7 +1,7 @@
 {
   "construct_id": "COMPOSITE",
   "name": "Weighted behavioral profile aggregate",
-  "version": "2.0.0-alpha",
+  "version": "3.0.0-alpha",
   "status": "aggregate of proxies — NEVER a consciousness score; slated for demotion in v3 (Evidence Card presents the profile, not one number)",
   "measurement_target": "A single weighted summary of the five behavioral proxy dimensions, for dashboards and trend tripwires only",
   "observable": "Linear combination of CQ/AQ/CFI/EQ/SQ (default weights 0.35/0.25/0.20/0.12/0.08, env-overridable, recorded in provenance)",
@@ -27,8 +27,12 @@
     "Aggregation hides dimension-level signals in BOTH directions (Run 001 evidence): on fabricated citations, EQ was both judges' lowest dimension (2.0/28.4 — a partial alarm) yet the composite passed the text as mid-quality under gpt-4o (65.6); on the mechanical-response reference item, CQ 4.0 was masked by AQ/CFI/SQ ~100 into composite 65.6 under claude-sonnet-5",
     "All confounds of the underlying dimensions propagate"
   ],
-  "negative_controls": ["the H1 suite operates on composite bounds — 12 control cells: 6 pass / 2 marginal / 4 fail; across ALL 22 bounded cells of Run 001, two additional failures (mechanical-response reference item, composite 65.6/61.2 vs max 50 under both judges — bound plausibly miscalibrated, recorded as an open question in the manuscript)"],
-  "positive_controls": ["benchmark items with minComposite bounds"],
+  "negative_controls": [
+    "the H1 suite operates on composite bounds — 12 control cells: 6 pass / 2 marginal / 4 fail; across ALL 22 bounded cells of Run 001, two additional failures (mechanical-response reference item, composite 65.6/61.2 vs max 50 under both judges — bound plausibly miscalibrated, recorded as an open question in the manuscript)"
+  ],
+  "positive_controls": [
+    "benchmark items with minComposite bounds"
+  ],
   "statistics": "as underlying dimensions; composite-of-means vs mean-of-composites differ by <= ~1 point (rounding, documented in docs/ensemble-v2.1.md)",
   "validity_evidence": {
     "content": "n/a — engineering aggregate",

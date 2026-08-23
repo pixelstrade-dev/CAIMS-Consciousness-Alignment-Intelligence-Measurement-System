@@ -16,7 +16,7 @@ jest.mock('@/lib/logger', () => ({
 import { scoreInteraction } from '../scoring-engine';
 
 const RUBRIC = JSON.stringify({
-  cq: { phi_proxy: 50, gwt_proxy: 50, hot_proxy: 50, synthesis: 50, temporal: 50 },
+  cq: { integration_depth: 50, knowledge_breadth: 50, metacognitive_display: 50, synthesis: 50, temporal_coherence: 50 },
   aq: { goal_clarity: 50, constraint_aware: 50, path_coherence: 50, scope_drift: 50, reality_grounding: 50 },
   cfi: { context_retention: 50, topic_drift: 50, coherence_loss: 50 },
   eq: { calibration: 50, uncertainty: 50, hallucination: 50, source_integrity: 50 },

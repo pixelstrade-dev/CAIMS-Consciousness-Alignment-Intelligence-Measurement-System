@@ -8,9 +8,9 @@ This document describes the theoretical limitations and methodological caveats o
 
 CAIMS draws on three established theories of consciousness as conceptual frameworks. All three inspire sub-proxies **inside the CQ (Cognitive-Integration Quotient) rubric** — this mapping matches the implementation exactly:
 
-- **Integrated Information Theory (IIT)** -- motivates the `phi_proxy` sub-score (integration of multiple knowledge domains into a unified answer). It is named after Phi but does not compute it (see section 2).
-- **Global Workspace Theory (GWT)** -- motivates the `gwt_proxy` sub-score (breadth of access to diverse knowledge areas within a response).
-- **Higher-Order Thought (HOT) theory** -- motivates the `hot_proxy` sub-score (meta-cognitive reflection visible in the response text).
+- **Integrated Information Theory (IIT)** -- motivates the `integration_depth` sub-score (named `phi_proxy` before protocol 3.0.0-alpha) (integration of multiple knowledge domains into a unified answer). The pre-v3 name referenced Phi; the sub-score never computed it (see section 2).
+- **Global Workspace Theory (GWT)** -- motivates the `knowledge_breadth` sub-score (previously `gwt_proxy`) (breadth of access to diverse knowledge areas within a response).
+- **Higher-Order Thought (HOT) theory** -- motivates the `metacognitive_display` sub-score (previously `hot_proxy`) (meta-cognitive reflection visible in the response text).
 
 The remaining KPIs are behavioral quality dimensions without a specific consciousness-theory claim: **AQ** (task alignment: goal adherence and constraint respect), **CFI** (Context Fidelity Index: context retention and drift), **EQ** (Epistemic Quality: calibration and honesty) and **SQ** (Stability Quotient: intra-session consistency). Earlier versions of this document mapped GWT to CFI and HOT to SQ; that never corresponded to the implemented rubric and is corrected here.
 
@@ -59,7 +59,7 @@ The composite CAIMS score is a weighted sum of the five KPI scores. The default 
 
 The same caveat applies to three further sets of constants that earlier versions of this document did not mention:
 
-- **19 sub-score weights** hard-coded inside the KPI calculators (e.g. `phi_proxy` counts for 30% of CQ) — expert defaults, not empirically derived, and currently not configurable.
+- **19 sub-score weights** hard-coded inside the KPI calculators (e.g. `integration_depth` counts for 30% of CQ) — expert defaults, not empirically derived, and currently not configurable.
 - **The interpretation thresholds** (75 / 50 / 25) that map the composite onto labels such as "SCORE PROXY ÉLEVÉ" — conventional quartile-style bands with no empirical justification; the labels describe the observed proxy profile, never a level of consciousness.
 - **The single-sample scoring design** — one judge call per score, no seed, no variance estimate. Run-to-run and month-to-month variability is currently unmeasured; treat any single score as a point estimate of unknown precision.
 

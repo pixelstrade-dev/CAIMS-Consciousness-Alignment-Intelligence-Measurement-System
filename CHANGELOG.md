@@ -8,6 +8,16 @@ the meaning of scores even when the software API is unchanged.
 
 ## [Unreleased] — scoring protocol 2.0.0-alpha
 
+### Changed — BREAKING: scoring protocol 3.0.0-alpha (Phase A2 of the validity program)
+- CQ sub-dimensions renamed from theory-implying names to what they
+  behaviorally observe: `phi_proxy → integration_depth`,
+  `gwt_proxy → knowledge_breadth`, `hot_proxy → metacognitive_display`,
+  `temporal → temporal_coherence`. The rubric text changed, so the
+  prompt hash changed; **v2 and v3 scores are never comparable**.
+  `details.cq` response keys and `CQDetails` types use the new names.
+  Run 001 artifacts keep the v2 names (historical record of a
+  2.0.0-alpha run); Run 002 will execute under 3.0.0-alpha.
+
 ### Changed — BREAKING for score consumers
 - Interpretation labels renamed from consciousness language
   (`CONSCIENCE ÉLEVÉE` … `TRAITEMENT MÉCANIQUE`) to proxy language

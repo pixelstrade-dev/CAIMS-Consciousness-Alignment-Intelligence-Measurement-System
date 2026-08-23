@@ -13,7 +13,7 @@ jest.mock('@/lib/emotions', () => ({
 import { getAdapter } from '@/lib/adapters';
 
 const VALID_JUDGE_JSON = JSON.stringify({
-  cq: { phi_proxy: 80, gwt_proxy: 70, hot_proxy: 75, synthesis: 60, temporal: 65 },
+  cq: { integration_depth: 80, knowledge_breadth: 70, metacognitive_display: 75, synthesis: 60, temporal_coherence: 65 },
   aq: { goal_clarity: 85, constraint_aware: 80, path_coherence: 75, scope_drift: 90, reality_grounding: 70 },
   cfi: { context_retention: 80, topic_drift: 85, coherence_loss: 90 },
   eq: { calibration: 70, uncertainty: 65, hallucination: 95, source_integrity: 80 },

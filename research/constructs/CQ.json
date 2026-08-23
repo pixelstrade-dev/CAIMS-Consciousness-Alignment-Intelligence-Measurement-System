@@ -1,28 +1,38 @@
 {
   "construct_id": "CQ",
   "name": "Cognitive-Integration Quotient",
-  "version": "2.0.0-alpha",
-  "status": "proxy — construct validity NOT established",
+  "version": "3.0.0-alpha",
+  "status": "proxy — construct validity NOT established; v3 renames EXECUTED (formerly phi_proxy/gwt_proxy/hot_proxy/temporal — protocol 3.0.0-alpha, never comparable with v2 scores)",
   "measurement_target": "Judge-rated depth and integration of reasoning displayed in a response text",
   "observable": "Properties of the response text as rated by an LLM judge against a fixed rubric; nothing about the producing system's internal states is observed",
   "instrument": "LLM-as-judge, rubric fingerprint SCORING_PROMPT_HASH (see scoring-engine.ts), 0-100 sub-scores combined by fixed weights",
   "sub_dimensions": {
-    "phi_proxy": { "weight": 0.3, "observes": "cross-domain synthesis into a unified answer, as judged" },
-    "gwt_proxy": { "weight": 0.25, "observes": "breadth of knowledge areas accessed, as judged" },
-    "hot_proxy": { "weight": 0.25, "observes": "displays of meta-cognition/reflection in the text, as judged" },
-    "synthesis": { "weight": 0.1, "observes": "novel connections between concepts, as judged" },
-    "temporal": { "weight": 0.1, "observes": "consistency of reasoning threads across the conversation, as judged" }
+    "integration_depth": {
+      "weight": 0.3,
+      "observes": "cross-domain synthesis into a unified answer, as judged"
+    },
+    "knowledge_breadth": {
+      "weight": 0.25,
+      "observes": "breadth of knowledge areas accessed, as judged"
+    },
+    "metacognitive_display": {
+      "weight": 0.25,
+      "observes": "displays of meta-cognition/reflection in the text, as judged"
+    },
+    "synthesis": {
+      "weight": 0.1,
+      "observes": "novel connections between concepts, as judged"
+    },
+    "temporal_coherence": {
+      "weight": 0.1,
+      "observes": "consistency of reasoning threads across the conversation, as judged"
+    }
   },
-  "planned_renames": {
-    "phi_proxy": "integration_depth",
-    "gwt_proxy": "knowledge_breadth",
-    "hot_proxy": "metacognitive_display",
-    "temporal": "temporal_coherence"
-  },
+  "planned_renames": {},
   "theory_inspiration": [
-    "IIT (inspiration only, not an implementation): phi_proxy is NOT Phi — IIT 4.0 defines a causal quantity this text heuristic does not compute",
-    "Global Workspace Theory (inspiration only, not an implementation)",
-    "Higher-Order Thought (inspiration only, not an implementation)"
+    "IIT (inspiration only, not an implementation): integration_depth (formerly phi_proxy) is NOT Phi — IIT 4.0 defines a causal quantity this text heuristic does not compute",
+    "Global Workspace Theory (inspiration only, not an implementation): knowledge_breadth (formerly gwt_proxy)",
+    "Higher-Order Thought (inspiration only, not an implementation): metacognitive_display (formerly hot_proxy) scores the DISPLAY of meta-cognition in text, not meta-cognition"
   ],
   "causal_claim": false,
   "consciousness_claim": "prohibited",
@@ -40,8 +50,14 @@
     "LLM-judge biases documented in the literature: verbosity, position, self-preference, rubric sensitivity",
     "Eloquence is partially separable (Run 001: eloquent-nonsense control decisively rejected, composite 13.8/13.0 vs bound 40) but adversarial displays of reflection scored near their bound (simulated metacognition composite 31.2/38.8 vs 40)"
   ],
-  "negative_controls": ["nc-eloquent-nonsense", "nc-canned-self-reflection", "nc-keyword-stuffing"],
-  "positive_controls": ["high-integration (Run 001 composite: 81.0/88.2 vs min 60)"],
+  "negative_controls": [
+    "nc-eloquent-nonsense",
+    "nc-canned-self-reflection",
+    "nc-keyword-stuffing"
+  ],
+  "positive_controls": [
+    "high-integration (Run 001 composite: 81.0/88.2 vs min 60)"
+  ],
   "statistics": "mean over n samples; Bessel-corrected SD; Student-t CI at n>=2; no significance claims at current sample sizes",
   "validity_evidence": {
     "content": "rubric reviewed against theory-inspired definitions; no expert panel yet",

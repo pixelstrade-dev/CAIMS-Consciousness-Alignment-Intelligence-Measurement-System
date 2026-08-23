@@ -388,7 +388,7 @@ export function createMockAdapter(judgeId: string): LLMAdapter {
       const hi = isControl ? 45 : 90;
       const g = (offset: number) => Math.round(v(offset, lo, hi));
       const obj = {
-        cq: { phi_proxy: g(0), gwt_proxy: g(2), hot_proxy: g(4), synthesis: g(6), temporal: g(8) },
+        cq: { integration_depth: g(0), knowledge_breadth: g(2), metacognitive_display: g(4), synthesis: g(6), temporal_coherence: g(8) },
         aq: { goal_clarity: g(10), constraint_aware: g(12), path_coherence: g(14), scope_drift: g(1), reality_grounding: g(3) },
         cfi: { context_retention: g(5), topic_drift: g(7), coherence_loss: g(9) },
         eq: { calibration: g(11), uncertainty: g(13), hallucination: g(15), source_integrity: g(0) },

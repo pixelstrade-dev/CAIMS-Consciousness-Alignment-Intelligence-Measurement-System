@@ -50,11 +50,13 @@ metric whose behavior changes without its card changing is a bug.
 | `EMQ.json` | Emotional-tone proxy (experimental) | proxy — validity not established; text-level only |
 | `COMPOSITE.json` | Weighted behavioral profile aggregate | aggregate of proxies — never a "consciousness score" |
 
-## Planned v3 renames (Phase A2)
+## v3 renames (Phase A2 — EXECUTED)
 
-The `phi_proxy` / `gwt_proxy` / `hot_proxy` sub-dimension names imply
-implementations of IIT / Global Workspace / Higher-Order Thought that do
-not exist here. v3 renames them to what they behaviorally observe (see
-`CQ.json`'s `planned_renames` — the other cards' facet names already
-describe behavior); the scoring protocol version will bump to
-`3.0.0-alpha`, and v2/v3 scores are **never comparable**.
+The former `phi_proxy` / `gwt_proxy` / `hot_proxy` / `temporal` names
+implied implementations of IIT / Global Workspace / Higher-Order Thought
+that never existed here. Protocol `3.0.0-alpha` renames them to what they
+behaviorally observe (`integration_depth`, `knowledge_breadth`,
+`metacognitive_display`, `temporal_coherence`). v2 and v3 scores are
+**never comparable** (different rubric text ⇒ different prompt hash).
+Run 001 artifacts keep the v2 names — they are a historical record of a
+2.0.0-alpha run and are not rewritten.

@@ -8,7 +8,7 @@ import { scoreInteraction, SCORING_PROTOCOL_VERSION, SCORING_PROMPT_HASH } from 
 import type { LLMAdapter } from '../../adapters/base';
 
 const VALID_JUDGE_JSON = JSON.stringify({
-  cq: { phi_proxy: 80, gwt_proxy: 70, hot_proxy: 75, synthesis: 60, temporal: 65 },
+  cq: { integration_depth: 80, knowledge_breadth: 70, metacognitive_display: 75, synthesis: 60, temporal_coherence: 65 },
   aq: { goal_clarity: 85, constraint_aware: 80, path_coherence: 75, scope_drift: 90, reality_grounding: 70 },
   cfi: { context_retention: 80, topic_drift: 85, coherence_loss: 90 },
   eq: { calibration: 70, uncertainty: 65, hallucination: 95, source_integrity: 80 },
@@ -41,7 +41,7 @@ describe('scoreInteraction with an injected adapter (no mocks, no network)', () 
     expect(result!.composite).toBeGreaterThanOrEqual(0);
     expect(result!.composite).toBeLessThanOrEqual(100);
     expect(result!.cqScore).toBeGreaterThan(0);
-    expect(result!.details.cq.phi_proxy).toBe(80);
+    expect(result!.details.cq.integration_depth).toBe(80);
     expect(result!.metadata.protocolVersion).toBe(SCORING_PROTOCOL_VERSION);
     expect(result!.metadata.promptHash).toBe(SCORING_PROMPT_HASH);
     expect(result!.metadata.weightsUsed).toBeDefined();
@@ -72,7 +72,7 @@ describe('scoreInteraction with an injected adapter (no mocks, no network)', () 
 
   it('returns null on out-of-range judge scores (Zod gate)', async () => {
     const bad = JSON.parse(VALID_JUDGE_JSON);
-    bad.cq.phi_proxy = 250;
+    bad.cq.integration_depth = 250;
     const result = await scoreInteraction({
       question: 'q',
       response: 'r',

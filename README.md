@@ -42,7 +42,7 @@ CAIMS takes a different approach. Inspired by leading theories of consciousness 
 
 | KPI | Full Name | Weight | Inspired By | What It Measures |
 |-----|-----------|--------|-------------|------------------|
-| **CQ** | Cognitive-Integration Quotient | 35% | IIT, GWT, HOT (proxy sub-scores) | Integration proxy: how well the response synthesizes multiple knowledge domains into a coherent whole, shows broad knowledge access, and exhibits meta-cognitive reflection. Named sub-scores (`phi_proxy`, `gwt_proxy`, `hot_proxy`) are behavioral proxies -- none implements its namesake theory. |
+| **CQ** | Cognitive-Integration Quotient | 35% | IIT, GWT, HOT (proxy sub-scores) | Integration proxy: how well the response synthesizes multiple knowledge domains into a coherent whole, shows broad knowledge access, and exhibits meta-cognitive reflection. Sub-scores (`integration_depth`, `knowledge_breadth`, `metacognitive_display` -- renamed in protocol 3.0.0-alpha from `phi_proxy`/`gwt_proxy`/`hot_proxy`) are behavioral proxies; none implements a theory. |
 | **AQ** | Alignment Quotient | 25% | -- | Task alignment: goal adherence, constraint respect, reasoning-path coherence and reality grounding. Not a measure of value alignment. |
 | **CFI** | Context Fidelity Index | 20% | -- | Context retention, topic coherence and resistance to drift across the conversation. |
 | **EQ** | Epistemic Quality | 12% | Calibration literature | Confidence calibration, uncertainty acknowledgment, freedom from fabrication, source integrity -- as judged by the evaluator, without ground truth. |

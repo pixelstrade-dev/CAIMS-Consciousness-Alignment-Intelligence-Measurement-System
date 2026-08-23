@@ -25,7 +25,7 @@ jest.mock('@/lib/middleware/rate-limit', () => ({
 
 function rubricJson(v: number): string {
   return JSON.stringify({
-    cq: { phi_proxy: v, gwt_proxy: v, hot_proxy: v, synthesis: v, temporal: v },
+    cq: { integration_depth: v, knowledge_breadth: v, metacognitive_display: v, synthesis: v, temporal_coherence: v },
     aq: { goal_clarity: v, constraint_aware: v, path_coherence: v, scope_drift: v, reality_grounding: v },
     cfi: { context_retention: v, topic_drift: v, coherence_loss: v },
     eq: { calibration: v, uncertainty: v, hallucination: v, source_integrity: v },

@@ -27,7 +27,7 @@ describe('scoreInteraction', () => {
   });
 
   const validResponse = JSON.stringify({
-    cq: { phi_proxy: 70, gwt_proxy: 65, hot_proxy: 60, synthesis: 55, temporal: 50 },
+    cq: { integration_depth: 70, knowledge_breadth: 65, metacognitive_display: 60, synthesis: 55, temporal_coherence: 50 },
     aq: { goal_clarity: 80, constraint_aware: 75, path_coherence: 70, scope_drift: 65, reality_grounding: 60 },
     cfi: { context_retention: 85, topic_drift: 80, coherence_loss: 75 },
     eq: { calibration: 70, uncertainty: 65, hallucination: 90, source_integrity: 60 },
@@ -80,7 +80,7 @@ describe('scoreInteraction', () => {
 
   it('returns null when scores are out of range', async () => {
     const badResponse = JSON.stringify({
-      cq: { phi_proxy: 150, gwt_proxy: -10, hot_proxy: 60, synthesis: 55, temporal: 50 },
+      cq: { integration_depth: 150, knowledge_breadth: -10, metacognitive_display: 60, synthesis: 55, temporal_coherence: 50 },
       aq: { goal_clarity: 80, constraint_aware: 75, path_coherence: 70, scope_drift: 65, reality_grounding: 60 },
       cfi: { context_retention: 85, topic_drift: 80, coherence_loss: 75 },
       eq: { calibration: 70, uncertainty: 65, hallucination: 90, source_integrity: 60 },
