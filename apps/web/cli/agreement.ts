@@ -56,6 +56,15 @@ for (const ds of datasets) {
   const sub = interRaterAgreement(Array.from(byItem.values()), judges.length);
   const a = sub.krippendorffAlpha === null ? 'undefined' : sub.krippendorffAlpha.toFixed(3);
   const i = sub.icc ? sub.icc.icc2_1.toFixed(3) : 'undefined';
-  console.log(`  ${ds}: alpha ${a}, ICC(2,1) ${i} (${sub.alphaItems} items) — within-dataset, bimodality removed`);
+  // Raw mean absolute pairwise difference — the coefficient-free statistic
+  // that survives range-restriction and outlier effects.
+  const diffs: number[] = [];
+  for (const ratings of byItem.values()) {
+    for (let x = 0; x < ratings.length; x++) {
+      for (let y = x + 1; y < ratings.length; y++) diffs.push(Math.abs(ratings[x] - ratings[y]));
+    }
+  }
+  const meanAbs = diffs.length ? (diffs.reduce((s, d) => s + d, 0) / diffs.length).toFixed(1) : 'n/a';
+  console.log(`  ${ds}: alpha ${a}, ICC(2,1) ${i}, mean |judge diff| ${meanAbs} pts (${sub.alphaItems} items) — within-dataset`);
 }
-console.log('CAVEAT: pooled coefficients are inflated by the bimodal design (controls low / benchmarks high) exactly as protocol-001 states for Pearson r; the mean absolute difference (12.7 pts) remains the honest absolute-scale statistic.');
+console.log('CAVEATS: pooled coefficients are inflated by the bimodal design (as protocol-001 states for Pearson r); WITHIN-dataset coefficients carry their own confounds (range restriction deflates them; at these item counts a single item can swing alpha by ~0.5) — read the raw mean |judge diff| alongside any coefficient.');

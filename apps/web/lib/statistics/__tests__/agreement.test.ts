@@ -23,6 +23,11 @@ describe('krippendorffAlphaInterval', () => {
     expect(krippendorffAlphaInterval([[4, 4], [4, 4]])).toBeNull(); // zero expected disagreement
   });
 
+  it('a single pairable unit is undefined (alpha would be identically 0 — a misleading artifact)', () => {
+    expect(krippendorffAlphaInterval([[1, 1.0001]])).toBeNull();
+    expect(krippendorffAlphaInterval([[1, 5], [99]])).toBeNull(); // singleton does not rescue it
+  });
+
   it('systematic offset between raters is penalized (absolute agreement, unlike Pearson r)', () => {
     // Rater B = Rater A + 20: r would be 1.0; alpha must be well below 1.
     const alpha = krippendorffAlphaInterval([[10, 30], [40, 60], [70, 90]]);

@@ -38,7 +38,10 @@ export function krippendorffAlphaInterval(units: number[][]): number | null {
   const values: number[] = [];
   for (const u of pairable) values.push(...u);
   const n = values.length;
-  if (n < 2 || pairable.length === 0) return null;
+  // With a single pairable unit, Do === De algebraically and alpha is
+  // identically 0 regardless of the ratings — a misleading artifact, so
+  // it is undefined here (Krippendorff's reliability needs >= 2 units).
+  if (n < 2 || pairable.length < 2) return null;
 
   // Observed disagreement: within-unit ordered-pair squared differences,
   // each unit weighted by 1/(m_u - 1), averaged over all pairable values.
@@ -139,7 +142,7 @@ export function interRaterAgreement(
     krippendorffAlpha: krippendorffAlphaInterval(ratingsByItem),
     icc: expectedRaters >= 2 ? icc2_1(complete) : null,
     alphaItems: alphaUnits.length,
-    iccItems: complete.length,
+    iccItems: expectedRaters >= 2 ? complete.length : 0,
     note: AGREEMENT_NOTE,
   };
 }

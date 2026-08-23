@@ -53,6 +53,14 @@ describe('runExperiment (mock adapters, injected — no env, no network)', () =>
     return { summary, records };
   }
 
+  it('emits interRater (Phase A5): alpha + ICC grouped by item across judges', async () => {
+    const { summary } = await run();
+    expect(summary.interRater).toBeDefined();
+    expect(summary.interRater.alphaItems).toBeGreaterThan(0);
+    expect(summary.interRater.iccItems).toBeGreaterThan(0);
+    expect(summary.interRater.note).toContain('DESCRIPTIVE');
+  });
+
   it('emits items × judges × nSamples raw records with full provenance', async () => {
     const { records } = await run();
     expect(records).toHaveLength(2 * 2 * 3);
