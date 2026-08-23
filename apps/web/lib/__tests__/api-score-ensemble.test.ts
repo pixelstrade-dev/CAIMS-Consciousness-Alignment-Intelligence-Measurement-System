@@ -112,6 +112,12 @@ describe('POST /api/score — ensemble & n-sample (v2.1)', () => {
     expect(body.data.evidenceCard.phenomenalConsciousness).toBe('NOT_ASSESSED');
     expect(body.data.evidenceCard.profile.cq.basis).toBe('across-judges');
     expect(body.data.evidenceCard.profile.cq.n).toBe(2);
+    // INVARIANT: the card's profile scores must equal scores.* in the SAME
+    // response — the two are computed by (currently identical) expressions
+    // in two files, and a divergence would be a self-contradicting payload.
+    for (const k of ['cq', 'aq', 'cfi', 'eq', 'sq'] as const) {
+      expect(body.data.evidenceCard.profile[k].score).toBe(body.data.scores[k].score);
+    }
   });
 
   it('n-sample without ensemble: single default judge, SD over samples', async () => {

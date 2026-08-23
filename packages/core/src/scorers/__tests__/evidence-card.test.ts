@@ -89,6 +89,31 @@ describe('buildEvidenceCardFromEnsemble', () => {
     expect(card.caveats.some(c => c.includes('one provider family'))).toBe(true);
   });
 
+  it('ASYMMETRIC judges: profile scores equal the ensemble scores field (round-tripped invariant)', () => {
+    // Deliberately asymmetric per-KPI means so any divergence between the
+    // two computations would show (symmetric fixtures cannot catch it).
+    const a = judge({ id: 'anthropic:a', provider: 'anthropic',
+      kpiMeans: { cq: 61.3, aq: 77.7, cfi: 50.1, eq: 33.3, sq: 90.9 } });
+    const b = judge({ id: 'openai:b', provider: 'openai',
+      kpiMeans: { cq: 68.8, aq: 71.1, cfi: 55.5, eq: 44.4, sq: 88.8 } });
+    // Recompute the ensemble scores field the way ensemble.ts does:
+    const scores = Object.fromEntries(
+      (['cq', 'aq', 'cfi', 'eq', 'sq'] as const).map(k => [
+        k, Math.round(((a.kpiMeans[k] + b.kpiMeans[k]) / 2) * 10) / 10,
+      ])
+    ) as { cq: number; aq: number; cfi: number; eq: number; sq: number };
+    const res = ensembleResult([a, b]);
+    res.scores = { ...scores, composite: 70 };
+    const card = buildEvidenceCardFromEnsemble(res);
+    for (const k of ['cq', 'aq', 'cfi', 'eq', 'sq'] as const) {
+      expect(card.profile[k].score).toBe(res.scores[k]);
+    }
+  });
+
+  it('throws a clear error on zero successful judges (library-consumer guard)', () => {
+    expect(() => buildEvidenceCardFromEnsemble(ensembleResult([]))).toThrow(/at least one successful judge/);
+  });
+
   it('failed judges surface as a caveat', () => {
     const card = buildEvidenceCardFromEnsemble(ensembleResult([judge({})], 1));
     expect(card.caveats.some(c => c.includes('failed entirely'))).toBe(true);

@@ -122,6 +122,11 @@ export function buildEvidenceCardFromEnsemble(
   opts: { deterministicChecksRan?: boolean } = {}
 ): EvidenceCard {
   const judges = result.judges;
+  // The API route 503s before reaching here with zero ok judges; guard for
+  // library consumers hand-building an EnsembleScores.
+  if (judges.length === 0) {
+    throw new Error('buildEvidenceCardFromEnsemble requires at least one successful judge (scoreEnsemble returns null in that case)');
+  }
   const multiJudge = judges.length >= 2;
 
   const profile = Object.fromEntries(

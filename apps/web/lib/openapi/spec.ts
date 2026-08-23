@@ -461,16 +461,18 @@ export const openApiSpec = {
         properties: {
           profile: {
             type: 'object',
-            description: 'Per-KPI profile. sd/n semantics depend on basis — never mix bases.',
-            additionalProperties: {
-              type: 'object',
-              properties: {
-                score: { type: 'number' },
-                sd: { type: ['number', 'null'], description: 'Bessel-corrected sample SD over `basis`; null when n < 2' },
-                n: { type: 'integer' },
-                basis: { type: 'string', enum: ['single-call', 'samples-within-judge', 'across-judges'] },
-              },
-            },
+            description: 'Per-KPI profile (exactly cq/aq/cfi/eq/sq). sd/n semantics depend on basis — never mix bases.',
+            properties: Object.fromEntries(
+              ['cq', 'aq', 'cfi', 'eq', 'sq'].map(k => [k, {
+                type: 'object',
+                properties: {
+                  score: { type: 'number' },
+                  sd: { type: ['number', 'null'], description: 'Bessel-corrected sample SD over `basis`; null when n < 2' },
+                  n: { type: 'integer' },
+                  basis: { type: 'string', enum: ['single-call', 'samples-within-judge', 'across-judges'] },
+                },
+              }])
+            ),
           },
           aggregate: {
             type: 'object',
@@ -621,6 +623,14 @@ export const openApiSpec = {
                           properties: {
                             cq: { type: 'number' }, aq: { type: 'number' }, cfi: { type: 'number' },
                             eq: { type: 'number' }, sq: { type: 'number' },
+                          },
+                        },
+                        kpiSd: {
+                          type: 'object',
+                          description: 'Per-KPI Bessel-corrected sample SD across this judge\'s ok samples; null when samples < 2',
+                          properties: {
+                            cq: { type: ['number', 'null'] }, aq: { type: ['number', 'null'] }, cfi: { type: ['number', 'null'] },
+                            eq: { type: ['number', 'null'] }, sq: { type: ['number', 'null'] },
                           },
                         },
                         composite: {

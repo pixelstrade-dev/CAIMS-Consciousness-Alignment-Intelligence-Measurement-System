@@ -69,7 +69,11 @@ Implementation decisions beyond the sketch: each profile entry carries a
 `basis` field (`single-call` / `samples-within-judge` / `across-judges`)
 so sd/n semantics can never be silently mixed; judges that failed
 entirely add a caveat to the card itself; L0 (mock) never reaches the
-production path, so the API emits L1–L3 only.
+production path, so the API emits L1–L3 only; and `constructRegistry`
+carries the protocol version (`research/constructs/ (protocol …)`)
+instead of the sketched git sha — the protocol version is the provenance
+key the rest of the system already enforces, and a runtime git sha is
+not reliably available in deployed builds.
 
 ## Breaking changes bundle (one bump, not a trickle)
 
