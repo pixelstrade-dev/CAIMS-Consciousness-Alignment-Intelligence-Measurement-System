@@ -96,6 +96,8 @@ export interface EnsembleJudgeResult {
   samplesFailed: number;
   /** Per-KPI means across this judge's ok samples. */
   kpiMeans: { cq: number; aq: number; cfi: number; eq: number; sq: number };
+  /** Per-KPI Bessel-corrected sample SD across this judge's ok samples; null when samples < 2. */
+  kpiSd: { cq: number | null; aq: number | null; cfi: number | null; eq: number | null; sq: number | null };
   composite: { mean: number; sd: number | null };
 }
 
@@ -206,6 +208,12 @@ export async function scoreEnsemble(params: {
         eq: round1(mean(kpiSamples.eq)),
         sq: round1(mean(kpiSamples.sq)),
       },
+      kpiSd: Object.fromEntries(
+        KPI_KEYS.map(k => {
+          const s = sampleSd(kpiSamples[k]);
+          return [k, s === null ? null : round1(s)];
+        })
+      ) as EnsembleJudgeResult['kpiSd'],
       composite: { mean: round1(mean(composites)), sd: sd === null ? null : round1(sd) },
     } };
   }));

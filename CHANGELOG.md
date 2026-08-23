@@ -8,6 +8,17 @@ the meaning of scores even when the software API is unchanged.
 
 ## [Unreleased] — scoring protocol 3.0.0-alpha
 
+### Added — Evidence Card (Phase A3 of the validity program)
+- `POST /api/score` now returns `data.evidenceCard` on every path: a
+  per-dimension profile (with sd/n and an explicit spread `basis`), a
+  demoted `aggregate` (the composite, marked "never to be presented
+  alone"), a COMPUTED evidence level (L1 single judge family, L2 ≥2
+  provider families, L3 reserved for deterministic verification — Phase
+  A4), standing Run 001 caveats, and the constant
+  `phenomenalConsciousness: "NOT_ASSESSED"`. `data.scores` is retained
+  for compatibility and deprecated as the primary reading. Ensemble
+  judge results additionally expose per-KPI sample SDs (`kpiSd`).
+
 ### Changed — BREAKING: scoring protocol 3.0.0-alpha (Phase A2 of the validity program)
 - CQ sub-dimensions renamed from theory-implying names to what they
   behaviorally observe: `phi_proxy → integration_depth`,

@@ -107,6 +107,11 @@ describe('POST /api/score — ensemble & n-sample (v2.1)', () => {
     expect(body.data.metadata.mode).toBe('ensemble');
     expect(body.data.metadata.emotionAnalysis).toBe('skipped');
     expect(mockJudge).toHaveBeenCalledTimes(2); // no emotion calls
+    // v3 Evidence Card: two provider families → computed L2, profile primary
+    expect(body.data.evidenceCard.evidenceLevel).toBe('L2');
+    expect(body.data.evidenceCard.phenomenalConsciousness).toBe('NOT_ASSESSED');
+    expect(body.data.evidenceCard.profile.cq.basis).toBe('across-judges');
+    expect(body.data.evidenceCard.profile.cq.n).toBe(2);
   });
 
   it('n-sample without ensemble: single default judge, SD over samples', async () => {
@@ -122,6 +127,10 @@ describe('POST /api/score — ensemble & n-sample (v2.1)', () => {
     expect(body.data.ensemble.judges[0].composite.sd).toBeCloseTo(7.1, 1);
     expect(body.data.ensemble.agreement).toBeNull();
     expect(mockJudge).toHaveBeenCalledTimes(2);
+    // Evidence Card: one judge, n samples → L1, samples-within-judge basis
+    expect(body.data.evidenceCard.evidenceLevel).toBe('L1');
+    expect(body.data.evidenceCard.profile.cq.basis).toBe('samples-within-judge');
+    expect(body.data.evidenceCard.profile.cq.n).toBe(2);
   });
 
   it('all judges failing → 503 SCORING_UNAVAILABLE', async () => {
@@ -142,5 +151,9 @@ describe('POST /api/score — ensemble & n-sample (v2.1)', () => {
     expect(body.data.ensemble).toBeUndefined();
     expect(body.data.metadata.mode).toBeUndefined();
     expect(body.data.scores.composite).toBe(65);
+    // Evidence Card is present on the single path too: L1, single-call basis
+    expect(body.data.evidenceCard.evidenceLevel).toBe('L1');
+    expect(body.data.evidenceCard.profile.eq).toEqual({ score: 65, sd: null, n: 1, basis: 'single-call' });
+    expect(body.data.evidenceCard.phenomenalConsciousness).toBe('NOT_ASSESSED');
   });
 });

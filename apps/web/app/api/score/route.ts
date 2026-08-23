@@ -9,6 +9,7 @@ import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { scoreInteraction } from '@/lib/scorers/scoring-engine';
 import { scoreEnsemble, getEnsembleConfig, defaultJudge, MAX_SAMPLES_PER_JUDGE } from '@/lib/scorers/ensemble';
+import { buildEvidenceCardFromSingle, buildEvidenceCardFromEnsemble } from '@/lib/scorers/evidence-card';
 import { interpretScore, checkContextAlert } from '@/lib/scorers/composite';
 import { checkRateLimit, getRateLimitHeaders, clientIp } from '@/lib/middleware/rate-limit';
 import { apiSuccess, apiError } from '@/lib/middleware/api-response';
@@ -110,6 +111,10 @@ export async function POST(req: NextRequest) {
       });
 
       return apiSuccess({
+        // v3 primary result: the profile with computed evidence level.
+        evidenceCard: buildEvidenceCardFromEnsemble(result),
+        // Retained for compatibility (deprecated as the primary reading —
+        // see the OpenAPI description and docs/evidence-card-v3.md).
         scores: {
           cq: { score: result.scores.cq, details: {} },
           aq: { score: result.scores.aq, details: {} },
@@ -145,6 +150,9 @@ export async function POST(req: NextRequest) {
     logger.info('Scoring completed', { processingTimeMs, composite: scores.composite });
 
     return apiSuccess({
+      // v3 primary result: the profile with computed evidence level (L1
+      // by construction on this single-judge single-call path).
+      evidenceCard: buildEvidenceCardFromSingle(scores),
       scores: {
         cq: { score: scores.cqScore, details: scores.details.cq },
         aq: { score: scores.aqScore, details: scores.details.aq },

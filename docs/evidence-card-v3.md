@@ -1,7 +1,11 @@
 # Evidence Card — v3 design (Phase A of the validity program)
 
-Status: **DESIGN — approved direction, not yet implemented.** Implementation
-is Phase A3; the sub-dimension renames it depends on are Phase A2.
+Status: **IMPLEMENTED (Phase A3)** — `POST /api/score` returns
+`data.evidenceCard` on every path (single, n-sample, ensemble);
+`data.scores` is retained for compatibility and deprecated as the
+primary reading. Implementation: `apps/web/lib/scorers/evidence-card.ts`
+(synced to `@caims/core`). Notes below record the design and its
+decisions; deviations from the original sketch are marked.
 
 ## Why the single composite has to step down
 
@@ -56,8 +60,16 @@ what may be claimed; the API's primary output must match that honesty.
 | L4 | mechanistic | RESERVED — requires interventional evidence on model internals; out of scope for this codebase today, listed so nobody claims it by accident |
 
 The level is computed, not declared: L2 requires the ensemble path with
-≥ 2 successful judge families; L3 additionally requires the deterministic
-verifier suite to have run on the response.
+≥ 2 successful judge **provider families** (two models of one family stay
+L1, with an explicit caveat); L3 additionally requires the deterministic
+verifier suite (Phase A4) to have run on the response — the hook exists
+(`deterministicChecksRan`) and stays false until A4 ships.
+
+Implementation decisions beyond the sketch: each profile entry carries a
+`basis` field (`single-call` / `samples-within-judge` / `across-judges`)
+so sd/n semantics can never be silently mixed; judges that failed
+entirely add a caveat to the card itself; L0 (mock) never reaches the
+production path, so the API emits L1–L3 only.
 
 ## Breaking changes bundle (one bump, not a trickle)
 

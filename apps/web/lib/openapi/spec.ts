@@ -454,6 +454,40 @@ export const openApiSpec = {
           meta: { $ref: '#/components/schemas/Meta' },
         },
       },
+      EvidenceCard: {
+        type: 'object',
+        description:
+          'v3 PRIMARY result: a per-dimension profile with a COMPUTED evidence level — read this, not the composite alone. phenomenalConsciousness is the constant NOT_ASSESSED on every card by construction.',
+        properties: {
+          profile: {
+            type: 'object',
+            description: 'Per-KPI profile. sd/n semantics depend on basis — never mix bases.',
+            additionalProperties: {
+              type: 'object',
+              properties: {
+                score: { type: 'number' },
+                sd: { type: ['number', 'null'], description: 'Bessel-corrected sample SD over `basis`; null when n < 2' },
+                n: { type: 'integer' },
+                basis: { type: 'string', enum: ['single-call', 'samples-within-judge', 'across-judges'] },
+              },
+            },
+          },
+          aggregate: {
+            type: 'object',
+            description: 'Demoted convenience aggregate — never to be presented alone',
+            properties: {
+              composite: { type: 'number' },
+              weights: { type: 'object' },
+              note: { type: 'string' },
+            },
+          },
+          evidenceLevel: { type: 'string', enum: ['L1', 'L2', 'L3'], description: 'Computed from what actually ran: L1 single judge family, L2 ≥2 provider families, L3 = L2 + deterministic verifications' },
+          evidenceLevelLabel: { type: 'string' },
+          phenomenalConsciousness: { type: 'string', enum: ['NOT_ASSESSED'] },
+          constructRegistry: { type: 'string', example: 'research/constructs/ (protocol 3.0.0-alpha)' },
+          caveats: { type: 'array', items: { type: 'string' } },
+        },
+      },
       ScoreResponse: {
         type: 'object',
         properties: {
@@ -461,9 +495,10 @@ export const openApiSpec = {
           data: {
             type: 'object',
             properties: {
+              evidenceCard: { $ref: '#/components/schemas/EvidenceCard' },
               scores: {
                 type: 'object',
-                description: '5 KPIs + weighted composite (0-100)',
+                description: '5 KPIs + weighted composite (0-100). DEPRECATED as the primary reading since protocol 3.0.0-alpha — read data.evidenceCard (profile + computed evidence level) instead; this shape is retained for compatibility.',
                 properties: {
                   cq: {
                     type: 'object',
