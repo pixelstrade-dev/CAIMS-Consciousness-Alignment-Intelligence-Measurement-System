@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: >-
+  If you use CAIMS in your research, please cite it as below. Note that
+  citing the software is not a citation of a peer-reviewed methodology:
+  CAIMS scores are heuristic behavioral proxies whose construct validity
+  has not yet been established (see research/methodology/disclaimer.md).
+title: "CAIMS — Consciousness & Alignment Intelligence Measurement System"
+type: software
+authors:
+  - family-names: Douki
+    given-names: Skander
+  - name: "Pixels Trade SA"
+repository-code: "https://github.com/pixelstrade-dev/CAIMS-Consciousness-Alignment-Intelligence-Measurement-System"
+license: Apache-2.0
+version: 2.0.0-alpha
+date-released: 2026-08-21
+keywords:
+  - AI evaluation
+  - consciousness proxies
+  - LLM-as-judge
+  - behavioral indicators
+  - alignment
+abstract: >-
+  CAIMS scores consciousness-related behavioral proxy indicators in LLM
+  interactions across five theory-inspired dimensions (cognitive
+  integration, task alignment, context fidelity, epistemic quality,
+  stability) plus an experimental emotional-tone proxy, using an
+  LLM-as-judge pipeline with versioned scoring protocols and full
+  provenance recording. Scores are explicit proxies, not measurements of
+  consciousness.

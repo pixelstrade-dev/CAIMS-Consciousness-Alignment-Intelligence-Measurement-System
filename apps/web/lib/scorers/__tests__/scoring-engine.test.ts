@@ -7,6 +7,7 @@ jest.mock('@/lib/adapters', () => ({
   getAdapter: () => ({
     judge: mockJudge,
   }),
+  getProviderFromEnv: () => 'anthropic',
 }));
 
 jest.mock('@/lib/logger', () => ({

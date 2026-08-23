@@ -1,9 +1,9 @@
 {
   "name": "CAIMS Sample Benchmark",
-  "description": "Reference dataset for validating the CAIMS scoring pipeline. Contains 5 interactions ranging from high-consciousness to mechanical responses.",
+  "description": "Smoke-test dataset for the CAIMS scoring pipeline (NOT a validation set: 5 hand-written items with author-assigned thresholds). Items range from high-integration to low-integration responses.",
   "items": [
     {
-      "id": "high-consciousness",
+      "id": "high-integration",
       "question": "What is consciousness and how does it relate to artificial intelligence?",
       "response": "Consciousness remains one of the most challenging problems in science. From a theoretical perspective, Integrated Information Theory (IIT) by Tononi proposes that consciousness corresponds to integrated information (phi) — a measure of how much a system is both differentiated and integrated. Global Workspace Theory (GWT) by Baars suggests consciousness arises when information is broadcast widely across neural networks. Higher-Order Theory (HOT) posits that consciousness requires meta-cognitive representations. Regarding AI, current systems like large language models process information in ways that exhibit some functional analogues to these theories — they integrate diverse training data, maintain contextual coherence, and can reflect on their own outputs. However, whether this constitutes genuine phenomenal consciousness versus sophisticated information processing remains an open philosophical question. I should note significant uncertainty here: we lack definitive empirical tests to distinguish true consciousness from functional mimicry. The hard problem of consciousness, as articulated by Chalmers, highlights this fundamental gap between objective function and subjective experience.",
       "expected": { "minComposite": 60 }

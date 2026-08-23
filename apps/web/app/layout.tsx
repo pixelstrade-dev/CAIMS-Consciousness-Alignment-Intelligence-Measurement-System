@@ -15,7 +15,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "CAIMS — Consciousness & Alignment Intelligence Measurement System",
-  description: "The first open-source framework for measuring consciousness proxies in LLM interactions. Measures CQ, AQ, CFI, EQ, SQ across every interaction.",
+  description: "Open-source framework for scoring consciousness-related behavioral proxies in LLM interactions — CQ, AQ, CFI, EQ, SQ. Proxy indicators, not consciousness measurements.",
 };
 
 export default function RootLayout({

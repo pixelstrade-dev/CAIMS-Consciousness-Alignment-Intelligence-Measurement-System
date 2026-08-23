@@ -39,6 +39,7 @@ const mockChat = jest.fn();
 const mockJudge = jest.fn();
 jest.mock('@/lib/adapters', () => ({
   getAdapter: () => ({ chat: mockChat, judge: mockJudge }),
+  getProviderFromEnv: () => 'anthropic',
 }));
 
 // Mock logger (suppress output)
@@ -51,6 +52,10 @@ const mockCheckRateLimit = jest.fn();
 jest.mock('@/lib/middleware/rate-limit', () => ({
   checkRateLimit: (...args: unknown[]) => mockCheckRateLimit(...args),
   getRateLimitHeaders: () => ({}),
+  clientIp: (headers: { get(name: string): string | null }) =>
+    headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    headers.get('x-real-ip')?.trim() ||
+    'anonymous',
 }));
 
 // Helper to create NextRequest-like objects

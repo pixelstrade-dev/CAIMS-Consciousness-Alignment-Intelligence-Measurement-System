@@ -153,7 +153,7 @@ export class OpenAIAdapter implements LLMAdapter {
         messages: [
           {
             role: 'system',
-            content: 'You are a computational consciousness evaluation system. You MUST respond ONLY with valid JSON, no text before or after the JSON.',
+            content: 'You are a rigorous evaluator of behavioral proxy indicators in AI responses. You do not measure consciousness. You MUST respond ONLY with valid JSON, no text before or after the JSON.',
           },
           { role: 'user', content: prompt },
         ],

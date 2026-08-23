@@ -7,7 +7,7 @@ describe('OpenAPI Specification', () => {
 
   it('has correct API title and version', () => {
     expect(openApiSpec.info.title).toBe('CAIMS API');
-    expect(openApiSpec.info.version).toBe('1.0.0');
+    expect(openApiSpec.info.version).toBe('2.0.0-alpha');
   });
 
   it('has Apache 2.0 license', () => {

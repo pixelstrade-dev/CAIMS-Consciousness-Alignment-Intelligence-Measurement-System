@@ -5,6 +5,12 @@ function clamp(value: number): number {
   return Math.max(0, Math.min(100, Math.round(value)));
 }
 
+// The weights actually applied for this process (env override or defaults) —
+// exposed so the scoring engine can record them in each score's provenance.
+export function getActiveWeights(): KPIWeights {
+  return getWeightsFromEnv();
+}
+
 export function computeCompositeScore(
   scores: { cq: number; aq: number; cfi: number; eq: number; sq: number },
   weights?: KPIWeights
@@ -19,12 +25,21 @@ export function computeCompositeScore(
   );
 }
 
+// Labels describe the observed behavioral-proxy profile, never consciousness
+// itself — see research/methodology/disclaimer.md. Band boundaries (75/50/25)
+// are conventional quartile-style cutoffs, not empirically derived.
 export function interpretScore(score: number): ScoreLabel {
   const clamped = clamp(score);
-  if (clamped >= 75) return { label: "CONSCIENCE ÉLEVÉE", color: "#00f5d4" };
-  if (clamped >= 50) return { label: "CONSCIENCE MODÉRÉE", color: "#4cc9f0" };
-  if (clamped >= 25) return { label: "CONSCIENCE FAIBLE", color: "#f8961e" };
-  return { label: "TRAITEMENT MÉCANIQUE", color: "#f72585" };
+  if (clamped >= 75) return { label: "SCORE PROXY ÉLEVÉ", color: "#00f5d4" };
+  if (clamped >= 50) return { label: "SCORE PROXY MODÉRÉ", color: "#4cc9f0" };
+  if (clamped >= 25) return { label: "SCORE PROXY FAIBLE", color: "#f8961e" };
+  return { label: "SCORE PROXY MINIMAL", color: "#f72585" };
+}
+
+// Single source of truth for score→color mapping (previously hand-copied in
+// five UI components with the risk of divergence).
+export function scoreColor(score: number): string {
+  return interpretScore(score).color;
 }
 
 export function checkContextAlert(cfiScore: number): ContextAlert | null {

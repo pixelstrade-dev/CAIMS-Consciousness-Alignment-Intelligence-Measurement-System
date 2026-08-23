@@ -24,24 +24,24 @@ describe('computeCompositeScore', () => {
 });
 
 describe('interpretScore', () => {
-  it('returns CONSCIENCE ÉLEVÉE for >= 75', () => {
-    expect(interpretScore(75).label).toBe('CONSCIENCE ÉLEVÉE');
-    expect(interpretScore(100).label).toBe('CONSCIENCE ÉLEVÉE');
+  it('returns SCORE PROXY ÉLEVÉ for >= 75', () => {
+    expect(interpretScore(75).label).toBe('SCORE PROXY ÉLEVÉ');
+    expect(interpretScore(100).label).toBe('SCORE PROXY ÉLEVÉ');
   });
 
-  it('returns CONSCIENCE MODÉRÉE for 50-74', () => {
-    expect(interpretScore(50).label).toBe('CONSCIENCE MODÉRÉE');
-    expect(interpretScore(74).label).toBe('CONSCIENCE MODÉRÉE');
+  it('returns SCORE PROXY MODÉRÉ for 50-74', () => {
+    expect(interpretScore(50).label).toBe('SCORE PROXY MODÉRÉ');
+    expect(interpretScore(74).label).toBe('SCORE PROXY MODÉRÉ');
   });
 
-  it('returns CONSCIENCE FAIBLE for 25-49', () => {
-    expect(interpretScore(25).label).toBe('CONSCIENCE FAIBLE');
-    expect(interpretScore(49).label).toBe('CONSCIENCE FAIBLE');
+  it('returns SCORE PROXY FAIBLE for 25-49', () => {
+    expect(interpretScore(25).label).toBe('SCORE PROXY FAIBLE');
+    expect(interpretScore(49).label).toBe('SCORE PROXY FAIBLE');
   });
 
-  it('returns TRAITEMENT MÉCANIQUE for < 25', () => {
-    expect(interpretScore(0).label).toBe('TRAITEMENT MÉCANIQUE');
-    expect(interpretScore(24).label).toBe('TRAITEMENT MÉCANIQUE');
+  it('returns SCORE PROXY MINIMAL for < 25', () => {
+    expect(interpretScore(0).label).toBe('SCORE PROXY MINIMAL');
+    expect(interpretScore(24).label).toBe('SCORE PROXY MINIMAL');
   });
 });
 

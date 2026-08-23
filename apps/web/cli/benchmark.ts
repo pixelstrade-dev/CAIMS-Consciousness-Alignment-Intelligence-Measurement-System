@@ -282,6 +282,9 @@ function printTable(summary: BenchmarkSummary): void {
   console.log('');
   console.log(`  Scored: ${summary.scored}/${summary.totalItems}  |  Failed: ${summary.failed}${summary.passed !== null ? `  |  Passed: ${summary.passed}/${summary.scored}` : ''}`);
   console.log('');
+  console.log('  Note: scores are behavioral proxy indicators, not consciousness');
+  console.log('  measurements — see research/methodology/disclaimer.md');
+  console.log('');
 }
 
 function pad(str: string, len: number): string {
