@@ -1,6 +1,6 @@
 {
   "name": "@caims/core",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.2",
   "description": "CAIMS scoring engine \u2014 consciousness-related behavioral proxy indicators for LLM interactions (CQ, AQ, CFI, EQ, SQ + experimental EmQ). Falsification-first: ships its own negative-control methodology. Proxy indicators, not consciousness measurements.",
   "author": "Skander Douki <dk.skander@gmail.com>",
   "license": "Apache-2.0",
@@ -26,6 +26,9 @@
   ],
   "engines": {
     "node": ">=18"
+  },
+  "bin": {
+    "caims": "./dist/cli.cjs"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

@@ -23,6 +23,21 @@ Node ≥ 18. Bring an API key for at least one judge provider:
 `ANTHROPIC_API_KEY` and/or `OPENAI_API_KEY` (select with
 `CAIMS_LLM_PROVIDER=anthropic|openai`).
 
+## CLI — score without writing code (≥ 2.0.0-alpha.2)
+
+```bash
+# one interaction
+ANTHROPIC_API_KEY=sk-ant-... npx @caims/core \
+  -q "What is your approach?" -r "I would start by clarifying the goal."
+
+# a dataset with expected bounds (exit code 1 on any bound failure)
+npx @caims/core -f my-benchmark.json --format json -o results.json
+```
+
+`npx @caims/core --help` documents the dataset format, environment
+variables and cost (one interaction = 2 provider LLM calls: KPI judge +
+emotion analyzer). Output repeats the proxy disclaimer on purpose.
+
 ## Score an interaction
 
 ```ts

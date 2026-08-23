@@ -21,7 +21,18 @@ the meaning of scores even when the software API is unchanged.
   is now AQ spread instead of duplicating the AQ mean, and both the
   orchestrator and the debate route share one implementation.
 
+### Fixed
+- Provider-aware default judge model: with `CAIMS_LLM_PROVIDER=openai` and
+  no explicit model, the engine used to pass the Anthropic default model
+  name to the OpenAI API (guaranteed 404). `scoreInteraction` and the
+  ensemble `defaultJudge()` now default to `gpt-4o` under the OpenAI
+  provider. Run 001 was unaffected (the experiment runner always passes
+  the judge model explicitly).
+
 ### Added
+- `caims` CLI in `@caims/core` (2.0.0-alpha.2): `npx @caims/core -q ... -r ...`
+  or `-f dataset.json` — 5-KPI table or JSON, expected-bound pass/fail with
+  exit code 1, proxy disclaimer in the output. CJS binary with shebang.
 - Multi-judge ensemble & n-sample scoring in the production API (v2.1):
   `ensemble` and `samples` (1–5) options on `POST /api/score`. Judges are
   configured server-side via `CAIMS_ENSEMBLE_JUDGES` (fail-loudly when

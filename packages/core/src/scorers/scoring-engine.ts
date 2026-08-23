@@ -228,7 +228,13 @@ export async function scoreInteraction(params: {
   /** Set false to skip the EmQ emotion pass (e.g. controlled experiments). Default true. */
   enableEmotions?: boolean;
 }): Promise<KPIScores | null> {
-  const model = params.model || process.env.CAIMS_SCORING_MODEL || 'claude-sonnet-4-20250514';
+  // Provider-aware default: with CAIMS_LLM_PROVIDER=openai and no explicit
+  // model, the judge must default to an OpenAI model — the adapter's own
+  // fallback never applies because this value is always passed down.
+  const model =
+    params.model ||
+    process.env.CAIMS_SCORING_MODEL ||
+    (getProviderFromEnv() === 'openai' ? 'gpt-4o' : 'claude-sonnet-4-20250514');
   const startTime = Date.now();
 
   try {

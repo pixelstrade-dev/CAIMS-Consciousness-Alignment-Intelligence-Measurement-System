@@ -70,7 +70,9 @@ function transform(content, relFile) {
 }
 
 // Files allowed to exist in packages/core/src without being synced.
-const HANDWRITTEN = new Set(['index.ts']);
+// cli.ts is the npx-runnable binary — its usage text and import paths differ
+// from apps/web/cli/benchmark.ts on purpose.
+const HANDWRITTEN = new Set(['index.ts', 'cli.ts', '__tests__/cli.test.ts']);
 
 function listDstFiles() {
   const out = [];

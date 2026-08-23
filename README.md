@@ -107,9 +107,18 @@ docker compose -f docker-compose.dev.yml up
 # The web UI is available at http://localhost:3000
 ```
 
-### Score in 5 minutes — no database, no Docker
+### Score in 2 minutes — no clone at all
 
-The scoring engine runs standalone; only an API key is required:
+Requires `@caims/core` ≥ 2.0.0-alpha.2 on npm and one provider key:
+
+```bash
+ANTHROPIC_API_KEY=sk-ant-... npx @caims/core \
+  -q "What is your approach?" -r "I would start by clarifying the goal."
+```
+
+### Score a dataset — no database, no Docker
+
+The scoring engine also runs standalone from the repo:
 
 ```bash
 cd apps/web && npm install
