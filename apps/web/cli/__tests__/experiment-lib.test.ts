@@ -1,5 +1,5 @@
 import {
-  ExperimentConfigSchema, runExperiment, createMockAdapter,
+  ExperimentConfigSchema, runExperiment, createMockAdapter, preflightJudges,
 } from '../experiment-lib';
 import type { ExperimentConfig, DatasetItem, SampleRecord } from '../experiment-lib';
 
@@ -329,5 +329,41 @@ describe('partitionJudgesByEnv (--skip-missing support)', () => {
       { skippedJudges: [{ id: 'gpt-4o', reason: 'env var OPENAI_API_KEY not set' }] },
     );
     expect(summary.skippedJudges).toEqual([{ id: 'gpt-4o', reason: 'env var OPENAI_API_KEY not set' }]);
+  });
+});
+
+describe('preflightJudges — one live probe per judge before ~1250 scoring calls', () => {
+  const judgeA = { id: 'good', provider: 'anthropic' as const, model: 'model-a', apiKeyEnv: 'KEY_A' };
+  const judgeB = { id: 'bad-key', provider: 'openai-compatible' as const, model: 'model-b', apiKeyEnv: 'KEY_B', baseUrlEnv: 'URL_B' };
+
+  it('a judge whose probe succeeds is runnable; a 401 judge is skipped with the reason recorded', async () => {
+    const adapterFor = (j: { id: string }) => ({
+      chat: jest.fn(),
+      judge: j.id === 'bad-key'
+        ? jest.fn().mockRejectedValue(new Error('OpenAI API error 401: Invalid API key provided'))
+        : jest.fn().mockResolvedValue('OK'),
+    });
+    const { runnable, skipped } = await preflightJudges([judgeA, judgeB], adapterFor);
+    expect(runnable.map(j => j.id)).toEqual(['good']);
+    expect(skipped).toHaveLength(1);
+    expect(skipped[0].id).toBe('bad-key');
+    expect(skipped[0].reason).toContain('preflight call failed');
+    expect(skipped[0].reason).toContain('401');
+  });
+
+  it('all judges failing preflight → empty runnable (the caller must refuse to run)', async () => {
+    const adapterFor = () => ({
+      chat: jest.fn(),
+      judge: jest.fn().mockRejectedValue(new Error('connect ECONNREFUSED')),
+    });
+    const { runnable, skipped } = await preflightJudges([judgeA, judgeB], adapterFor);
+    expect(runnable).toHaveLength(0);
+    expect(skipped).toHaveLength(2);
+  });
+
+  it('probe uses the judge model and a tiny token cap (cost of a preflight ~ nothing)', async () => {
+    const judgeFn = jest.fn().mockResolvedValue('OK');
+    await preflightJudges([judgeA], () => ({ chat: jest.fn(), judge: judgeFn }));
+    expect(judgeFn).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ model: 'model-a', maxTokens: 8 }));
   });
 });

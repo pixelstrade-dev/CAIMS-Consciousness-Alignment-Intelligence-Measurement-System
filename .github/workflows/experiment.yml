@@ -53,6 +53,7 @@ jobs:
           npm ci
           npx prisma generate
       - name: Execute experiment
+        id: exp
         working-directory: apps/web
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -63,19 +64,44 @@ jobs:
           MOCK_FLAG=""
           if [ "$MOCK_INPUT" = "true" ]; then MOCK_FLAG="--mock"; fi
           npx tsx cli/experiment.ts -c "${GITHUB_WORKSPACE}/${CONFIG_PATH}" $MOCK_FLAG --skip-missing
+      # Runs even when the experiment step fails: run-002 attempt 1 lost
+      # ~2500 paid judge calls because the failed step blocked publication.
+      # Failed-run data is diagnostic material — pushed on a clearly-labeled
+      # branch, with NO automatic pull request (a failed run must never look
+      # like results).
       - name: Publish results branch (PR automatic, or one-click link)
+        if: ${{ always() && steps.exp.outcome != 'skipped' }}
         env:
           GH_TOKEN: ${{ github.token }}
+          EXP_OUTCOME: ${{ steps.exp.outcome }}
         run: |
           RUN_DIR=$(dirname "$CONFIG_PATH")
-          SUFFIX=$([ "$MOCK_INPUT" = "true" ] && echo "mock" || echo "results")
+          if [ "$EXP_OUTCOME" != "success" ]; then
+            SUFFIX="FAILED"
+          elif [ "$MOCK_INPUT" = "true" ]; then
+            SUFFIX="mock"
+          else
+            SUFFIX="results"
+          fi
           BRANCH="experiment/$(basename "$RUN_DIR")-${SUFFIX}-${GITHUB_RUN_ID}"
+          if [ -z "$(git status --porcelain "$RUN_DIR")" ]; then
+            echo "### ⚠️ No experiment output to publish (the run failed before writing results)" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
           git config user.name "caims-experiment-bot"
           git config user.email "experiments@users.noreply.github.com"
           git checkout -b "$BRANCH"
           git add "$RUN_DIR"
           git commit -m "results($(basename "$RUN_DIR")): ${SUFFIX} from workflow run ${GITHUB_RUN_ID}"
           git push -u origin "$BRANCH"
+          # A FAILED run's data is preserved for diagnosis but never offered
+          # as results: branch only, no pull request.
+          if [ "$EXP_OUTCOME" != "success" ]; then
+            echo "### ❌ Experiment FAILED — partial data preserved for diagnosis (never merge as results)" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Branch: \`$BRANCH\` — inspect summary.json / raw JSONL to see which judge failed and why." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
           # Automatic PR needs the repo toggle "Allow GitHub Actions to create
           # and approve pull requests". If it is off, we do NOT fail: the
           # results branch is already pushed — we surface a one-click link in

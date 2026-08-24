@@ -162,6 +162,37 @@ export function partitionJudgesByEnv(
   return { runnable, skipped };
 }
 
+// One live probe call per judge BEFORE its ~1250 scoring calls. Run-002
+// attempt 1 burned 1252 failed calls because a PRESENT-but-INVALID key
+// (Together 401) passed the env-var check and then failed every call,
+// pushing the run over the failure threshold and losing the two good
+// judges' data. A preflight failure of any kind (bad key, wrong model id,
+// unreachable endpoint) means every scoring call would fail identically,
+// so the judge is skipped and recorded as a protocol deviation instead.
+export async function preflightJudges(
+  judges: JudgeConfig[],
+  adapterFor: (judge: JudgeConfig) => LLMAdapter,
+  log?: (msg: string) => void
+): Promise<{ runnable: JudgeConfig[]; skipped: { id: string; reason: string }[] }> {
+  const runnable: JudgeConfig[] = [];
+  const skipped: { id: string; reason: string }[] = [];
+  for (const judge of judges) {
+    try {
+      await adapterFor(judge).judge(
+        'Preflight credential check. Reply with the single word OK.',
+        { model: judge.model, maxTokens: 8 }
+      );
+      runnable.push(judge);
+      log?.(`preflight: judge "${judge.id}" ok`);
+    } catch (error) {
+      const msg = (error instanceof Error ? error.message : String(error)).slice(0, 200);
+      skipped.push({ id: judge.id, reason: `preflight call failed: ${msg}` });
+      log?.(`preflight: judge "${judge.id}" FAILED — skipped, recorded as protocol deviation (${msg})`);
+    }
+  }
+  return { runnable, skipped };
+}
+
 // ── Runner ────────────────────────────────────────────────────────────────
 
 export interface RunDeps {

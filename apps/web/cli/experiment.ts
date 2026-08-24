@@ -17,7 +17,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import {
-  ExperimentConfigSchema, runExperiment, createMockAdapter, partitionJudgesByEnv,
+  ExperimentConfigSchema, runExperiment, createMockAdapter, partitionJudgesByEnv, preflightJudges,
 } from './experiment-lib';
 import type { ExperimentConfig, JudgeConfig, DatasetItem, SampleRecord, ExperimentSummary } from './experiment-lib';
 import { AnthropicAdapter } from '@/lib/adapters/anthropic';
@@ -148,9 +148,11 @@ async function main() {
   const rawConfig = JSON.parse(fs.readFileSync(configAbs, 'utf-8'));
   let config = ExperimentConfigSchema.parse(rawConfig);
 
-  // --skip-missing: run with the judges whose credentials exist; record the
-  // rest as a protocol deviation (protocol-001 Amendment A2). Mock runs need
-  // no credentials, so nothing is skipped there.
+  // --skip-missing: run with the judges whose credentials exist AND work; the
+  // rest are recorded as a protocol deviation (protocol-001 Amendment A2).
+  // Two gates: (1) env vars present, (2) one live preflight call per judge —
+  // run-002 attempt 1 showed a present-but-invalid key burns ~1250 failed
+  // calls and sinks the whole run. Mock runs need no credentials.
   let skippedJudges: { id: string; reason: string }[] = [];
   if (skipMissing && !mock) {
     const { runnable, skipped } = partitionJudgesByEnv(config.judges, process.env);
@@ -159,7 +161,10 @@ async function main() {
       process.stderr.write(`skip-missing: judge "${sk.id}" skipped (${sk.reason})\n`);
     }
     if (runnable.length === 0) fail('all judges skipped — no credentials found; set at least ANTHROPIC_API_KEY or OPENAI_API_KEY');
-    config = { ...config, judges: runnable };
+    const pf = await preflightJudges(runnable, realAdapterFor, (m) => process.stderr.write(m + '\n'));
+    skippedJudges = [...skippedJudges, ...pf.skipped];
+    if (pf.runnable.length === 0) fail('all judges failed preflight — no working credentials (check the API keys, base URLs and model ids)');
+    config = { ...config, judges: pf.runnable };
   }
 
   const baseOut = outDir ? path.resolve(outDir) : configDir;
