@@ -23,6 +23,10 @@ on:
         description: "Run with the deterministic mock judge (pipeline validation only)"
         type: boolean
         default: false
+      preflight_only:
+        description: "Credential check only: one tiny probe call per judge, no scoring, no spend. Green = all judges ready; red = a secret needs fixing."
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -40,6 +44,7 @@ jobs:
       # scripts in a secret-holding workflow.
       CONFIG_PATH: ${{ inputs.config }}
       MOCK_INPUT: ${{ inputs.mock }}
+      PREFLIGHT_INPUT: ${{ inputs.preflight_only }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v6
@@ -63,7 +68,9 @@ jobs:
         run: |
           MOCK_FLAG=""
           if [ "$MOCK_INPUT" = "true" ]; then MOCK_FLAG="--mock"; fi
-          npx tsx cli/experiment.ts -c "${GITHUB_WORKSPACE}/${CONFIG_PATH}" $MOCK_FLAG --skip-missing
+          PREFLIGHT_FLAG=""
+          if [ "$PREFLIGHT_INPUT" = "true" ]; then PREFLIGHT_FLAG="--preflight-only"; fi
+          npx tsx cli/experiment.ts -c "${GITHUB_WORKSPACE}/${CONFIG_PATH}" $MOCK_FLAG $PREFLIGHT_FLAG --skip-missing
       # Runs even when the experiment step fails: run-002 attempt 1 lost
       # ~2500 paid judge calls because the failed step blocked publication.
       # Failed-run data is diagnostic material — pushed on a clearly-labeled

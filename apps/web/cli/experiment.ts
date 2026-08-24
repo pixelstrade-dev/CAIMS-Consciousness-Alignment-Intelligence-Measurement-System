@@ -34,19 +34,21 @@ function parseArgs(argv: string[]) {
   let mock = false;
   let outDir = '';
   let skipMissing = false;
+  let preflightOnly = false;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '-c' || a === '--config') configPath = argv[++i] ?? '';
     else if (a === '--mock') mock = true;
     else if (a === '--out') outDir = argv[++i] ?? '';
     else if (a === '--skip-missing') skipMissing = true;
+    else if (a === '--preflight-only') preflightOnly = true;
     else if (a === '-h' || a === '--help') {
-      process.stdout.write('usage: experiment.ts -c config.json [--mock] [--out DIR] [--skip-missing]\n');
+      process.stdout.write('usage: experiment.ts -c config.json [--mock] [--out DIR] [--skip-missing] [--preflight-only]\n');
       process.exit(0);
     } else fail(`unknown argument: ${a}`);
   }
   if (!configPath) fail('missing -c config.json');
-  return { configPath, mock, outDir, skipMissing };
+  return { configPath, mock, outDir, skipMissing, preflightOnly };
 }
 
 // Real adapter factory. The adapter classes read credentials from fixed env
@@ -142,7 +144,7 @@ function renderReport(summary: ExperimentSummary): string {
 }
 
 async function main() {
-  const { configPath, mock, outDir, skipMissing } = parseArgs(process.argv.slice(2));
+  const { configPath, mock, outDir, skipMissing, preflightOnly } = parseArgs(process.argv.slice(2));
   const configAbs = path.resolve(configPath);
   const configDir = path.dirname(configAbs);
   const rawConfig = JSON.parse(fs.readFileSync(configAbs, 'utf-8'));
@@ -154,7 +156,7 @@ async function main() {
   // run-002 attempt 1 showed a present-but-invalid key burns ~1250 failed
   // calls and sinks the whole run. Mock runs need no credentials.
   let skippedJudges: { id: string; reason: string }[] = [];
-  if (skipMissing && !mock) {
+  if ((skipMissing || preflightOnly) && !mock) {
     const { runnable, skipped } = partitionJudgesByEnv(config.judges, process.env);
     skippedJudges = skipped;
     for (const sk of skipped) {
@@ -163,8 +165,24 @@ async function main() {
     if (runnable.length === 0) fail('all judges skipped — no credentials found; set at least ANTHROPIC_API_KEY or OPENAI_API_KEY');
     const pf = await preflightJudges(runnable, realAdapterFor, (m) => process.stderr.write(m + '\n'));
     skippedJudges = [...skippedJudges, ...pf.skipped];
-    if (pf.runnable.length === 0) fail('all judges failed preflight — no working credentials (check the API keys, base URLs and model ids)');
+    if (pf.runnable.length === 0 && !preflightOnly) fail('all judges failed preflight — no working credentials (check the API keys, base URLs and model ids)');
     config = { ...config, judges: pf.runnable };
+  }
+
+  // --preflight-only: credential check mode — a few ~8-token probe calls,
+  // no scoring, no files written. Exit 0 only when EVERY configured judge
+  // passed, so a red workflow run means "fix a secret before spending on a
+  // real run" and a green one means "all three families are ready".
+  if (preflightOnly) {
+    if (mock) fail('--preflight-only is meaningless with --mock (the mock needs no credentials)');
+    process.stderr.write(`\nPREFLIGHT SUMMARY — ${config.judges.length} ok, ${skippedJudges.length} failed/missing\n`);
+    for (const j of config.judges) process.stderr.write(`  ✓ ${j.id}\n`);
+    for (const sk of skippedJudges) process.stderr.write(`  ✗ ${sk.id}: ${sk.reason}\n`);
+    if (skippedJudges.length > 0) {
+      fail(`${skippedJudges.length} judge(s) not ready — fix the secrets above, then re-run the preflight`);
+    }
+    process.stderr.write('\nall judges ready — launch the real run.\n');
+    return;
   }
 
   const baseOut = outDir ? path.resolve(outDir) : configDir;
